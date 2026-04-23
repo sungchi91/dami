@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "additionalDirectories": [
+      "/Users/sungchi/Documents/dev/shop-dami/sections",
+      "/Users/sungchi/Documents/dev/shop-dami/assets",
+      "/Users/sungchi/Documents/dev/shop-dami/config"
+    ]
+  }
+}

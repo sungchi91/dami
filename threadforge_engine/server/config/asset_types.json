@@ -1,0 +1,20 @@
+[
+  {
+    "id": "hero",
+    "label": "Hero Asset",
+    "description": "High-fidelity, scroll-stopping lifestyle visuals. Mission: Aspiration & Attention.",
+    "templateRules": "Editorial lifestyle photograph. The product is ambient — part of the scene, never the hero subject. Shot feels like a real captured moment, not a staged ad. Wide enough to show the full environment and mood."
+  },
+  {
+    "id": "contextual",
+    "label": "Contextual Asset",
+    "description": "Lifestyle shots, in-use scenarios. Mission: Believability & Trust.",
+    "templateRules": "Candid, believable lifestyle photograph. The product is in natural use — being carried, worn, or used as part of daily life. Mid-distance shot. The person or setting is as important as the product."
+  },
+  {
+    "id": "functional",
+    "label": "Functional Asset",
+    "description": "Product shots, close-ups, texture detail. Mission: Clarity & Detail.",
+    "templateRules": "Clean product or texture photograph. The product IS the subject. Sharp focus on the product details, fabric, and embroidery. Simple, uncluttered background. Macro detail where relevant."
+  }
+]

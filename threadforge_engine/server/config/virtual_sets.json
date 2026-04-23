@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sonoma-winery",
+    "label": "Sonoma Winery Table",
+    "description": "Outdoor winery table setting. Aged stone or teak table, dappled afternoon light through olive trees, wine glasses, artisan bread. Ground: fine gravel or lush grass. Relaxed, unhurried California wine country atmosphere."
+  },
+  {
+    "id": "marble-kitchen",
+    "label": "Marble Kitchen Counter",
+    "description": "White marble kitchen counter beside a large window. Soft diffused morning light filtering through white linen curtains. Clean and serene. Props: sculptural glass vase, fresh garden flowers, linen napkin, small ceramic bowl."
+  },
+  {
+    "id": "garden-path",
+    "label": "Garden Path",
+    "description": "A lush private garden with a gravel or stone path. Climbing roses and green foliage. Dappled light through tree canopy. Terracotta pavers or aged stone tile underfoot. The feeling of a well-loved European-California garden."
+  },
+  {
+    "id": "french-interior",
+    "label": "French Country Interior",
+    "description": "Warm, lived-in interior room. Aged stone tile or terracotta hex floors. White-painted walls, sheer linen curtains. A vintage armchair or simple linen sofa. Soft morning window light. Intimate and quiet."
+  },
+  {
+    "id": "farmers-market",
+    "label": "Farmer's Market",
+    "description": "Outdoor farmer's market setting. Striped canvas awning overhead casting soft diffused light. Fresh produce, flowers in paper wrapping, and market baskets nearby. Warm but not golden-hour light. Candid, mid-motion atmosphere."
+  },
+  {
+    "id": "outdoor-dining",
+    "label": "Outdoor Garden Table",
+    "description": "An intimate outdoor dining setup in a lush private garden. Iron bistro chairs or a wooden table under dappled light. Fresh flowers in a simple vase. Linen napkins, ceramic plates. The feeling of a private Sunday lunch."
+  }
+]
