@@ -41,7 +41,6 @@
 
   <script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
   <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
-  <script src="{{ 'customizer-bundle.js' | asset_url }}" defer="defer"></script>
   {%- if product.quantity_price_breaks_configured? -%}
     <script src="{{ 'show-more.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'price-per-item.js' | asset_url }}" defer="defer"></script>
@@ -684,51 +683,6 @@
         </section>
       </div>
     </div>
-
-    {% comment %} d'ami customizer — hide Dawn's native product columns {% endcomment %}
-    <style>
-      #MainProduct-{{ section.id }} .product__media-wrapper,
-      #MainProduct-{{ section.id }} .product__info-wrapper {
-        display: none !important;
-      }
-    </style>
-    {%- assign canvas_img = product.images | where: "alt", "canvas" | first -%}
-    {%- unless canvas_img -%}{%- assign canvas_img = product.images | first -%}{%- endunless -%}
-    <div
-      id="dami-customizer"
-      data-images="{% for image in product.images %}{{ image | image_url: width: 1500 }}{% unless forloop.last %},{% endunless %}{% endfor %}"
-      data-alts="{% for image in product.images %}{{ image.alt | escape }}{% unless forloop.last %},{% endunless %}{% endfor %}"
-      data-product-title="{{ product.title | escape }}"
-      data-product-price="{{ product.price | money }}"
-      data-current-variant-id="{{ product.selected_or_first_available_variant.id }}"
-      data-canvas-image="{% if canvas_img %}{{ canvas_img | image_url: width: 1500 }}{% endif %}"
-      data-category-label="{{ product.collections.last.title | escape }}"
-      data-tagline="{{ section.settings.tagline | escape }}"
-      data-description="{{ product.description | strip_html | strip | escape }}"
-      data-founder-quote="{{ product.metafields.custom.founder_quote | escape }}"
-      data-founder-name="{{ section.settings.founder_name | escape }}"
-      data-dimensions="{{ product.metafields.custom.dimensions | escape }}"
-      data-care="{{ product.metafields.custom.care | escape }}"
-      data-shipping-message="{{ section.settings.shipping_message | escape }}"
-      data-feature-1="{{ section.settings.feature_1 | escape }}"
-      data-feature-2="{{ section.settings.feature_2 | escape }}"
-      data-feature-3="{{ section.settings.feature_3 | escape }}"
-      data-canvas-bg-color="{{ section.settings.canvas_bg_color }}"
-      data-max-motifs="{{ product.metafields.custom.max_motifs | escape }}"
-      {%- assign color_parts = '' -%}
-      {%- for option in product.options_with_values -%}
-        {%- if option.name == 'Color' -%}
-          {%- for value in option.values -%}
-            {%- assign hex = value.swatch.color | default: '' -%}
-            {%- capture entry -%}{"name":{{ value.name | json }},"color":{{ hex | json }},"available":{{ value.available | json }}}{%- endcapture -%}
-            {%- if color_parts == '' -%}{%- assign color_parts = entry -%}
-            {%- else -%}{%- assign color_parts = color_parts | append: ',' | append: entry -%}
-            {%- endif -%}
-          {%- endfor -%}
-        {%- endif -%}
-      {%- endfor -%}
-      data-colors='[{{ color_parts }}]'
-    ></div>
 
     {% render 'product-media-modal', variant_images: variant_images %}
 
@@ -2135,52 +2089,6 @@
     }
   ],
   "settings": [
-    {
-      "type": "header",
-      "content": "d'ami Customizer"
-    },
-    {
-      "type": "color",
-      "id": "canvas_bg_color",
-      "label": "Canvas background color",
-      "default": "#F0EBE0"
-    },
-    {
-      "type": "text",
-      "id": "tagline",
-      "label": "Tagline",
-      "default": "every stitch tells your story"
-    },
-    {
-      "type": "text",
-      "id": "founder_name",
-      "label": "Founder name",
-      "default": "Marie-Claire, Founder"
-    },
-    {
-      "type": "text",
-      "id": "shipping_message",
-      "label": "Shipping message",
-      "default": "Free shipping on orders over $150"
-    },
-    {
-      "type": "text",
-      "id": "feature_1",
-      "label": "Feature 1",
-      "default": "Ships in 3–4 weeks"
-    },
-    {
-      "type": "text",
-      "id": "feature_2",
-      "label": "Feature 2",
-      "default": "Handcrafted piece"
-    },
-    {
-      "type": "text",
-      "id": "feature_3",
-      "label": "Feature 3",
-      "default": "Gift wrapping"
-    },
     {
       "type": "checkbox",
       "id": "enable_sticky_info",
