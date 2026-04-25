@@ -4,11 +4,24 @@
 @import 'tw-animate-css';
 @config '../../tailwind.config.js';
 
-#dami-customizer-root {
+.dami-customizer-scope {
   font-size: 16px;
   box-sizing: border-box;
+  /* Override Tailwind's rem-based text scale with px so we're immune to
+     whatever root font-size the Shopify theme sets (often 62.5% = 10px). */
+  --text-xs:   12px;
+  --text-sm:   14px;
+  --text-base: 16px;
+  --text-lg:   18px;
+  --text-xl:   20px;
+  --text-2xl:  24px;
+  --text-3xl:  30px;
+  --text-4xl:  36px;
+  --text-5xl:  48px;
+  --text-6xl:  60px;
+  --spacing:   4px;
 }
-#dami-customizer-root *, #dami-customizer-root *::before, #dami-customizer-root *::after {
+.dami-customizer-scope *, .dami-customizer-scope *::before, .dami-customizer-scope *::after {
   box-sizing: border-box;
 }
 
@@ -16,7 +29,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* Scoped to our root — variables never pollute Dawn's :root namespace */
-#dami-customizer-root {
+.dami-customizer-scope {
   /* Linen White - Main background #FAF8F5 */
   --background: #FAF8F5;
   /* Soft Ink - Primary typography #2C3338 */
@@ -61,8 +74,8 @@
   --font-cursive: 'Caveat', 'Brush Script MT', cursive;
 }
 
-#dami-customizer-root.dark,
-.dark #dami-customizer-root {
+.dami-customizer-scope.dark,
+.dark .dami-customizer-scope {
   --background: #1A1D1F;
   --foreground: #FAF8F5;
   --card: #22262A;
@@ -145,10 +158,11 @@
 
 @layer base {
   /* Scoped to our root only — never bleed into Dawn */
-  #dami-customizer-root *, #dami-customizer-root *::before, #dami-customizer-root *::after {
+  .dami-customizer-scope *, .dami-customizer-scope *::before, .dami-customizer-scope *::after {
     @apply border-border outline-ring/50;
   }
-  #dami-customizer-root {
-    @apply bg-background text-foreground;
+  .dami-customizer-scope {
+    @apply text-foreground;
+    background: transparent;
   }
 }

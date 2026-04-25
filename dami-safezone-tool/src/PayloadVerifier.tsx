@@ -2,8 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Canvas, FabricImage, FabricText, Rect } from 'fabric'
 import { PRESETS } from './presets'
 
-const MINI_W = 300
-const MINI_H = 375  // 4:5
+const MINI_W = 560
+const MINI_H = 700  // 4:5
 
 const FONT_CSS: Record<string, string> = {
   'Cursive Script': 'Caveat, "Brush Script MT", cursive',
@@ -188,7 +188,7 @@ export default function PayloadVerifier() {
       </div>
 
       {/* Right — canvas preview */}
-      <div style={{ flex: '1 1 360px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+      <div style={{ flex: '1 1 580px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
         <p style={{ margin: 0, fontSize: '0.8rem', fontWeight: 600, color: '#475569' }}>Preview</p>
         <div style={{ border: '1px solid #e2e8f0', borderRadius: '1rem', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
           <canvas ref={canvasElRef} />

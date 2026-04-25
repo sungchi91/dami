@@ -1,0 +1,60 @@
+<style>
+  /* 50/50 column split — desktop only */
+  @media screen and (min-width: 750px) {
+    .product__media-wrapper,
+    .product__info-wrapper {
+      max-width: 50% !important;
+      width: calc(50% - var(--grid-desktop-horizontal-spacing) / 2) !important;
+    }
+    .product__info-wrapper {
+      padding-left: 3rem !important;
+    }
+  }
+</style>
+
+{%- comment -%} Build colors array from the Color variant option {%- endcomment -%}
+{%- assign dami_color_idx = nil -%}
+{%- for o in product.options -%}
+  {%- assign o_lower = o | downcase -%}
+  {%- if o_lower == 'color' or o_lower == 'colour' or o_lower == 'colors' -%}
+    {%- assign dami_color_idx = forloop.index0 -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign dami_colors_arr = '' -%}
+{%- if dami_color_idx != nil -%}
+  {%- assign dami_seen = '' -%}
+  {%- for v in product.variants -%}
+    {%- assign cv = v.options[dami_color_idx] -%}
+    {%- unless dami_seen contains cv -%}
+      {%- assign dami_seen = dami_seen | append: cv | append: '|' -%}
+      {%- capture dami_entry -%}{"name":{{ cv | json }},"available":{{ v.available }}}{%- endcapture -%}
+      {%- if dami_colors_arr == '' -%}
+        {%- assign dami_colors_arr = dami_entry -%}
+      {%- else -%}
+        {%- assign dami_colors_arr = dami_colors_arr | append: ',' | append: dami_entry -%}
+      {%- endif -%}
+    {%- endunless -%}
+  {%- endfor -%}
+{%- endif -%}
+
+<div
+  id="dami-customizer"
+  data-product-title="{{ product.title | escape }}"
+  data-current-variant-id="{{ product.selected_or_first_available_variant.id }}"
+  data-product-price="{{ product.selected_or_first_available_variant.price | money }}"
+  data-canvas-image="{{ product.featured_image | image_url: width: 800 }}"
+  data-canvas-bg-color="{{ product.metafields.custom.canvas_bg_color.value | default: product.metafields.custom.canvas_bg_color | default: '#F5F3EF' }}"
+  data-max-motifs="{{ product.metafields.custom.max_motifs.value | default: product.metafields.custom.max_motifs | default: 3 }}"
+  data-category-label="{{ product.metafields.custom.category_label.value | default: product.metafields.custom.category_label | default: 'Bespoke Customization' }}"
+  data-tagline="{{ product.metafields.custom.tagline.value | default: product.metafields.custom.tagline | escape }}"
+  data-description="{{ product.description | strip_html | truncate: 300 | escape }}"
+  data-founder-quote="{{ product.metafields.custom.founder_quote.value | default: product.metafields.custom.founder_quote | escape }}"
+  data-founder-name="{{ product.metafields.custom.founder_name.value | default: product.metafields.custom.founder_name | escape }}"
+  data-feature-1="{{ product.metafields.custom.feature_1.value | default: product.metafields.custom.feature_1 | default: 'Free shipping on orders over $150' }}"
+  data-feature-2="{{ product.metafields.custom.feature_2.value | default: product.metafields.custom.feature_2 | default: 'Hand-embroidered to order' }}"
+  data-feature-3="{{ product.metafields.custom.feature_3.value | default: product.metafields.custom.feature_3 | default: 'Gift wrapping available' }}"
+  data-color-option="{{ product.options | join: ',' | escape }}"
+  data-colors="{{ '[' | append: dami_colors_arr | append: ']' | escape }}"
+></div>
+<script src="{{ 'customizer-bundle.js' | asset_url }}" defer="defer"></script>
