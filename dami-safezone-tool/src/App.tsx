@@ -10,7 +10,7 @@ export default function App() {
   return (
     <div style={{ fontFamily: 'system-ui, sans-serif', color: '#1e293b', minHeight: '100vh', background: '#f8fafc' }}>
       <header style={{ borderBottom: '1px solid #e2e8f0', background: '#fff', padding: '1rem 2rem', display: 'flex', alignItems: 'center', gap: '2rem' }}>
-        <h1 style={{ fontSize: '1.1rem', fontWeight: 600, margin: 0 }}>d'ami Admin</h1>
+        <h1 style={{ fontSize: '1.1rem', fontWeight: 600, margin: 0 }}>Ember Lane Admin</h1>
         <nav style={{ display: 'flex', gap: '0.25rem' }}>
           {([
             { id: 'safezone', label: 'Safe Zone Configurator' },

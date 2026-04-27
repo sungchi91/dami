@@ -4,7 +4,7 @@
 @import 'tw-animate-css';
 @config '../../tailwind.config.js';
 
-.dami-customizer-scope {
+.ember-lane-customizer-scope {
   font-size: 16px;
   box-sizing: border-box;
   font-family: var(--font-body-family, inherit);
@@ -46,7 +46,7 @@
   --font-cursive:        'Caveat', 'Brush Script MT', cursive;
 }
 
-.dami-customizer-scope *, .dami-customizer-scope *::before, .dami-customizer-scope *::after {
+.ember-lane-customizer-scope *, .ember-lane-customizer-scope *::before, .ember-lane-customizer-scope *::after {
   box-sizing: border-box;
 }
 
@@ -80,10 +80,10 @@
 }
 
 @layer base {
-  .dami-customizer-scope *, .dami-customizer-scope *::before, .dami-customizer-scope *::after {
+  .ember-lane-customizer-scope *, .ember-lane-customizer-scope *::before, .ember-lane-customizer-scope *::after {
     @apply border-border outline-ring/50;
   }
-  .dami-customizer-scope {
+  .ember-lane-customizer-scope {
     @apply text-foreground;
     background: transparent;
   }

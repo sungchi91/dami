@@ -8,7 +8,7 @@ import { buildCartPayload, submitToCart } from '@/lib/cart'
 // ── Thread swatches ────────────────────────────────────────────────────────────
 
 export const threadSwatches = [
-  { name: "d'ami Blue",    color: '#7594B4' },
+  { name: 'Ember Lane Blue', color: '#7594B4' },
   { name: 'Deep Navy',     color: '#223A59' },
   { name: 'Pale Sky',      color: '#BBD0E3' },
   { name: 'Periwinkle',    color: '#96A1C6' },

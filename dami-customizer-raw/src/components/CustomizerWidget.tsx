@@ -43,7 +43,7 @@ function colorNameToHex(name: string): string {
 }
 
 function readDataset() {
-  const el = document.getElementById('dami-customizer')
+  const el = document.getElementById('ember-lane-customizer')
   const d  = el?.dataset ?? {}
   const title = d.productTitle ?? ''
   const idx   = ITEM_TYPES.findIndex(t => t.toLowerCase() === title.toLowerCase())
@@ -129,8 +129,8 @@ export default function CustomizerWidget() {
 
   // Direct DOM toggle happens synchronously so Fabric.js gets real canvas dimensions.
   const handlePersonalize = useCallback(() => {
-    const photosPanel  = document.getElementById('dami-photos-panel')
-    const canvasPortal = document.getElementById('dami-canvas-portal')
+    const photosPanel  = document.getElementById('ember-lane-photos-panel')
+    const canvasPortal = document.getElementById('ember-lane-canvas-portal')
     if (photosPanel)  photosPanel.style.display  = 'none'
     if (canvasPortal) canvasPortal.style.display = 'block'
     setHasPersonalized(true)
@@ -138,14 +138,14 @@ export default function CustomizerWidget() {
   }, [])
 
   const handleBack = useCallback(() => {
-    const photosPanel  = document.getElementById('dami-photos-panel')
-    const canvasPortal = document.getElementById('dami-canvas-portal')
+    const photosPanel  = document.getElementById('ember-lane-photos-panel')
+    const canvasPortal = document.getElementById('ember-lane-canvas-portal')
     if (photosPanel)  photosPanel.style.display  = ''
     if (canvasPortal) canvasPortal.style.display = 'none'
     setShowPersonalize(false)
   }, [])
 
-  const canvasPortalEl = document.getElementById('dami-canvas-portal')
+  const canvasPortalEl = document.getElementById('ember-lane-canvas-portal')
 
   return (
     <>
@@ -183,7 +183,7 @@ export default function CustomizerWidget() {
       />
 
       {hasPersonalized && canvasPortalEl && createPortal(
-        <div className="dami-customizer-scope">
+        <div className="ember-lane-customizer-scope">
           <CanvasEditor
             embroideryText={embroideryText}
             textColor={textColor}

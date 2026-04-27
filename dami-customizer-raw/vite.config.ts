@@ -23,7 +23,7 @@ export default defineConfig({
         // Inline any code-split chunks so there is only one file
         inlineDynamicImports: true,
         format: 'iife',
-        name: 'DamiCustomizer',
+        name: 'EmberLaneCustomizer',
       },
     },
     // Don't split CSS — cssInjectedByJsPlugin handles injection

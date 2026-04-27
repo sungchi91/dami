@@ -13,38 +13,38 @@
 </style>
 
 {%- comment -%} Build colors array from the Color variant option {%- endcomment -%}
-{%- assign dami_color_idx = nil -%}
+{%- assign el_color_idx = nil -%}
 {%- for o in product.options -%}
   {%- assign o_lower = o | downcase -%}
   {%- if o_lower == 'color' or o_lower == 'colour' or o_lower == 'colors' -%}
-    {%- assign dami_color_idx = forloop.index0 -%}
+    {%- assign el_color_idx = forloop.index0 -%}
   {%- endif -%}
 {%- endfor -%}
 
-{%- assign dami_colors_arr = '' -%}
-{%- if dami_color_idx != nil -%}
-  {%- assign dami_seen = '' -%}
+{%- assign el_colors_arr = '' -%}
+{%- if el_color_idx != nil -%}
+  {%- assign el_seen = '' -%}
   {%- for v in product.variants -%}
-    {%- assign cv = v.options[dami_color_idx] -%}
-    {%- unless dami_seen contains cv -%}
-      {%- assign dami_seen = dami_seen | append: cv | append: '|' -%}
-      {%- assign dami_media_id = '' -%}
-      {%- if v.featured_media != nil -%}{%- assign dami_media_id = section.id | append: '-' | append: v.featured_media.id -%}{%- endif -%}
-      {%- assign dami_img_url = '' -%}
-      {%- if v.featured_image != nil -%}{%- assign dami_img_url = v.featured_image | image_url: width: 1200 -%}{%- endif -%}
-      {%- assign dami_hex = v.metafields.custom.color.value | default: '' -%}
-      {%- capture dami_entry -%}{"name":{{ cv | json }},"available":{{ v.available }},"variantId":{{ v.id }},"mediaId":{{ dami_media_id | json }},"imageUrl":{{ dami_img_url | json }},"color":{{ dami_hex | json }}}{%- endcapture -%}
-      {%- if dami_colors_arr == '' -%}
-        {%- assign dami_colors_arr = dami_entry -%}
+    {%- assign cv = v.options[el_color_idx] -%}
+    {%- unless el_seen contains cv -%}
+      {%- assign el_seen = el_seen | append: cv | append: '|' -%}
+      {%- assign el_media_id = '' -%}
+      {%- if v.featured_media != nil -%}{%- assign el_media_id = section.id | append: '-' | append: v.featured_media.id -%}{%- endif -%}
+      {%- assign el_img_url = '' -%}
+      {%- if v.featured_image != nil -%}{%- assign el_img_url = v.featured_image | image_url: width: 1200 -%}{%- endif -%}
+      {%- assign el_hex = v.metafields.custom.color.value | default: '' -%}
+      {%- capture el_entry -%}{"name":{{ cv | json }},"available":{{ v.available }},"variantId":{{ v.id }},"mediaId":{{ el_media_id | json }},"imageUrl":{{ el_img_url | json }},"color":{{ el_hex | json }}}{%- endcapture -%}
+      {%- if el_colors_arr == '' -%}
+        {%- assign el_colors_arr = el_entry -%}
       {%- else -%}
-        {%- assign dami_colors_arr = dami_colors_arr | append: ',' | append: dami_entry -%}
+        {%- assign el_colors_arr = el_colors_arr | append: ',' | append: el_entry -%}
       {%- endif -%}
     {%- endunless -%}
   {%- endfor -%}
 {%- endif -%}
 
 <div
-  id="dami-customizer"
+  id="ember-lane-customizer"
   data-product-title="{{ product.title | escape }}"
   data-current-variant-id="{{ product.selected_or_first_available_variant.id }}"
   data-product-price="{{ product.selected_or_first_available_variant.price | money }}"
@@ -61,6 +61,6 @@
   data-feature-3="{{ product.metafields.custom.feature_3.value | default: product.metafields.custom.feature_3 }}"
   data-cover-media-id="{{ section.id }}-{{ product.featured_media.id }}"
   data-color-option="{{ product.options | join: ',' | escape }}"
-  data-colors="{{ '[' | append: dami_colors_arr | append: ']' | escape }}"
+  data-colors="{{ '[' | append: el_colors_arr | append: ']' | escape }}"
 ></div>
 <script src="{{ 'customizer-bundle.js' | asset_url }}" defer="defer"></script>

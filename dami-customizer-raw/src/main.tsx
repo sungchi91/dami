@@ -4,12 +4,12 @@ import './styles/globals.css'
 import CustomizerWidget from './components/CustomizerWidget'
 
 const mount = () => {
-  const container = document.getElementById('dami-customizer')
+  const container = document.getElementById('ember-lane-customizer')
   if (!container) return
 
   const root = document.createElement('div')
-  root.id = 'dami-customizer-root'
-  root.className = 'dami-customizer-scope'
+  root.id = 'ember-lane-customizer-root'
+  root.className = 'ember-lane-customizer-scope'
   container.appendChild(root)
 
   createRoot(root).render(
