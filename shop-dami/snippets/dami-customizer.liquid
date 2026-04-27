@@ -33,7 +33,7 @@
       {%- assign dami_img_url = '' -%}
       {%- if v.featured_image != nil -%}{%- assign dami_img_url = v.featured_image | image_url: width: 1200 -%}{%- endif -%}
       {%- assign dami_hex = v.metafields.custom.color.value | default: '' -%}
-      {%- capture dami_entry -%}{"name":{{ cv | json }},"available":{{ v.available }},"mediaId":{{ dami_media_id | json }},"imageUrl":{{ dami_img_url | json }},"color":{{ dami_hex | json }}}{%- endcapture -%}
+      {%- capture dami_entry -%}{"name":{{ cv | json }},"available":{{ v.available }},"variantId":{{ v.id }},"mediaId":{{ dami_media_id | json }},"imageUrl":{{ dami_img_url | json }},"color":{{ dami_hex | json }}}{%- endcapture -%}
       {%- if dami_colors_arr == '' -%}
         {%- assign dami_colors_arr = dami_entry -%}
       {%- else -%}

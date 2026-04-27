@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Caveat:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap');
 
 @import 'tailwindcss';
 @import 'tw-animate-css';
@@ -7,8 +7,8 @@
 .dami-customizer-scope {
   font-size: 16px;
   box-sizing: border-box;
-  /* Override Tailwind's rem-based text scale with px so we're immune to
-     whatever root font-size the Shopify theme sets (often 62.5% = 10px). */
+  font-family: var(--font-body-family, inherit);
+  /* Override Tailwind's rem-based text scale with px — immune to Shopify's 62.5% root font-size */
   --text-xs:   12px;
   --text-sm:   14px;
   --text-base: 16px;
@@ -20,144 +20,66 @@
   --text-5xl:  48px;
   --text-6xl:  60px;
   --spacing:   4px;
+
+  /* Map Tailwind tokens → Studio theme variables */
+  --background:          rgb(var(--color-background));
+  --foreground:          rgb(var(--color-foreground));
+  --card:                rgb(var(--color-background));
+  --card-foreground:     rgb(var(--color-foreground));
+  --popover:             rgb(var(--color-background));
+  --popover-foreground:  rgb(var(--color-foreground));
+  --primary:             rgb(var(--color-button));
+  --primary-foreground:  rgb(var(--color-button-text));
+  --secondary:           rgba(var(--color-foreground), 0.06);
+  --secondary-foreground:rgb(var(--color-foreground));
+  --muted:               rgba(var(--color-foreground), 0.06);
+  --muted-foreground:    rgba(var(--color-foreground), 0.55);
+  --accent:              rgb(var(--color-button));
+  --accent-foreground:   rgb(var(--color-button-text));
+  --destructive:         rgba(var(--color-foreground), 0.8);
+  --destructive-foreground: rgb(var(--color-background));
+  --border:              rgba(var(--color-foreground), 0.12);
+  --input:               rgba(var(--color-foreground), 0.12);
+  --ring:                rgba(var(--color-foreground), 0.3);
+  --radius:              var(--buttons-radius, 0.5rem);
+  --font-sans:           var(--font-body-family, inherit);
+  --font-cursive:        'Caveat', 'Brush Script MT', cursive;
 }
+
 .dami-customizer-scope *, .dami-customizer-scope *::before, .dami-customizer-scope *::after {
   box-sizing: border-box;
 }
 
-
 @custom-variant dark (&:is(.dark *));
 
-/* Scoped to our root — variables never pollute Dawn's :root namespace */
-.dami-customizer-scope {
-  /* Linen White - Main background #FAF8F5 */
-  --background: #FAF8F5;
-  /* Soft Ink - Primary typography #2C3338 */
-  --foreground: #2C3338;
-  --card: #FAF8F5;
-  --card-foreground: #2C3338;
-  --popover: #FAF8F5;
-  --popover-foreground: #2C3338;
-  /* d'ami Blue - Primary actions & blue accents #7594B4 */
-  --primary: #7594B4;
-  --primary-foreground: #FAF8F5;
-  /* Canvas Stone - Secondary/borders #E1DCD3 */
-  --secondary: #F5F3EF;
-  --secondary-foreground: #2C3338;
-  --muted: #F0EDE8;
-  --muted-foreground: #5A6168;
-  /* Thread Red - Red accents #C43634 */
-  --accent: #C43634;
-  --accent-foreground: #FAF8F5;
-  --destructive: #C43634;
-  --destructive-foreground: #FAF8F5;
-  /* Canvas Stone - Borders & inputs #E1DCD3 */
-  --border: #E1DCD3;
-  --input: #E1DCD3;
-  --ring: #7594B4;
-  --chart-1: #7594B4;
-  --chart-2: #C43634;
-  --chart-3: #85A384;
-  --chart-4: #C68798;
-  --chart-5: #E1DCD3;
-  --radius: 1.5rem;
-  --sidebar: #FAF8F5;
-  --sidebar-foreground: #2C3338;
-  --sidebar-primary: #7594B4;
-  --sidebar-primary-foreground: #FAF8F5;
-  --sidebar-accent: #F5F3EF;
-  --sidebar-accent-foreground: #2C3338;
-  --sidebar-border: #E1DCD3;
-  --sidebar-ring: #7594B4;
-  /* Font variables for JSX font-[family-name:var(...)] utilities */
-  --font-sans: 'Cormorant Garamond', 'Georgia', serif;
-  --font-cursive: 'Caveat', 'Brush Script MT', cursive;
-}
-
-.dami-customizer-scope.dark,
-.dark .dami-customizer-scope {
-  --background: #1A1D1F;
-  --foreground: #FAF8F5;
-  --card: #22262A;
-  --card-foreground: #FAF8F5;
-  --popover: #22262A;
-  --popover-foreground: #FAF8F5;
-  --primary: #8FA9C6;
-  --primary-foreground: #1A1D1F;
-  --secondary: #2C3338;
-  --secondary-foreground: #FAF8F5;
-  --muted: #2C3338;
-  --muted-foreground: #9CA3AB;
-  --accent: #D4524F;
-  --accent-foreground: #1A1D1F;
-  --destructive: #D4524F;
-  --destructive-foreground: #FAF8F5;
-  --border: #3D4449;
-  --input: #3D4449;
-  --ring: #8FA9C6;
-  --chart-1: #8FA9C6;
-  --chart-2: #D4524F;
-  --chart-3: #9AB899;
-  --chart-4: #D49BA8;
-  --chart-5: #5A6168;
-  --sidebar: #1A1D1F;
-  --sidebar-foreground: #FAF8F5;
-  --sidebar-primary: #8FA9C6;
-  --sidebar-primary-foreground: #1A1D1F;
-  --sidebar-accent: #2C3338;
-  --sidebar-accent-foreground: #FAF8F5;
-  --sidebar-border: #3D4449;
-  --sidebar-ring: #8FA9C6;
-  --font-sans: 'Cormorant Garamond', 'Georgia', serif;
-  --font-cursive: 'Caveat', 'Brush Script MT', cursive;
-}
-
 @theme inline {
-  --font-sans: 'Cormorant Garamond', 'Georgia', serif;
-  --font-serif: 'Cormorant Garamond', 'Georgia', serif;
-  --font-cursive: 'Caveat', 'Brush Script MT', cursive;
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
+  --font-sans:    var(--font-sans);
+  --font-cursive: var(--font-cursive);
+  --color-background:         var(--background);
+  --color-foreground:         var(--foreground);
+  --color-card:               var(--card);
+  --color-card-foreground:    var(--card-foreground);
+  --color-popover:            var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
+  --color-primary:            var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
+  --color-secondary:          var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+  --color-muted:              var(--muted);
+  --color-muted-foreground:   var(--muted-foreground);
+  --color-accent:             var(--accent);
+  --color-accent-foreground:  var(--accent-foreground);
+  --color-destructive:        var(--destructive);
+  --color-border:             var(--border);
+  --color-input:              var(--input);
+  --color-ring:               var(--ring);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --font-cursive: var(--font-cursive);
 }
 
 @layer base {
-  /* Scoped to our root only — never bleed into Dawn */
   .dami-customizer-scope *, .dami-customizer-scope *::before, .dami-customizer-scope *::after {
     @apply border-border outline-ring/50;
   }

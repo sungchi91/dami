@@ -66,10 +66,10 @@ function readDataset() {
 try {
         const parsed = JSON.parse(d.colors ?? '[]')
         if (!Array.isArray(parsed)) return []
-        return parsed.map((c: { name: string; color?: string; available?: boolean; mediaId?: string; imageUrl?: string }) => ({
+        return parsed.map((c: { name: string; color?: string; available?: boolean; variantId?: number; mediaId?: string; imageUrl?: string }) => ({
           ...c,
           color: c.color || colorNameToHex(c.name ?? ''),
-        })) as { name: string; color: string; available?: boolean; mediaId?: string; imageUrl?: string }[]
+        })) as { name: string; color: string; available?: boolean; variantId?: number; mediaId?: string; imageUrl?: string }[]
       } catch { return [] }
     })(),
   }
@@ -101,7 +101,8 @@ export default function CustomizerWidget() {
   const [selectedColor,   setSelectedColor]   = useState(0)
 
   // Canvas uses the selected color's variant image, falling back to the product cover
-  const activeCanvasImage = colors[selectedColor]?.imageUrl || canvasImage || undefined
+  const activeCanvasImage  = colors[selectedColor]?.imageUrl || canvasImage || undefined
+  const activeVariantId    = colors[selectedColor]?.variantId ?? variantId
 
   const handleColorChange = useCallback((mediaId: string, imageUrl: string, colorIdx: number) => {
     setSelectedColor(colorIdx)
@@ -156,7 +157,7 @@ export default function CustomizerWidget() {
         setFontStyle={setFontStyle}
         textSize={textSize}
         setTextSize={setTextSize}
-        variantId={variantId}
+        variantId={activeVariantId}
         selectedItem={selectedItem}
         productPrice={productPrice}
         textPosition={textPosition}

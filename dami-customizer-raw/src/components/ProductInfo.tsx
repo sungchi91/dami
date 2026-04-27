@@ -75,7 +75,7 @@ interface ProductInfoProps {
   description:       string
   founderQuote:      string
   founderName:       string
-  colors:            { name: string; color: string; available?: boolean; mediaId?: string; imageUrl?: string }[]
+  colors:            { name: string; color: string; available?: boolean; variantId?: number; mediaId?: string; imageUrl?: string }[]
   selectedColor:     number
   onColorChange:     (mediaId: string, imageUrl: string, idx: number) => void
   feature1:          string

@@ -413,6 +413,14 @@ export function CanvasEditor({
     fc.renderAll()
   }, [selectedItem])
 
+  // ── Background swap when selected color changes ────────────────────────────
+  useEffect(() => {
+    const fc = fcRef.current
+    if (!fc) return
+    const { w, h } = canvasSizeRef.current
+    void applyBackground(fc, { bgColor: canvasBgColor || '#F0EBE0', bgImage: canvasImage || null }, w, h)
+  }, [canvasImage, canvasBgColor])
+
   // ── Motif reconciliation: syncs motifEntries → Fabric objects ─────────────
   useEffect(() => {
     const fc = fcRef.current
