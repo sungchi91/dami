@@ -28,7 +28,12 @@
     {%- assign cv = v.options[dami_color_idx] -%}
     {%- unless dami_seen contains cv -%}
       {%- assign dami_seen = dami_seen | append: cv | append: '|' -%}
-      {%- capture dami_entry -%}{"name":{{ cv | json }},"available":{{ v.available }}}{%- endcapture -%}
+      {%- assign dami_media_id = '' -%}
+      {%- if v.featured_media != nil -%}{%- assign dami_media_id = section.id | append: '-' | append: v.featured_media.id -%}{%- endif -%}
+      {%- assign dami_img_url = '' -%}
+      {%- if v.featured_image != nil -%}{%- assign dami_img_url = v.featured_image | image_url: width: 1200 -%}{%- endif -%}
+      {%- assign dami_hex = v.metafields.custom.color.value | default: '' -%}
+      {%- capture dami_entry -%}{"name":{{ cv | json }},"available":{{ v.available }},"mediaId":{{ dami_media_id | json }},"imageUrl":{{ dami_img_url | json }},"color":{{ dami_hex | json }}}{%- endcapture -%}
       {%- if dami_colors_arr == '' -%}
         {%- assign dami_colors_arr = dami_entry -%}
       {%- else -%}
@@ -54,6 +59,7 @@
   data-feature-1="{{ product.metafields.custom.feature_1.value | default: product.metafields.custom.feature_1 | default: 'Free shipping on orders over $150' }}"
   data-feature-2="{{ product.metafields.custom.feature_2.value | default: product.metafields.custom.feature_2 | default: 'Hand-embroidered to order' }}"
   data-feature-3="{{ product.metafields.custom.feature_3.value | default: product.metafields.custom.feature_3 | default: 'Gift wrapping available' }}"
+  data-cover-media-id="{{ section.id }}-{{ product.featured_media.id }}"
   data-color-option="{{ product.options | join: ',' | escape }}"
   data-colors="{{ '[' | append: dami_colors_arr | append: ']' | escape }}"
 ></div>

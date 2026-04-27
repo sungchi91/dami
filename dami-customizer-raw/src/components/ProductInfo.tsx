@@ -75,7 +75,9 @@ interface ProductInfoProps {
   description:       string
   founderQuote:      string
   founderName:       string
-  colors:            { name: string; color: string; available?: boolean }[]
+  colors:            { name: string; color: string; available?: boolean; mediaId?: string; imageUrl?: string }[]
+  selectedColor:     number
+  onColorChange:     (mediaId: string, imageUrl: string, idx: number) => void
   feature1:          string
   feature2:          string
   feature3:          string
@@ -108,13 +110,14 @@ export function ProductInfo({
   founderQuote,
   founderName,
   colors,
+  selectedColor,
+  onColorChange,
   feature1,
   feature2,
   feature3,
 }: ProductInfoProps) {
-  const [isWishlisted,  setIsWishlisted]  = useState(false)
-  const [selectedColor, setSelectedColor] = useState(0)
-  const [isSubmitting,  setIsSubmitting]  = useState(false)
+  const [isWishlisted, setIsWishlisted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleAddToBasket = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -147,7 +150,6 @@ export function ProductInfo({
     if (last) onRemoveMotif(last.id)
   }
 
-  useEffect(() => { setSelectedColor(0) }, [selectedItem])
 
   const selectedThreadIndex = threadSwatches.findIndex(s => s.color === textColor)
   const threadName = threadSwatches[selectedThreadIndex < 0 ? 0 : selectedThreadIndex].name
@@ -200,7 +202,7 @@ export function ProductInfo({
                   return (
                     <button
                       key={c.name}
-                      onClick={() => { if (!unavailable) setSelectedColor(i) }}
+                      onClick={() => { if (!unavailable) onColorChange(c.mediaId ?? '', c.imageUrl ?? '', i) }}
                       title={c.name}
                       aria-label={c.name}
                       disabled={unavailable}

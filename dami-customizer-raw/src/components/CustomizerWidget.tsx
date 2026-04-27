@@ -25,6 +25,7 @@ const COLOR_NAME_HEX: Record<string, string> = {
   'blush':         '#DFB1BE',
   'pink':          '#C68798',
   'blue':          '#7594B4',
+  'petrol':        '#2E5266',
   'slate':         '#5A6168',
   'grey':          '#A6A9A7',
   'gray':          '#A6A9A7',
@@ -51,6 +52,7 @@ function readDataset() {
     productPrice:  d.productPrice   ?? '',
     canvasImage:   d.canvasImage    ?? '',
     canvasBgColor: d.canvasBgColor  ?? '',
+    coverMediaId:  d.coverMediaId ?? '',
     maxMotifs:     d.maxMotifs ? parseInt(d.maxMotifs, 10) : 3,
     categoryLabel: d.categoryLabel  ?? '',
     tagline:       d.tagline        ?? '',
@@ -64,10 +66,10 @@ function readDataset() {
 try {
         const parsed = JSON.parse(d.colors ?? '[]')
         if (!Array.isArray(parsed)) return []
-        return parsed.map((c: { name: string; color?: string; available?: boolean }) => ({
+        return parsed.map((c: { name: string; color?: string; available?: boolean; mediaId?: string; imageUrl?: string }) => ({
           ...c,
-          color: c.color ?? colorNameToHex(c.name ?? ''),
-        })) as { name: string; color: string; available?: boolean }[]
+          color: c.color || colorNameToHex(c.name ?? ''),
+        })) as { name: string; color: string; available?: boolean; mediaId?: string; imageUrl?: string }[]
       } catch { return [] }
     })(),
   }
@@ -84,6 +86,7 @@ export default function CustomizerWidget() {
   } = shopifyData
 
   const {
+    coverMediaId,
     embroideryText,  setEmbroideryText,
     textColor,       setTextColor,
     fontStyle,       setFontStyle,
@@ -95,6 +98,32 @@ export default function CustomizerWidget() {
 
   const [activeTab,       setActiveTab]       = useState<'photos' | 'personalize'>('photos')
   const [hasPersonalized, setHasPersonalized] = useState(false)
+  const [selectedColor,   setSelectedColor]   = useState(0)
+
+  // Canvas uses the selected color's variant image, falling back to the product cover
+  const activeCanvasImage = colors[selectedColor]?.imageUrl || canvasImage || undefined
+
+  const handleColorChange = useCallback((mediaId: string, imageUrl: string, colorIdx: number) => {
+    setSelectedColor(colorIdx)
+    const gallery = document.querySelector('media-gallery') as (HTMLElement & { setActiveMedia?: (id: string, prepend: boolean) => void }) | null
+    if (!gallery) return
+
+    // Try native gallery swap first (works when variant images are in the slider)
+    const mediaEl = mediaId ? gallery.querySelector(`[data-media-id="${mediaId}"]`) : null
+    if (mediaEl) {
+      gallery.setActiveMedia?.(mediaId, false)
+      return
+    }
+
+    // Variant images hidden from gallery — swap the active slide's img src directly
+    if (imageUrl) {
+      const activeImg = gallery.querySelector('.product__media-item.is-active img') as HTMLImageElement | null
+      if (activeImg) {
+        activeImg.src = imageUrl
+        activeImg.srcset = ''
+      }
+    }
+  }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
   // Direct DOM toggle happens synchronously in the event handler so the portal
   // is visible before React mounts CanvasEditor — Fabric.js gets real dimensions.
@@ -141,6 +170,8 @@ export default function CustomizerWidget() {
         founderQuote={founderQuote}
         founderName={founderName}
         colors={colors}
+        selectedColor={selectedColor}
+        onColorChange={handleColorChange}
         feature1={feature1}
         feature2={feature2}
         feature3={feature3}
@@ -154,7 +185,7 @@ export default function CustomizerWidget() {
             fontStyle={fontStyle}
             textSize={textSize}
             selectedItem={selectedItem}
-            canvasImage={canvasImage || undefined}
+            canvasImage={activeCanvasImage}
             canvasBgColor={canvasBgColor || undefined}
             onPositionChange={onPositionChange}
             motifEntries={motifEntries}
