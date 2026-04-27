@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { Heart, Truck, Sparkles, Gift } from 'lucide-react'
+import React, { useState, useMemo } from 'react'
+import { Truck, Sparkles, Gift, ChevronLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ITEM_TYPES } from '@/config/products'
 import type { TextSize, TextPosition, MotifEntry } from '@/hooks/useCustomizer'
@@ -52,8 +52,9 @@ const MOTIFS = ['🦞', '🍋', '🎀', '🌷', '🤎', '🍓']
 // ── Props ─────────────────────────────────────────────────────────────────────
 
 interface ProductInfoProps {
-  activeTab:         'photos' | 'personalize'
-  setActiveTab:      (v: 'photos' | 'personalize') => void
+  showPersonalize:   boolean
+  onPersonalize:     () => void
+  onBack:            () => void
   embroideryText:    string
   setEmbroideryText: (v: string) => void
   textColor:         string
@@ -86,8 +87,9 @@ interface ProductInfoProps {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function ProductInfo({
-  activeTab,
-  setActiveTab,
+  showPersonalize,
+  onPersonalize,
+  onBack,
   embroideryText,
   setEmbroideryText,
   textColor,
@@ -116,7 +118,6 @@ export function ProductInfo({
   feature2,
   feature3,
 }: ProductInfoProps) {
-  const [isWishlisted, setIsWishlisted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleAddToBasket = async (e: React.MouseEvent) => {
@@ -131,8 +132,6 @@ export function ProductInfo({
       setIsSubmitting(false)
     }
   }
-
-  const itemName = ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]
 
   const motifCounts = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -150,33 +149,14 @@ export function ProductInfo({
     if (last) onRemoveMotif(last.id)
   }
 
-
   const selectedThreadIndex = threadSwatches.findIndex(s => s.color === textColor)
   const threadName = threadSwatches[selectedThreadIndex < 0 ? 0 : selectedThreadIndex].name
 
   return (
     <div className="flex flex-col gap-6">
 
-      {/* ── Tab switcher ──────────────────────────────────────────────────── */}
-      <div className="flex border-b border-border">
-        {(['photos', 'personalize'] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-6 py-3 text-xs tracking-widest uppercase transition-colors duration-200 ${
-              activeTab === tab
-                ? 'border-b-2 border-primary text-primary -mb-px font-medium'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {tab === 'photos' ? 'Photos' : 'Personalize'}
-          </button>
-        ))}
-      </div>
-
-      {/* ── Tab content ───────────────────────────────────────────────────── */}
-      {activeTab === 'photos' ? (
-
+      {/* ── Product overview (always visible) ─────────────────────────────── */}
+      {!showPersonalize && (
         <div className="flex flex-col gap-5">
           {description && (
             <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
@@ -217,11 +197,39 @@ export function ProductInfo({
               </div>
             </div>
           )}
+
+          {/* Personalize CTA */}
+          <Button
+            onClick={onPersonalize}
+            className="w-full py-6 text-base rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground mt-1"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            Personalize
+          </Button>
+
+          {/* ── Feature strip ─────────────────────────────────────────────── */}
+          {(feature1 || feature2 || feature3) && (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-border">
+              {feature1 && <div className="flex items-center gap-3 text-sm text-muted-foreground"><div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center shrink-0"><Truck className="w-4 h-4 text-primary" /></div><span>{feature1}</span></div>}
+              {feature2 && <div className="flex items-center gap-3 text-sm text-muted-foreground"><div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center shrink-0"><Sparkles className="w-4 h-4 text-primary" /></div><span>{feature2}</span></div>}
+              {feature3 && <div className="flex items-center gap-3 text-sm text-muted-foreground"><div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center shrink-0"><Gift className="w-4 h-4 text-primary" /></div><span>{feature3}</span></div>}
+            </div>
+          )}
         </div>
+      )}
 
-      ) : (
-
+      {/* ── Personalize steps ─────────────────────────────────────────────── */}
+      {showPersonalize && (
         <div className="flex flex-col gap-6">
+
+          {/* Back link */}
+          <button
+            onClick={onBack}
+            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Back
+          </button>
 
           {/* 01 · Thread */}
           <div className="flex flex-col gap-3">
@@ -355,36 +363,20 @@ export function ProductInfo({
               <p className="text-xs text-muted-foreground">Drag motifs on the canvas to position them · press Delete to remove</p>
             )}
           </div>
+
+          {/* ── Add to Basket ────────────────────────────────────────────────── */}
+          <div className="flex gap-4 pt-2 border-t border-border">
+            <Button
+              className="flex-1 py-6 text-base rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground"
+              disabled={isSubmitting}
+              onClick={handleAddToBasket}
+            >
+              {isSubmitting ? 'Adding…' : 'Add to Basket'}
+            </Button>
+          </div>
         </div>
       )}
 
-      {/* ── Add to Basket ─────────────────────────────────────────────────── */}
-      <div className="flex gap-4 pt-2 border-t border-border">
-        <Button
-          className="flex-1 py-6 text-base rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground"
-          disabled={isSubmitting}
-          onClick={handleAddToBasket}
-        >
-          {isSubmitting ? 'Adding…' : 'Add to Basket'}
-        </Button>
-        <Button
-          variant="outline"
-          className={`px-6 py-6 rounded-2xl border-border hover:border-primary/50 ${isWishlisted ? 'text-accent border-accent/30' : ''}`}
-          onClick={() => setIsWishlisted(!isWishlisted)}
-          aria-label={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
-        >
-          <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`} />
-        </Button>
-      </div>
-
-      {/* ── Feature strip ─────────────────────────────────────────────────── */}
-      {(feature1 || feature2 || feature3) && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {feature1 && <div className="flex items-center gap-3 text-sm text-muted-foreground"><div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center shrink-0"><Truck className="w-4 h-4 text-primary" /></div><span>{feature1}</span></div>}
-          {feature2 && <div className="flex items-center gap-3 text-sm text-muted-foreground"><div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center shrink-0"><Sparkles className="w-4 h-4 text-primary" /></div><span>{feature2}</span></div>}
-          {feature3 && <div className="flex items-center gap-3 text-sm text-muted-foreground"><div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center shrink-0"><Gift className="w-4 h-4 text-primary" /></div><span>{feature3}</span></div>}
-        </div>
-      )}
     </div>
   )
 }

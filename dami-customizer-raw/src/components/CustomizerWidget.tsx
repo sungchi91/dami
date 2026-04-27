@@ -35,6 +35,7 @@ const COLOR_NAME_HEX: Record<string, string> = {
   'terracotta':    '#C46D42',
   'mustard':       '#DBAD53',
   'yellow':        '#DBAD53',
+  'powder pink':   '#E8D6CA',
 }
 
 function colorNameToHex(name: string): string {
@@ -96,7 +97,7 @@ export default function CustomizerWidget() {
     removeMotif,     updateMotifPosition,
   } = useCustomizer()
 
-  const [activeTab,       setActiveTab]       = useState<'photos' | 'personalize'>('photos')
+  const [showPersonalize, setShowPersonalize] = useState(false)
   const [hasPersonalized, setHasPersonalized] = useState(false)
   const [selectedColor,   setSelectedColor]   = useState(0)
 
@@ -126,20 +127,22 @@ export default function CustomizerWidget() {
     }
   }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Direct DOM toggle happens synchronously in the event handler so the portal
-  // is visible before React mounts CanvasEditor — Fabric.js gets real dimensions.
-  const handleSetTab = useCallback((tab: 'photos' | 'personalize') => {
+  // Direct DOM toggle happens synchronously so Fabric.js gets real canvas dimensions.
+  const handlePersonalize = useCallback(() => {
     const photosPanel  = document.getElementById('dami-photos-panel')
     const canvasPortal = document.getElementById('dami-canvas-portal')
-    if (tab === 'personalize') {
-      if (photosPanel)  photosPanel.style.display  = 'none'
-      if (canvasPortal) canvasPortal.style.display = 'block'
-      setHasPersonalized(true)
-    } else {
-      if (photosPanel)  photosPanel.style.display  = ''
-      if (canvasPortal) canvasPortal.style.display = 'none'
-    }
-    setActiveTab(tab)
+    if (photosPanel)  photosPanel.style.display  = 'none'
+    if (canvasPortal) canvasPortal.style.display = 'block'
+    setHasPersonalized(true)
+    setShowPersonalize(true)
+  }, [])
+
+  const handleBack = useCallback(() => {
+    const photosPanel  = document.getElementById('dami-photos-panel')
+    const canvasPortal = document.getElementById('dami-canvas-portal')
+    if (photosPanel)  photosPanel.style.display  = ''
+    if (canvasPortal) canvasPortal.style.display = 'none'
+    setShowPersonalize(false)
   }, [])
 
   const canvasPortalEl = document.getElementById('dami-canvas-portal')
@@ -147,8 +150,9 @@ export default function CustomizerWidget() {
   return (
     <>
       <ProductInfo
-        activeTab={activeTab}
-        setActiveTab={handleSetTab}
+        showPersonalize={showPersonalize}
+        onPersonalize={handlePersonalize}
+        onBack={handleBack}
         embroideryText={embroideryText}
         setEmbroideryText={setEmbroideryText}
         textColor={textColor}
