@@ -1,69 +1,107 @@
-{%- style -%}
-  .section-{{ section.id }}-padding {
-    padding-top: calc({{ section.settings.padding_top }}px * 0.75);
-    padding-bottom: calc({{ section.settings.padding_bottom }}px  * 0.75);
-  }
-
-  @media screen and (min-width: 750px) {
-    .section-{{ section.id }}-padding {
-      padding-top: {{ section.settings.padding_top }}px;
-      padding-bottom: {{ section.settings.padding_bottom }}px;
+<style>                                                                                                                                                        
+    .ig-section {                                                                                                                                                
+      background-color: #FFFFFF;                                                                                                                                 
+      padding: 6rem 0;                                                                                                                                           
     }
-  }
-{%- endstyle -%}
-<div class="color-{{ section.settings.color_scheme }} gradient">
-  <div class="section-{{ section.id }}-padding">
-    {{ section.settings.custom_liquid }}
-  </div>
-</div>
-
-{% schema %}
-{
-  "name": "t:sections.custom-liquid.name",
-  "tag": "section",
-  "class": "section",
-  "settings": [
-    {
-      "type": "liquid",
-      "id": "custom_liquid",
-      "label": "t:sections.custom-liquid.settings.custom_liquid.label",
-      "info": "t:sections.custom-liquid.settings.custom_liquid.info"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:sections.all.colors.label",
-      "default": "scheme-1"
-    },
-    {
-      "type": "header",
-      "content": "t:sections.all.padding.section_padding_heading"
-    },
-    {
-      "type": "range",
-      "id": "padding_top",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "t:sections.all.padding.padding_top",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "t:sections.all.padding.padding_bottom",
-      "default": 52
+    .ig-section .ig-inner {                                                                                                                                      
+      max-width: 80rem;
+      margin: 0 auto;                                                                                                                                            
+      padding: 0 1.5rem;
+    }                                                                                                                                                            
+    .ig-section .ig-header {
+      text-align: center;
+      margin-bottom: 4rem;
     }
-  ],
-  "presets": [
-    {
-      "name": "t:sections.custom-liquid.presets.name"
+    .ig-section .ig-handle {
+      display: block;
+      font-size: 1rem;
+      letter-spacing: 0.15em;                                                                                                                                    
+      text-transform: uppercase;
+      color: #1B3054;                                                                                                                                            
+      margin-bottom: .5;                                                                                                                                       
+    }           
+    @media (min-width: 768px) {
+      .ig-section .ig-heading { font-size: 3rem; }                                                                                                            
     }
-  ]
-}
-{% endschema %}
+    .ig-section .ig-grid {                                                                                                                                       
+      display: grid;                                                                                                                                             
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;                                                                                                                                                 
+    }             
+    @media (min-width: 768px) {
+      .ig-section .ig-grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    }                                                                                                                                                            
+    .ig-section .ig-item {
+      position: relative;                                                                                                                                        
+      aspect-ratio: 1;
+      overflow: hidden;                                                                                                                                          
+      cursor: pointer;
+    }
+    .ig-section .ig-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;                                                                                                                                         
+      transition: transform 0.5s ease;
+      display: block;                                                                                                                                            
+    }             
+    .ig-section .ig-item:hover img { transform: scale(1.05); }
+    .ig-section .ig-overlay {                                                                                                                                    
+      position: absolute;
+      inset: 0;                                                                                                                                                  
+      background: rgba(27, 48, 84, 0);
+      transition: background 0.3s ease;                                                                                                                          
+    }
+    .ig-section .ig-item:hover .ig-overlay { background: rgba(27, 48, 84, 0.2); }                                                                                
+    .ig-section .ig-item--tilt-left  { transform: rotate(-1deg); }                                                                                               
+    .ig-section .ig-item--tilt-right { transform: rotate(1deg); }                                                                                                
+    .ig-section .ig-cta {                                                                                                                                        
+      text-align: center;                                                                                                                                        
+      margin-top: 3rem;
+    }                                                                                                                                                            
+    .ig-section .ig-cta a {
+      color: #1B3054;                                                                                                                                            
+      font-size: 1.2rem;
+      text-decoration: underline;                                                                                                                                
+      text-underline-offset: 3px;
+    }
+    .ig-section .ig-cta a:hover { opacity: 0.7; }                                                                                                                
+  </style>
+                                                                                                                                                                 
+  {%- assign gallery_image = 'Image_May_1_2026_07_21_44_PM.png' | file_url -%}                                                                                   
+  {%- assign gallery_count = '1,2,3,4,5,6' | split: ',' -%}
+                                                                                                                                                                 
+  <section class="ig-section">                                                                                                                                   
+    <div class="ig-inner">                                                                                                                                       
+                                                                                                                                                                 
+      <div class="ig-header">
+        <span class="ig-handle">@shopemberlane</span>
+        <h2 class="ig-heading">In the Wild</h2>                                                                                                                  
+      </div>
+                                                                                                                                                                 
+      <div class="ig-grid">
+        {%- for i in gallery_count -%}
+          {%- assign tilt = '' -%}                                                                                                                               
+          {%- if forloop.index0 == 2 -%}{%- assign tilt = 'ig-item--tilt-left' -%}{%- endif -%}
+          {%- if forloop.index0 == 4 -%}{%- assign tilt = 'ig-item--tilt-right' -%}{%- endif -%}                                                                 
+                                                                                                                                                                 
+          <div class="ig-item {{ tilt }}">                                                                                                                       
+            <img
+              width="200px"                           
+              height="200px"                                                                                                                      
+              src="{{ gallery_image }}"                                                                                                                          
+              alt="Emberlane in the wild"
+              loading="lazy"                                                                                                                                     
+            />
+            <div class="ig-overlay"></div>                                                                                                                       
+          </div>  
+        {%- endfor -%}
+      </div>
+                                                                                                                                                                 
+      <div class="ig-cta">
+        <a href="https://instagram.com/shopemberlane" target="_blank" rel="noopener noreferrer">                                                                     
+          Follow along on Instagram                                                                                                                              
+        </a>
+      </div>                                                                                                                                                     
+                  
+    </div>
+  </section>
