@@ -120,7 +120,8 @@ export function ProductInfo({
   feature3,
   customizerType,
 }: ProductInfoProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting,    setIsSubmitting]    = useState(false)
+  const [exceededWarning, setExceededWarning] = useState(false)
 
   const handleAddToBasket = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -153,7 +154,7 @@ export function ProductInfo({
 
   const handleRemoveLastOfEmoji = (emoji: string) => {
     const last = [...motifEntries].reverse().find(e => e.emoji === emoji)
-    if (last) onRemoveMotif(last.id)
+    if (last) { onRemoveMotif(last.id); setExceededWarning(false) }
   }
 
   const selectedThreadIndex = threadSwatches.findIndex(s => s.color === textColor)
@@ -170,7 +171,7 @@ export function ProductInfo({
           )}
 
           {founderQuote && (
-            <div className="bg-secondary/50 rounded-3xl p-6 border border-border/50">
+            <div className="bg-secondary/50 p-6 border border-border/50">
               <p className="text-foreground/80 leading-relaxed italic">&ldquo;{founderQuote}&rdquo;</p>
               {founderName && (
                 <p className="font-[family-name:var(--font-cursive)] text-xl text-primary mt-3">— {founderName}</p>
@@ -208,7 +209,7 @@ export function ProductInfo({
           {/* Personalize CTA */}
           <Button
             onClick={onPersonalize}
-            className="w-full py-6 text-base rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground mt-1"
+            className="w-full py-6 text-base bg-primary hover:bg-primary/90 text-primary-foreground mt-1"
           >
             <Sparkles className="w-4 h-4 mr-2" />
             Personalize
@@ -280,14 +281,14 @@ export function ProductInfo({
               value={embroideryText}
               onChange={(e) => setEmbroideryText(e.target.value)}
               placeholder="Type your text here…"
-              className="w-full px-5 py-4 rounded-2xl border border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors duration-200 text-base"
+              className="w-full px-5 py-4 border border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors duration-200 text-base"
             />
             <div className="flex flex-wrap gap-2">
               {fontStyles.map((f) => (
                 <button
                   key={f.id}
                   onClick={() => setFontStyle(f.id)}
-                  className={`px-4 py-2 rounded-xl border text-sm transition-all duration-200 ${
+                  className={`px-4 py-2 border text-sm transition-all duration-200 ${
                     fontStyle === f.id
                       ? 'bg-primary text-primary-foreground border-primary'
                       : 'bg-background text-foreground border-border hover:border-primary/50'
@@ -311,7 +312,7 @@ export function ProductInfo({
                 <button
                   key={s.id}
                   onClick={() => setTextSize(s.id)}
-                  className={`flex-1 py-3 rounded-xl border text-sm font-medium transition-all duration-200 ${
+                  className={`flex-1 py-3 border text-sm font-medium transition-all duration-200 ${
                     textSize === s.id
                       ? 'bg-primary text-primary-foreground border-primary'
                       : 'bg-background text-foreground border-border hover:border-primary/50'
@@ -332,8 +333,8 @@ export function ProductInfo({
               <span className="text-xs text-muted-foreground font-normal">({totalMotifs}/{effectiveMaxMotifs})</span>
             </p>
 
-            {atMax && (
-              <p className="text-xs text-amber-600/80 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+            {exceededWarning && (
+              <p className="text-xs text-amber-600/80 bg-amber-50 border border-amber-200 px-3 py-2">
                 Maximum motifs reached for this item
               </p>
             )}
@@ -344,10 +345,9 @@ export function ProductInfo({
                 return (
                   <div key={emoji} className="flex flex-col items-center gap-1.5">
                     <button
-                      onClick={() => { if (!atMax) onAddMotif(emoji) }}
+                      onClick={() => { if (!atMax) { onAddMotif(emoji); setExceededWarning(false) } else setExceededWarning(true) }}
                       aria-label={`Add ${emoji}`}
-                      disabled={atMax}
-                      className={`w-11 h-11 text-xl rounded-2xl border transition-all duration-200 ${
+                      className={`w-11 h-11 text-xl border transition-all duration-200 ${
                         count > 0 ? 'border-primary bg-primary/10' :
                         atMax ? 'border-border bg-background opacity-40 cursor-not-allowed' :
                         'border-border bg-background hover:border-primary/50 hover:scale-105'
@@ -357,9 +357,9 @@ export function ProductInfo({
                     </button>
                     {count > 0 && (
                       <div className="flex items-center gap-1">
-                        <button onClick={() => handleRemoveLastOfEmoji(emoji)} className="w-5 h-5 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:border-primary/50 text-xs">−</button>
+                        <button onClick={() => handleRemoveLastOfEmoji(emoji)} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">−</button>
                         <span className="w-4 text-center text-xs font-medium tabular-nums">{count}</span>
-                        <button onClick={() => { if (!atMax) onAddMotif(emoji) }} disabled={atMax} className="w-5 h-5 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:border-primary/50 text-xs disabled:opacity-40">+</button>
+                        <button onClick={() => { if (!atMax) { onAddMotif(emoji); setExceededWarning(false) } else setExceededWarning(true) }} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">+</button>
                       </div>
                     )}
                   </div>
@@ -376,7 +376,7 @@ export function ProductInfo({
           {/* ── Add to Basket ────────────────────────────────────────────────── */}
           <div className="flex gap-4 pt-2 border-t border-border">
             <Button
-              className="flex-1 py-6 text-base rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="flex-1 py-6 text-base bg-primary hover:bg-primary/90 text-primary-foreground"
               disabled={isSubmitting}
               onClick={handleAddToBasket}
             >

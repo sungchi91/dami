@@ -163,6 +163,7 @@ export async function submitToCart(variantId: number, payload: CartPayload): Pro
       'Font':             d.font,
       'Thread Color':     d.thread_color,
       'Size':             d.size,
+      ...(d.motifs.length > 0 ? { 'Motifs': d.motifs.map(m => m.icon).join('  ') } : {}),
       '_customizer_data': JSON.stringify(d),
     }
   }

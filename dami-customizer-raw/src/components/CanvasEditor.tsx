@@ -519,7 +519,7 @@ export function CanvasEditor({
   return (
     <div
       ref={wrapperRef}
-      className="relative aspect-[4/5] w-full max-w-full overflow-hidden rounded-[2rem] rounded-tl-[4rem] rounded-br-[4rem] shadow-xl"
+      className="relative aspect-[4/5] w-full max-w-full overflow-hidden shadow-xl"
     >
       <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%' }} />
     </div>
