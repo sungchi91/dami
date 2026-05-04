@@ -96,24 +96,24 @@ const SEEDED_MOTIF_INCHES: Record<string, number> = {
 
 const SEEDED_LAYOUTS: Record<string, Partial<Record<LayoutType, LayoutState>>> = {
   'Grand Tote': {
-    classic:   { text: { x: 0.52, y: 0.17 } },
+    classic:   { text: { x: 0.51, y: 0.19 } },
     statement: { text: { x: 0.51, y: 0.65 } },
     sidenote:  { text: { x: 0.51, y: 0.18 }, motif:    { x: 0.84, y: 0.88 } },
-    crown:     { text: { x: 0.51, y: 0.27 }, motifRow: { x: 0.51, y: 0.12 } },
-    pedestal:  { text: { x: 0.51, y: 0.10 }, motifRow: { x: 0.52, y: 0.28 } },
+    crown:     { text: { x: 0.51, y: 0.26 }, motifRow: { x: 0.51, y: 0.12 } },
+    pedestal:  { text: { x: 0.51, y: 0.09 }, motifRow: { x: 0.51, y: 0.24 } },
   },
   'Signature Tote': {
     classic:   { text: { x: 0.49, y: 0.17 } },
     statement: { text: { x: 0.49, y: 0.60 } },
     sidenote:  { text: { x: 0.49, y: 0.18 }, motif:    { x: 0.85, y: 0.88 } },
-    crown:     { text: { x: 0.49, y: 0.28 }, motifRow: { x: 0.49, y: 0.13 } },
-    pedestal:  { text: { x: 0.49, y: 0.13 }, motifRow: { x: 0.49, y: 0.28 } },
+    crown:     { text: { x: 0.49, y: 0.27 }, motifRow: { x: 0.49, y: 0.13 } },
+    pedestal:  { text: { x: 0.49, y: 0.12 }, motifRow: { x: 0.49, y: 0.26 } },
   },
   'Petite Tote': {
-    classic:   { text: { x: 0.53, y: 0.18 } },
+    classic:   { text: { x: 0.52, y: 0.19 } },
     statement: { text: { x: 0.53, y: 0.54 } },
-    sidenote:  { text: { x: 0.51, y: 0.17 }, motif:    { x: 0.90, y: 0.86 } },
-    crown:     { text: { x: 0.53, y: 0.24 }, motifRow: { x: 0.53, y: 0.11 } },
+    sidenote:  { text: { x: 0.53, y: 0.17 }, motif:    { x: 0.90, y: 0.86 } },
+    crown:     { text: { x: 0.53, y: 0.24 }, motifRow: { x: 0.53, y: 0.12 } },
     pedestal:  { text: { x: 0.52, y: 0.11 }, motifRow: { x: 0.52, y: 0.24 } },
   },
 }
@@ -183,9 +183,10 @@ export default function FixedLayoutConfigurator() {
   const motifRowCanvasPos = current.motifRow ? szToCanvas(current.motifRow, activePreset) : null
 
   const motifInches   = motifMap[activePreset.name] ?? 1.0
-  const motifSzRel    = motifInches / activePreset.physicalWidthInches          // safe-zone-relative diameter
-  const motifSizePct  = motifSzRel * activePreset.widthRatio * 100              // % of canvas width
-  const szGap         = MOTIF_GAP_MULTIPLIER * motifSzRel                       // safe-zone-relative center-to-center
+  const ppi           = activePreset.widthRatio / activePreset.physicalWidthInches  // safe-zone fraction per physical inch
+  const motifSizePct  = motifInches * ppi * 100 * 0.5                              // 50% of physical size for readability
+  const textSizePct   = 1.0         * ppi * 100 * 0.5                              // S size (1") at 50% scale
+  const szGap         = MOTIF_GAP_MULTIPLIER * (motifInches / activePreset.physicalWidthInches)
 
   const snippet    = buildSnippet(current, layoutType)
   const allSnippet = buildAllSnippet(layouts, motifMap)
@@ -255,10 +256,10 @@ export default function FixedLayoutConfigurator() {
 
           {/* Legend */}
           <div style={{ fontSize: '0.75rem', color: '#64748b', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-            <Dot color="#7594B4" label="Text position — drag to move" />
-            {layoutType === 'sidenote' && <Dot color="#10b981" label="Motif position — drag to move" />}
+            <Dot color="#7594B4" label="Text — drag handle · dashed circle = S-size height" />
+            {layoutType === 'sidenote' && <Dot color="#10b981" label="Motif — drag handle · dashed circle = physical motif size" />}
             {(layoutType === 'crown' || layoutType === 'pedestal') && (
-              <Dot color="#10b981" label="Motif row center — drag to move (hollow dots = auto-spaced motifs)" />
+              <Dot color="#10b981" label="Motif row center — drag · circles = auto-spaced at physical size" />
             )}
           </div>
 
@@ -311,6 +312,22 @@ export default function FixedLayoutConfigurator() {
               border: '2px dashed rgba(117,148,180,0.55)', background: 'rgba(117,148,180,0.06)',
               pointerEvents: 'none',
             }} />
+
+            {/* Ghost text circle (all layouts) */}
+            {(() => {
+              const cp = szToCanvas(current.text, activePreset)
+              return (
+                <div style={{
+                  position: 'absolute',
+                  left: `${cp.left}%`, top: `${cp.top}%`,
+                  transform: 'translate(-50%, -50%)',
+                  width: `${textSizePct}%`, aspectRatio: '1',
+                  borderRadius: '50%',
+                  border: '2px dashed rgba(117,148,180,0.55)',
+                  pointerEvents: 'none',
+                }} />
+              )
+            })()}
 
             {/* Ghost motif circles (crown / pedestal) */}
             {current.motifRow && (() => {
@@ -381,11 +398,11 @@ function DragHandle({ label, color, pos, onDown }: {
         position: 'absolute',
         left: `${pos.left}%`, top: `${pos.top}%`,
         transform: 'translate(-50%, -50%)',
-        width: 28, height: 28, borderRadius: '50%',
-        background: color, border: '2px solid #fff',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+        width: 16, height: 16, borderRadius: '50%',
+        background: color, border: '1.5px solid #fff',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        color: '#fff', fontSize: '0.65rem', fontWeight: 700,
+        color: '#fff', fontSize: '0.5rem', fontWeight: 700,
         cursor: 'grab', zIndex: 10,
       }}
     >

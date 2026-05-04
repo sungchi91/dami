@@ -27,9 +27,12 @@ import type { TextPosition, TextSize, MotifEntry } from '@/hooks/useCustomizer'
 // ── Label maps ────────────────────────────────────────────────────────────────
 
 const FONT_LABELS: Record<string, string> = {
-  cursive: 'Cursive Script',
-  serif:   'Classic Serif',
-  block:   'Fine Block',
+  'ballantines': 'Bold Script',
+  'block':       'Modern Block',
+  'katelyn':     'Playful Script',
+  'edwardian':   'Elegant Script',
+  'chateauneuf': 'Delicate Script',
+  'garamond':    'Classic Serif',
 }
 
 const PHYSICAL_HEIGHT_INCHES: Record<TextSize, number> = { S: 1, M: 1.5, L: 2 }

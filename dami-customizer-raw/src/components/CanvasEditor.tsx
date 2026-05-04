@@ -31,9 +31,12 @@ import type { TextSize, MotifEntry } from '@/hooks/useCustomizer'
 // ── Constants ──────────────────────────────────────────────────────────────────
 
 const FONT_MAP: Record<string, string> = {
-  cursive: 'Caveat, "Brush Script MT", cursive',
-  serif:   '"Cormorant Garamond", Georgia, serif',
-  block:   '"Helvetica Neue", Helvetica, Arial, sans-serif',
+  'ballantines': 'Ballantines, cursive',
+  'block':       'Block, sans-serif',
+  'katelyn':     'Katelyn, cursive',
+  'edwardian':   'Edwardian, cursive',
+  'chateauneuf': 'Chateauneuf, serif',
+  'garamond':    'Garamond, Georgia, serif',
 }
 
 // Physical embroidery height targets in inches: S=1", M=1.5", L=2"
@@ -462,43 +465,49 @@ export function CanvasEditor({
     }
 
     const sz         = safeZoneRef.current
-    const fontFamily = FONT_MAP[fontStyle] ?? FONT_MAP.cursive
+    const fontFamily = FONT_MAP[fontStyle] ?? Object.values(FONT_MAP)[0]
     const config     = PRODUCT_CONFIG[ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]]
+    const fontSize   = Math.round(Math.max(22, sz.width * 0.085))
+    const primaryFont = fontFamily.split(',')[0].trim()
 
-    if (textRef.current) {
-      textRef.current.set({ text: embroideryText, fill: textColor, fontFamily })
-      textRef.current.setCoords()
-    } else {
-      const fontSize = Math.round(Math.max(22, sz.width * 0.085))
-      const t = new IText(embroideryText, {
-        left:         sz.left + sz.width  / 2,
-        top:          sz.top  + sz.height / 2,
-        originX:      'center',
-        originY:      'center',
-        fontSize,
-        fontFamily,
-        fill:         textColor,
-        editable:     false,
-        lockScalingX: true,
-        lockScalingY: true,
-        lockRotation: true,
-        hasControls:  false,
-        hasBorders:   true,
-        borderColor:  BRAND_BLUE,
-        cornerColor:  BRAND_BLUE,
-        padding:      8,
-        hoverCursor:  'move',
-        moveCursor:   'grabbing',
-      })
-      const scale = physicalScale(t, textSize, sz.width, config.safeZonePhysicalWidthInches)
-      t.set({ scaleX: scale, scaleY: scale })
-      textRef.current = t
-      fc.add(t)
-      fc.setActiveObject(t)
-      onChangeCb.current({ x: 0.5, y: 0.5 })
-    }
+    ;(async () => {
+      await document.fonts.load(`${fontSize}px "${primaryFont}"`)
+      if (!fcRef.current) return
 
-    fc.renderAll()
+      if (textRef.current) {
+        textRef.current.set({ text: embroideryText, fill: textColor, fontFamily })
+        textRef.current.setCoords()
+      } else {
+        const t = new IText(embroideryText, {
+          left:         sz.left + sz.width  / 2,
+          top:          sz.top  + sz.height / 2,
+          originX:      'center',
+          originY:      'center',
+          fontSize,
+          fontFamily,
+          fill:         textColor,
+          editable:     false,
+          lockScalingX: true,
+          lockScalingY: true,
+          lockRotation: true,
+          hasControls:  false,
+          hasBorders:   true,
+          borderColor:  BRAND_BLUE,
+          cornerColor:  BRAND_BLUE,
+          padding:      8,
+          hoverCursor:  'move',
+          moveCursor:   'grabbing',
+        })
+        const scale = physicalScale(t, textSize, sz.width, config.safeZonePhysicalWidthInches)
+        t.set({ scaleX: scale, scaleY: scale })
+        textRef.current = t
+        fc.add(t)
+        fc.setActiveObject(t)
+        onChangeCb.current({ x: 0.5, y: 0.5 })
+      }
+
+      fc.renderAll()
+    })()
   }, [embroideryText, textColor, fontStyle]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Apply physical size when textSize changes ─────────────────────────────

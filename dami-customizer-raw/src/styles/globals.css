@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap');
-
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @config '../../tailwind.config.js';
@@ -43,7 +41,6 @@
   --ring:                rgba(var(--color-foreground), 0.3);
   --radius:              var(--buttons-radius, 0.5rem);
   --font-sans:           var(--font-body-family, inherit);
-  --font-cursive:        'Caveat', 'Brush Script MT', cursive;
 }
 
 .ember-lane-customizer-scope *, .ember-lane-customizer-scope *::before, .ember-lane-customizer-scope *::after {
@@ -54,7 +51,6 @@
 
 @theme inline {
   --font-sans:    var(--font-sans);
-  --font-cursive: var(--font-cursive);
   --color-background:         var(--background);
   --color-foreground:         var(--foreground);
   --color-card:               var(--card);

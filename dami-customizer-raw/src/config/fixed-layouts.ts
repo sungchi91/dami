@@ -62,25 +62,25 @@ export function getMotifInches(productTitle: string): number {
 export const FIXED_LAYOUTS: Record<string, ProductFixedLayouts> = {
   'Grand Tote': {
     motifInches: 1.50,
-    classic:   { text: { x: 0.52, y: 0.17 } },
+    classic:   { text: { x: 0.51, y: 0.19 } },
     statement: { text: { x: 0.51, y: 0.65 } },
     sidenote:  { text: { x: 0.51, y: 0.18 }, motif: { x: 0.84, y: 0.88 } },
-    crown:     { text: { x: 0.51, y: 0.27 }, motifRow: { centerX: 0.51, y: 0.12 } },
-    pedestal:  { text: { x: 0.51, y: 0.10 }, motifRow: { centerX: 0.52, y: 0.28 } },
+    crown:     { text: { x: 0.51, y: 0.26 }, motifRow: { centerX: 0.51, y: 0.12 } },
+    pedestal:  { text: { x: 0.51, y: 0.09 }, motifRow: { centerX: 0.51, y: 0.24 } },
   },
   'Signature Tote': {
     motifInches: 1.25,
     classic:   { text: { x: 0.49, y: 0.17 } },
     statement: { text: { x: 0.49, y: 0.60 } },
     sidenote:  { text: { x: 0.49, y: 0.18 }, motif: { x: 0.85, y: 0.88 } },
-    crown:     { text: { x: 0.49, y: 0.28 }, motifRow: { centerX: 0.49, y: 0.13 } },
-    pedestal:  { text: { x: 0.49, y: 0.13 }, motifRow: { centerX: 0.49, y: 0.28 } },
+    crown:     { text: { x: 0.49, y: 0.27 }, motifRow: { centerX: 0.49, y: 0.13 } },
+    pedestal:  { text: { x: 0.49, y: 0.12 }, motifRow: { centerX: 0.49, y: 0.26 } },
   },
   'Petite Tote': {
-    classic:   { text: { x: 0.53, y: 0.18 } },
+    classic:   { text: { x: 0.52, y: 0.19 } },
     statement: { text: { x: 0.53, y: 0.54 } },
-    sidenote:  { text: { x: 0.51, y: 0.17 }, motif: { x: 0.90, y: 0.86 } },
-    crown:     { text: { x: 0.53, y: 0.24 }, motifRow: { centerX: 0.53, y: 0.11 } },
+    sidenote:  { text: { x: 0.53, y: 0.17 }, motif: { x: 0.90, y: 0.86 } },
+    crown:     { text: { x: 0.53, y: 0.24 }, motifRow: { centerX: 0.53, y: 0.12 } },
     pedestal:  { text: { x: 0.52, y: 0.11 }, motifRow: { centerX: 0.52, y: 0.24 } },
   },
   'Petite Crossbody': {

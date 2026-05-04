@@ -34,7 +34,7 @@ export interface CustomizerState {
 export function useCustomizer(): CustomizerState {
   const [embroideryText, setEmbroideryText] = useState('')
   const [textColor,      setTextColor]      = useState('#7594B4') // Ember Lane Blue
-  const [fontStyle,      setFontStyle]      = useState('cursive')
+  const [fontStyle,      setFontStyle]      = useState('edwardian')
   const [textSize,       setTextSize]       = useState<TextSize>('M')
   const [textPosition,   setTextPosition]   = useState<TextPosition>({ x: 0.5, y: 0.5 })
   const [motifEntries,   setMotifEntries]   = useState<MotifEntry[]>([])

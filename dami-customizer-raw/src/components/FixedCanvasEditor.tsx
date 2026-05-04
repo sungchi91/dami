@@ -19,9 +19,12 @@ import type { TextSize, MotifEntry } from '@/hooks/useCustomizer'
 // ── Constants ──────────────────────────────────────────────────────────────────
 
 const FONT_MAP: Record<string, string> = {
-  cursive: 'Caveat, "Brush Script MT", cursive',
-  serif:   '"Cormorant Garamond", Georgia, serif',
-  block:   '"Helvetica Neue", Helvetica, Arial, sans-serif',
+  'ballantines': 'Ballantines, cursive',
+  'block':       'Block, sans-serif',
+  'katelyn':     'Katelyn, cursive',
+  'edwardian':   'Edwardian, cursive',
+  'chateauneuf': 'Chateauneuf, serif',
+  'garamond':    'Garamond, Georgia, serif',
 }
 
 const PHYSICAL_HEIGHT_INCHES: Record<TextSize, number> = { S: 1, M: 1.5, L: 2 }
@@ -206,34 +209,40 @@ export function FixedCanvasEditor({
       return
     }
 
-    const sz = safeZoneRef.current
-    const fontFamily = FONT_MAP[fontStyle] ?? FONT_MAP.cursive
-    const itemName   = ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]
-    const config     = PRODUCT_CONFIG[itemName]
-    const layout     = getFixedLayout(itemName, customizerType as FixedLayoutType)
-    const textPos    = layout?.text ?? { x: 0.5, y: 0.5 }
-    const absX       = sz.left + textPos.x * sz.width
-    const absY       = sz.top  + textPos.y * sz.height
+    const sz          = safeZoneRef.current
+    const fontFamily  = FONT_MAP[fontStyle] ?? Object.values(FONT_MAP)[0]
+    const itemName    = ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]
+    const config      = PRODUCT_CONFIG[itemName]
+    const layout      = getFixedLayout(itemName, customizerType as FixedLayoutType)
+    const textPos     = layout?.text ?? { x: 0.5, y: 0.5 }
+    const absX        = sz.left + textPos.x * sz.width
+    const absY        = sz.top  + textPos.y * sz.height
+    const fontSize    = Math.round(Math.max(22, sz.width * 0.085))
+    const primaryFont = fontFamily.split(',')[0].trim()
 
-    if (textRef.current) {
-      textRef.current.set({ text: embroideryText, fill: textColor, fontFamily, left: absX, top: absY })
-      textRef.current.setCoords()
-    } else {
-      const fontSize = Math.round(Math.max(22, sz.width * 0.085))
-      const t = new FabricText(embroideryText, {
-        left: absX, top: absY,
-        originX: 'center', originY: 'center',
-        fontSize, fontFamily, fill: textColor,
-        editable: false, selectable: false, evented: false,
-        hasControls: false, hasBorders: false,
-      })
-      const scale = physicalScale(t, textSize, sz.width, config.safeZonePhysicalWidthInches)
-      t.set({ scaleX: scale, scaleY: scale })
-      textRef.current = t
-      fc.add(t)
-    }
-    if (textRef.current) fc.bringObjectToFront(textRef.current)
-    fc.renderAll()
+    ;(async () => {
+      await document.fonts.load(`${fontSize}px "${primaryFont}"`)
+      if (!fcRef.current) return
+
+      if (textRef.current) {
+        textRef.current.set({ text: embroideryText, fill: textColor, fontFamily, left: absX, top: absY })
+        textRef.current.setCoords()
+      } else {
+        const t = new FabricText(embroideryText, {
+          left: absX, top: absY,
+          originX: 'center', originY: 'center',
+          fontSize, fontFamily, fill: textColor,
+          editable: false, selectable: false, evented: false,
+          hasControls: false, hasBorders: false,
+        })
+        const scale = physicalScale(t, textSize, sz.width, config.safeZonePhysicalWidthInches)
+        t.set({ scaleX: scale, scaleY: scale })
+        textRef.current = t
+        fc.add(t)
+      }
+      if (textRef.current) fcRef.current.bringObjectToFront(textRef.current)
+      fcRef.current.renderAll()
+    })()
   }, [embroideryText, textColor, fontStyle, customizerType, selectedItem]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Text size change ───────────────────────────────────────────────────────

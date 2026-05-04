@@ -36,9 +36,12 @@ export const threadSwatches = [
 ]
 
 const fontStyles = [
-  { id: 'cursive', label: 'Cursive Script' },
-  { id: 'serif',   label: 'Classic Serif'  },
-  { id: 'block',   label: 'Fine Block'     },
+  { id: 'edwardian',    label: 'Elegant Script'  },
+  { id: 'chateauneuf',  label: 'Delicate Script' },
+  { id: 'ballantines',  label: 'Bold Script'     },
+  { id: 'katelyn',      label: 'Playful Script'  },
+  { id: 'garamond',     label: 'Classic Serif'   },
+  { id: 'block',        label: 'Modern Block'    },
 ]
 
 const textSizes: { id: TextSize; label: string }[] = [
