@@ -1,9 +1,62 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createPortal }                     from 'react-dom'
 import { CanvasEditor }        from './CanvasEditor'
+import { FixedCanvasEditor }   from './FixedCanvasEditor'
 import { ProductInfo }         from './ProductInfo'
 import { useCustomizer }       from '@/hooks/useCustomizer'
-import { ITEM_TYPES }          from '@/config/products'
+import { ITEM_TYPES, resolveItemType } from '@/config/products'
+
+const CDN_BASE = 'https://cdn.shopify.com/s/files/1/0990/0326/9486/files/'
+
+type CdnEntry = { slug: string; ext: 'jpg' | 'png' }
+const CDN_CANVAS_MAP: Record<string, Record<string, CdnEntry>> = {
+  grand: {
+    navy:    { slug: 'large-navy',    ext: 'jpg' },
+    natural: { slug: 'large-natural', ext: 'png' },
+    tan:     { slug: 'large-tan',     ext: 'png' },
+    green:   { slug: 'large-green',   ext: 'png' },
+    red:     { slug: 'large-red',     ext: 'png' },
+    brown:   { slug: 'large-brown',   ext: 'png' },
+  },
+  signature: {
+    navy:    { slug: 'med-navy',    ext: 'jpg' },
+    natural: { slug: 'med-natural', ext: 'png' },
+    tan:     { slug: 'med-tan',     ext: 'png' },
+    green:   { slug: 'med-green',   ext: 'png' },
+    red:     { slug: 'med-red',     ext: 'png' },
+    brown:   { slug: 'med-brown',   ext: 'png' },
+    petrol:  { slug: 'med-teal',    ext: 'png' },
+  },
+  petite: {
+    navy:    { slug: 'mini-navy',    ext: 'png' },
+    natural: { slug: 'mini-natural', ext: 'png' },
+    tan:     { slug: 'mini-tan',     ext: 'png' },
+    green:   { slug: 'mini-green',   ext: 'png' },
+    red:     { slug: 'mini-red',     ext: 'png' },
+    brown:   { slug: 'mini-brown',   ext: 'png' },
+    petrol:  { slug: 'mini-teal',    ext: 'png' },
+    pink:    { slug: 'mini-pink',    ext: 'png' },
+  },
+}
+
+function getProductKey(title: string): string | null {
+  const t = title.toLowerCase()
+  if (t.includes('grand'))     return 'grand'
+  if (t.includes('signature')) return 'signature'
+  if (t.includes('petit'))     return 'petite'
+  return null
+}
+
+function getCDNCanvasImage(productTitle: string, colorName: string): string | null {
+  const productKey = getProductKey(productTitle)
+  if (!productKey) return null
+  const lower = colorName.toLowerCase()
+  const colorMap = CDN_CANVAS_MAP[productKey]
+  const key = Object.keys(colorMap).find(k => lower.includes(k))
+  if (!key) return null
+  const entry = colorMap[key]
+  return `${CDN_BASE}${entry.slug}-front.${entry.ext}`
+}
 
 const COLOR_NAME_HEX: Record<string, string> = {
   'navy':          '#223A59',
@@ -46,15 +99,17 @@ function readDataset() {
   const el = document.getElementById('ember-lane-customizer')
   const d  = el?.dataset ?? {}
   const title = d.productTitle ?? ''
-  const idx   = ITEM_TYPES.findIndex(t => t.toLowerCase() === title.toLowerCase())
+  const resolved = resolveItemType(title)
+  const idx      = ITEM_TYPES.indexOf(resolved)
   return {
     selectedItem:  idx >= 0 ? idx : 0,
     variantId:     d.currentVariantId ? parseInt(d.currentVariantId, 10) : 0,
     productPrice:  d.productPrice   ?? '',
     canvasImage:   d.canvasImage    ?? '',
     canvasBgColor: d.canvasBgColor  ?? '',
-    coverMediaId:  d.coverMediaId ?? '',
-    maxMotifs:     d.maxMotifs ? parseInt(d.maxMotifs, 10) : 3,
+    coverMediaId:   d.coverMediaId    ?? '',
+    customizerType: d.customizerType  ?? 'freeform',
+    maxMotifs:      d.maxMotifs ? parseInt(d.maxMotifs, 10) : 3,
     categoryLabel: d.categoryLabel  ?? '',
     tagline:       d.tagline        ?? '',
     description:   d.description    ?? '',
@@ -70,7 +125,8 @@ try {
         return parsed.map((c: { name: string; color?: string; available?: boolean; variantId?: number; mediaId?: string; imageUrl?: string }) => ({
           ...c,
           color: c.color || colorNameToHex(c.name ?? ''),
-        })) as { name: string; color: string; available?: boolean; variantId?: number; mediaId?: string; imageUrl?: string }[]
+          canvasImageUrl: getCDNCanvasImage(title, c.name ?? '') ?? undefined,
+        })) as { name: string; color: string; available?: boolean; variantId?: number; mediaId?: string; imageUrl?: string; canvasImageUrl?: string }[]
       } catch { return [] }
     })(),
   }
@@ -81,7 +137,7 @@ const shopifyData = readDataset()
 export default function CustomizerWidget() {
   const {
     selectedItem, variantId, productPrice, canvasImage,
-    canvasBgColor, maxMotifs, categoryLabel, tagline,
+    canvasBgColor, customizerType, maxMotifs, categoryLabel, tagline,
     description, founderQuote, founderName, colors,
     feature1, feature2, feature3,
   } = shopifyData
@@ -101,8 +157,8 @@ export default function CustomizerWidget() {
   const [hasPersonalized, setHasPersonalized] = useState(false)
   const [selectedColor,   setSelectedColor]   = useState(0)
 
-  // Canvas uses the selected color's variant image, falling back to the product cover
-  const activeCanvasImage  = colors[selectedColor]?.imageUrl || canvasImage || undefined
+  // Canvas prefers CDN mockup image, then variant image, then product cover
+  const activeCanvasImage  = colors[selectedColor]?.canvasImageUrl || colors[selectedColor]?.imageUrl || canvasImage || undefined
   const activeVariantId    = colors[selectedColor]?.variantId ?? variantId
 
   const handleColorChange = useCallback((mediaId: string, imageUrl: string, colorIdx: number) => {
@@ -180,23 +236,38 @@ export default function CustomizerWidget() {
         feature1={feature1}
         feature2={feature2}
         feature3={feature3}
+        customizerType={customizerType}
       />
 
       {hasPersonalized && canvasPortalEl && createPortal(
         <div className="ember-lane-customizer-scope">
-          <CanvasEditor
-            embroideryText={embroideryText}
-            textColor={textColor}
-            fontStyle={fontStyle}
-            textSize={textSize}
-            selectedItem={selectedItem}
-            canvasImage={activeCanvasImage}
-            canvasBgColor={canvasBgColor || undefined}
-            onPositionChange={onPositionChange}
-            motifEntries={motifEntries}
-            onMotifPositionChange={updateMotifPosition}
-            onRemoveMotif={removeMotif}
-          />
+          {customizerType === 'freeform' ? (
+            <CanvasEditor
+              embroideryText={embroideryText}
+              textColor={textColor}
+              fontStyle={fontStyle}
+              textSize={textSize}
+              selectedItem={selectedItem}
+              canvasImage={activeCanvasImage}
+              canvasBgColor={canvasBgColor || undefined}
+              onPositionChange={onPositionChange}
+              motifEntries={motifEntries}
+              onMotifPositionChange={updateMotifPosition}
+              onRemoveMotif={removeMotif}
+            />
+          ) : (
+            <FixedCanvasEditor
+              embroideryText={embroideryText}
+              textColor={textColor}
+              fontStyle={fontStyle}
+              textSize={textSize}
+              selectedItem={selectedItem}
+              canvasImage={activeCanvasImage}
+              canvasBgColor={canvasBgColor || undefined}
+              motifEntries={motifEntries}
+              customizerType={customizerType}
+            />
+          )}
         </div>,
         canvasPortalEl
       )}

@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import SafeZoneConfigurator from './SafeZoneConfigurator'
+import FixedLayoutConfigurator from './FixedLayoutConfigurator'
 import PayloadVerifier from './PayloadVerifier'
 
-type Tab = 'safezone' | 'verifier'
+type Tab = 'safezone' | 'fixed' | 'verifier'
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('safezone')
@@ -14,6 +15,7 @@ export default function App() {
         <nav style={{ display: 'flex', gap: '0.25rem' }}>
           {([
             { id: 'safezone', label: 'Safe Zone Configurator' },
+            { id: 'fixed',    label: 'Fixed Layout Positions' },
             { id: 'verifier', label: 'Order Preview' },
           ] as { id: Tab; label: string }[]).map(t => (
             <button
@@ -35,6 +37,7 @@ export default function App() {
 
       <main style={{ padding: '2rem' }}>
         {tab === 'safezone' && <SafeZoneConfigurator />}
+        {tab === 'fixed'    && <FixedLayoutConfigurator />}
         {tab === 'verifier' && <PayloadVerifier />}
       </main>
     </div>

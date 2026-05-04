@@ -79,6 +79,7 @@ export interface CanvasEditorProps {
   motifEntries:          MotifEntry[]
   onMotifPositionChange: (id: string, pos: { x: number; y: number }) => void
   onRemoveMotif:         (id: string) => void
+  customizerType?:       string
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -284,7 +285,6 @@ export function CanvasEditor({
   const canvasRef             = useRef<HTMLCanvasElement>(null)
   const fcRef                 = useRef<Canvas | null>(null)
   const textRef               = useRef<IText | null>(null)
-  const placeholderRef        = useRef<FabricText | null>(null)
   const safeZoneRef           = useRef<SafeZonePx>({ left: 0, top: 0, width: 0, height: 0 })
   const szObjectsRef          = useRef<FabricObject[]>([])
   const motifsMapRef          = useRef<Map<string, FabricText>>(new Map())
@@ -331,20 +331,7 @@ export function CanvasEditor({
 
     szObjectsRef.current = drawSafeZoneObjects(fc, sz, w, h)
 
-    const placeholder = new FabricText('Type your message →', {
-      left: sz.left + sz.width  / 2,
-      top:  sz.top  + sz.height / 2,
-      originX:    'center',
-      originY:    'center',
-      fontSize:   Math.round(w * 0.038),
-      fontFamily: '"Cormorant Garamond", Georgia, serif',
-      fontStyle:  'italic',
-      fill:       BRAND_BLUE,
-      opacity:    0.40,
-      selectable: false, evented: false,
-    })
-    placeholderRef.current = placeholder
-    fc.add(placeholder)
+
 
     fc.renderAll()
 
@@ -374,7 +361,6 @@ export function CanvasEditor({
       fc.dispose()
       fcRef.current          = null
       textRef.current        = null
-      placeholderRef.current = null
       szObjectsRef.current   = []
       motifsMapRef.current.clear()
     }
@@ -395,12 +381,6 @@ export function CanvasEditor({
     const sz = computeSafeZonePx(w, h, config.safeZone)
     safeZoneRef.current = sz
     szObjectsRef.current = drawSafeZoneObjects(fc, sz, w, h)
-
-    const ph = placeholderRef.current
-    if (ph) {
-      ph.set({ left: sz.left + sz.width / 2, top: sz.top + sz.height / 2 })
-      ph.setCoords()
-    }
 
     const t = textRef.current
     if (t) {
@@ -469,7 +449,6 @@ export function CanvasEditor({
   // ── Sync text content, color, and font ───────────────────────────────────
   useEffect(() => {
     const fc          = fcRef.current
-    const placeholder = placeholderRef.current
     if (!fc) return
 
     if (!embroideryText.trim()) {
@@ -478,12 +457,9 @@ export function CanvasEditor({
         textRef.current = null
         fc.discardActiveObject()
       }
-      placeholder?.set('opacity', 0.40)
       fc.renderAll()
       return
     }
-
-    placeholder?.set('opacity', 0)
 
     const sz         = safeZoneRef.current
     const fontFamily = FONT_MAP[fontStyle] ?? FONT_MAP.cursive

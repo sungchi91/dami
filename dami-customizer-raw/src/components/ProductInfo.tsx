@@ -82,6 +82,7 @@ interface ProductInfoProps {
   feature1:          string
   feature2:          string
   feature3:          string
+  customizerType?:   string
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -117,6 +118,7 @@ export function ProductInfo({
   feature1,
   feature2,
   feature3,
+  customizerType,
 }: ProductInfoProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -133,6 +135,11 @@ export function ProductInfo({
     }
   }
 
+  // Motif availability based on layout type
+  const showMotifStep = !customizerType || customizerType === 'freeform'
+    || customizerType === 'crown' || customizerType === 'pedestal' || customizerType === 'sidenote'
+  const effectiveMaxMotifs = customizerType === 'sidenote' ? 1 : maxMotifs
+
   const motifCounts = useMemo(() => {
     const counts: Record<string, number> = {}
     for (const entry of motifEntries) {
@@ -142,7 +149,7 @@ export function ProductInfo({
   }, [motifEntries])
 
   const totalMotifs = motifEntries.length
-  const atMax       = totalMotifs >= maxMotifs
+  const atMax       = totalMotifs >= effectiveMaxMotifs
 
   const handleRemoveLastOfEmoji = (emoji: string) => {
     const last = [...motifEntries].reverse().find(e => e.emoji === emoji)
@@ -316,12 +323,13 @@ export function ProductInfo({
             </div>
           </div>
 
-          {/* 04 · Motifs */}
+          {/* 04 · Motifs (hidden for classic / statement) */}
+          {showMotifStep && (
           <div className="flex flex-col gap-3">
             <p className="flex items-center gap-2 text-sm font-medium text-foreground">
               <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">04</span>
               Add Motifs
-              <span className="text-xs text-muted-foreground font-normal">({totalMotifs}/{maxMotifs})</span>
+              <span className="text-xs text-muted-foreground font-normal">({totalMotifs}/{effectiveMaxMotifs})</span>
             </p>
 
             {atMax && (
@@ -359,10 +367,11 @@ export function ProductInfo({
               })}
             </div>
 
-            {totalMotifs > 0 && (
+            {totalMotifs > 0 && customizerType === 'freeform' && (
               <p className="text-xs text-muted-foreground">Drag motifs on the canvas to position them · press Delete to remove</p>
             )}
           </div>
+          )}
 
           {/* ── Add to Basket ────────────────────────────────────────────────── */}
           <div className="flex gap-4 pt-2 border-t border-border">

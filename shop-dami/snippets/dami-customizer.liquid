@@ -45,6 +45,7 @@
 
 <div
   id="ember-lane-customizer"
+  data-customizer-type="{{ customizer_type }}"
   data-product-title="{{ product.title | escape }}"
   data-current-variant-id="{{ product.selected_or_first_available_variant.id }}"
   data-product-price="{{ product.selected_or_first_available_variant.price | money }}"
