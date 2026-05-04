@@ -56,9 +56,12 @@ export default function PayloadVerifier() {
     const fc = fcRef.current
     if (!fc) return
 
-    const preset = PRESETS.find(p => p.name === data.item_base)
+    const lower  = data.item_base.toLowerCase()
+    const preset = PRESETS.find(p =>
+      lower.includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(lower)
+    )
     if (!preset) {
-      setError(`Unknown item_base: "${data.item_base}"`)
+      setError(`Unknown item_base: "${data.item_base}" — valid names: ${PRESETS.map(p => p.name).join(', ')}`)
       return
     }
 
@@ -171,7 +174,7 @@ export default function PayloadVerifier() {
         <textarea
           value={json}
           onChange={e => handleChange(e.target.value)}
-          placeholder={'{\n  "item_base": "The Promenade Crossbody",\n  "text": "AMY",\n  ...\n}'}
+          placeholder={'{\n  "item_base": "Petite Crossbody",\n  "text": "AMY",\n  ...\n}'}
           spellCheck={false}
           style={{
             height: 280,

@@ -126,7 +126,7 @@ export function ProductInfo({
     e.preventDefault()
     setIsSubmitting(true)
     try {
-      const payload = buildCartPayload({ selectedItem, embroideryText, fontStyle, textColor, textSize, textPosition, motifEntries })
+      const payload = buildCartPayload({ selectedItem, embroideryText, fontStyle, textColor, textSize, textPosition, motifEntries, customizerType })
       await submitToCart(variantId, payload)
     } catch (err) {
       console.error('Add to basket failed:', err)

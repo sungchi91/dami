@@ -16,7 +16,12 @@
  *   in PRODUCT_CONFIG.
  */
 
-import { ITEM_TYPES, PRODUCT_CONFIG } from '@/config/products'
+import { ITEM_TYPES, PRODUCT_CONFIG, resolveItemType } from '@/config/products'
+import {
+  getFixedLayout, getMotifInches,
+  isRowLayout, isSidenoteLayout, calcMotifRowPositions,
+  type FixedLayoutType,
+} from '@/config/fixed-layouts'
 import type { TextPosition, TextSize, MotifEntry } from '@/hooks/useCustomizer'
 
 // ── Label maps ────────────────────────────────────────────────────────────────
@@ -72,8 +77,6 @@ function toCanvasRelative(
   }
 }
 
-const MOTIF_PHYSICAL_INCHES = 2.0
-
 // ── Public API ────────────────────────────────────────────────────────────────
 
 export function buildCartPayload(params: {
@@ -84,20 +87,57 @@ export function buildCartPayload(params: {
   textSize:       TextSize
   textPosition:   TextPosition
   motifEntries:   MotifEntry[]
+  customizerType?: string
 }): CartPayload {
   const { selectedItem, embroideryText, fontStyle, textColor, textSize,
-          textPosition, motifEntries } = params
+          textPosition, motifEntries, customizerType } = params
 
-  const { x: text_x, y: text_y } = toCanvasRelative(textPosition, selectedItem)
+  const itemName = ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]
+  const config   = PRODUCT_CONFIG[resolveItemType(itemName)]
 
-  const motifs: MotifPayload[] = motifEntries.map(entry => {
-    const { x, y } = toCanvasRelative(entry.position, selectedItem)
-    return { icon: entry.emoji, x_percent: x, y_percent: y }
-  })
+  let text_x: number, text_y: number
+  let motifs: MotifPayload[]
+  let motifPhysicalInches: number
+
+  const isFixed = customizerType && customizerType !== 'freeform'
+  const layout  = isFixed ? getFixedLayout(itemName, customizerType as FixedLayoutType) : null
+
+  if (isFixed && layout) {
+    // Fixed layout — positions come from the config, not from drag state
+    const textPos = toCanvasRelative(layout.text, selectedItem)
+    text_x = textPos.x
+    text_y = textPos.y
+
+    motifPhysicalInches = getMotifInches(itemName)
+    const physW = config.safeZonePhysicalWidthInches
+
+    if (isRowLayout(layout) && motifEntries.length > 0) {
+      const xs = calcMotifRowPositions(layout.motifRow.centerX, motifEntries.length, motifPhysicalInches, physW)
+      motifs = motifEntries.map((entry, i) => {
+        const { x, y } = toCanvasRelative({ x: xs[i], y: layout.motifRow.y }, selectedItem)
+        return { icon: entry.emoji, x_percent: x, y_percent: y }
+      })
+    } else if (isSidenoteLayout(layout) && motifEntries.length > 0) {
+      const { x, y } = toCanvasRelative(layout.motif, selectedItem)
+      motifs = [{ icon: motifEntries[0].emoji, x_percent: x, y_percent: y }]
+    } else {
+      motifs = []
+    }
+  } else {
+    // Freeform — positions come from drag state
+    const pos = toCanvasRelative(textPosition, selectedItem)
+    text_x = pos.x
+    text_y = pos.y
+    motifPhysicalInches = motifEntries.length > 0 ? getMotifInches(itemName) : 0
+    motifs = motifEntries.map(entry => {
+      const { x, y } = toCanvasRelative(entry.position, selectedItem)
+      return { icon: entry.emoji, x_percent: x, y_percent: y }
+    })
+  }
 
   return {
     _customizer_data: {
-      item_base:                  ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0],
+      item_base:                  itemName,
       text:                       embroideryText,
       font:                       FONT_LABELS[fontStyle] ?? fontStyle,
       thread_color:               textColor,
@@ -105,7 +145,7 @@ export function buildCartPayload(params: {
       physical_height_inches:     PHYSICAL_HEIGHT_INCHES[textSize],
       text_x_percent:             text_x,
       text_y_percent:             text_y,
-      motif_physical_size_inches: motifEntries.length > 0 ? MOTIF_PHYSICAL_INCHES : 0,
+      motif_physical_size_inches: motifPhysicalInches,
       motifs,
     },
   }

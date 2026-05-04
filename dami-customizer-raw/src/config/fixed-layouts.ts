@@ -61,12 +61,12 @@ export function getMotifInches(productTitle: string): number {
 
 export const FIXED_LAYOUTS: Record<string, ProductFixedLayouts> = {
   'Grand Tote': {
-    motifInches: 1.5,
-    classic:   { text: { x: 0.50, y: 0.18 } },
+    motifInches: 1.50,
+    classic:   { text: { x: 0.52, y: 0.17 } },
     statement: { text: { x: 0.51, y: 0.65 } },
     sidenote:  { text: { x: 0.51, y: 0.18 }, motif: { x: 0.84, y: 0.88 } },
-    crown:     { text: { x: 0.50, y: 0.25 }, motifRow: { centerX: 0.50, y: 0.12 } },
-    pedestal:  { text: { x: 0.51, y: 0.10 }, motifRow: { centerX: 0.51, y: 0.25 } },
+    crown:     { text: { x: 0.51, y: 0.27 }, motifRow: { centerX: 0.51, y: 0.12 } },
+    pedestal:  { text: { x: 0.51, y: 0.10 }, motifRow: { centerX: 0.52, y: 0.28 } },
   },
   'Signature Tote': {
     motifInches: 1.25,

@@ -96,11 +96,11 @@ const SEEDED_MOTIF_INCHES: Record<string, number> = {
 
 const SEEDED_LAYOUTS: Record<string, Partial<Record<LayoutType, LayoutState>>> = {
   'Grand Tote': {
-    classic:   { text: { x: 0.50, y: 0.18 } },
+    classic:   { text: { x: 0.52, y: 0.17 } },
     statement: { text: { x: 0.51, y: 0.65 } },
     sidenote:  { text: { x: 0.51, y: 0.18 }, motif:    { x: 0.84, y: 0.88 } },
-    crown:     { text: { x: 0.50, y: 0.25 }, motifRow: { x: 0.50, y: 0.12 } },
-    pedestal:  { text: { x: 0.51, y: 0.10 }, motifRow: { x: 0.51, y: 0.25 } },
+    crown:     { text: { x: 0.51, y: 0.27 }, motifRow: { x: 0.51, y: 0.12 } },
+    pedestal:  { text: { x: 0.51, y: 0.10 }, motifRow: { x: 0.52, y: 0.28 } },
   },
   'Signature Tote': {
     classic:   { text: { x: 0.49, y: 0.17 } },
