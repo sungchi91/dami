@@ -11,8 +11,9 @@ export interface SafeZoneConfig {
 }
 
 export interface ProductConfig {
-  safeZone:                    SafeZoneConfig
-  safeZonePhysicalWidthInches: number
+  safeZone:      SafeZoneConfig
+  physicalWidth: number
+  maxTextWidth:  number
 }
 
 // ── Item names (single source of truth for the dropdown) ──────────────────────
@@ -36,47 +37,56 @@ export type ItemType = typeof ITEM_TYPES[number]
 export const PRODUCT_CONFIG: Record<ItemType, ProductConfig> = {
   'Grand Tote': {
     safeZone: { widthRatio: 0.80, heightRatio: 0.33, offsetX: -0.02, offsetY: 0.09 },
-    safeZonePhysicalWidthInches: 25,
+    physicalWidth: 25,
+    maxTextWidth:  5,
   },
 
   'Signature Tote': {
     safeZone: { widthRatio: 0.71, heightRatio: 0.34, offsetX: -0.01, offsetY: 0.12 },
-    safeZonePhysicalWidthInches: 18,
+    physicalWidth: 18,
+    maxTextWidth:  5,
   },
 
   'Petite Tote': {
     safeZone: { widthRatio: 0.62, heightRatio: 0.37, offsetX: -0.01, offsetY: 0.10 },
-    safeZonePhysicalWidthInches: 13.5,
+    physicalWidth: 13.5,
+    maxTextWidth:  5,
   },
 
   'Petite Crossbody': {
     safeZone: { widthRatio: 0.73, heightRatio: 0.33, offsetX: 0.00, offsetY: 0.10 },
-    safeZonePhysicalWidthInches: 13,
+    physicalWidth: 13,
+    maxTextWidth:  5,
   },
 
   'Waffle Pouch': {
-    safeZone: { widthRatio: 0.60, heightRatio: 0.26, offsetX: 0.04, offsetY: 0.13 },
-    safeZonePhysicalWidthInches: 11,
+    safeZone: { widthRatio: 0.85, heightRatio: 0.33, offsetX: -0.01, offsetY: 0.01 },
+    physicalWidth: 7.9,
+    maxTextWidth:  5,
   },
 
   'Grand Waffle Pouch': {
-    safeZone: { widthRatio: 0.60, heightRatio: 0.26, offsetX: 0.04, offsetY: 0.13 },
-    safeZonePhysicalWidthInches: 13,
+    safeZone: { widthRatio: 0.84, heightRatio: 0.47, offsetX: -0.01, offsetY: 0.01 },
+    physicalWidth: 9,
+    maxTextWidth:  5,
   },
 
   'Seersucker Pouch': {
     safeZone: { widthRatio: 0.60, heightRatio: 0.26, offsetX: 0.04, offsetY: 0.13 },
-    safeZonePhysicalWidthInches: 11,
+    physicalWidth: 11,
+    maxTextWidth:  5,
   },
 
   'Linen Cocktail Napkin': {
-    safeZone: { widthRatio: 0.42, heightRatio: 0.42, offsetX: 0.16, offsetY: 0.16 },
-    safeZonePhysicalWidthInches: 5,
+    safeZone: { widthRatio: 0.53, heightRatio: 0.45, offsetX: 0.00, offsetY: -0.01 },
+    physicalWidth: 6,
+    maxTextWidth:  5,
   },
 
   'The Oxford': {
     safeZone: { widthRatio: 0.60, heightRatio: 0.40, offsetX: 0.00, offsetY: 0.00 },
-    safeZonePhysicalWidthInches: 10,
+    physicalWidth: 10,
+    maxTextWidth:  5,
   },
 }
 
@@ -85,8 +95,9 @@ export const PRODUCT_CONFIG: Record<ItemType, ProductConfig> = {
 /** Find the canonical ItemType whose key is contained in the product title, or vice versa. */
 export function resolveItemType(productTitle: string): ItemType {
   const lower = productTitle.toLowerCase()
-  const match = ITEM_TYPES.find(t => lower.includes(t.toLowerCase()) || t.toLowerCase().includes(lower))
-  return match ?? ITEM_TYPES[0]
+  const matches = ITEM_TYPES.filter(t => lower.includes(t.toLowerCase()) || t.toLowerCase().includes(lower))
+  matches.sort((a, b) => b.length - a.length)
+  return matches[0] ?? ITEM_TYPES[0]
 }
 
 /**

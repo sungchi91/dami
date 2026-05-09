@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "postbuild": "cp dist/customizer-bundle.js ../shop-dami/assets/customizer-bundle.js",
     "preview": "vite preview"
   },
   "dependencies": {

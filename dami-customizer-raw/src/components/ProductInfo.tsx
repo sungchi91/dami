@@ -44,11 +44,13 @@ const fontStyles = [
   { id: 'block',        label: 'Modern Block'    },
 ]
 
-const textSizes: { id: TextSize; label: string }[] = [
-  { id: 'S', label: 'Small'  },
-  { id: 'M', label: 'Medium' },
-  { id: 'L', label: 'Large'  },
-]
+const TEXT_SIZE_MIN  = 0.5
+const TEXT_SIZE_MAX  = 2.5
+const TEXT_SIZE_STEP = 0.25
+
+const FONT_SIZE_FLOOR: Record<string, number> = {
+  'edwardian': 1,
+}
 
 const MOTIFS = ['🦞', '🍋', '🎀', '🌷', '🤎', '🍓']
 
@@ -85,7 +87,10 @@ interface ProductInfoProps {
   feature1:          string
   feature2:          string
   feature3:          string
+  dimension:         string
+  care:              string
   customizerType?:   string
+  available?:        boolean
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -121,7 +126,10 @@ export function ProductInfo({
   feature1,
   feature2,
   feature3,
+  dimension,
+  care,
   customizerType,
+  available = true,
 }: ProductInfoProps) {
   const [isSubmitting,    setIsSubmitting]    = useState(false)
   const [exceededWarning, setExceededWarning] = useState(false)
@@ -133,16 +141,23 @@ export function ProductInfo({
       const payload = buildCartPayload({ selectedItem, embroideryText, fontStyle, textColor, textSize, textPosition, motifEntries, customizerType })
       await submitToCart(variantId, payload)
     } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
       console.error('Add to basket failed:', err)
-      alert('Something went wrong adding to basket. Please try again.')
+      alert(`Something went wrong adding to basket: ${msg}`)
       setIsSubmitting(false)
     }
   }
 
   // Motif availability based on layout type
+  const isMotifOnly   = customizerType === 'side-motif' || customizerType === 'classic-motif'
+  const showTextStep  = !isMotifOnly
   const showMotifStep = !customizerType || customizerType === 'freeform'
     || customizerType === 'crown' || customizerType === 'pedestal' || customizerType === 'sidenote'
-  const effectiveMaxMotifs = customizerType === 'sidenote' ? 1 : maxMotifs
+    || customizerType === 'side-motif' || customizerType === 'classic-motif'
+
+  const hasInput = (showTextStep && embroideryText.trim().length > 0)
+    || (showMotifStep && motifEntries.length > 0)
+  const effectiveMaxMotifs = (customizerType === 'sidenote' || customizerType === 'side-motif' || customizerType === 'classic-motif') ? 1 : maxMotifs
 
   const motifCounts = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -170,7 +185,13 @@ export function ProductInfo({
       {!showPersonalize && (
         <div className="flex flex-col gap-5">
           {description && (
-            <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{description.trim()}</p>
+          )}
+          {dimension && (
+            <p className="text-xs text-muted-foreground">{dimension}</p>
+          )}
+          {care && (
+            <p className="text-xs text-muted-foreground">{care}</p>
           )}
 
           {founderQuote && (
@@ -272,7 +293,7 @@ export function ProductInfo({
           </div>
 
           {/* 02 · Text */}
-          <div className="flex flex-col gap-3">
+          {showTextStep && <div className="flex flex-col gap-3">
             <label htmlFor="custom-text" className="flex items-center gap-2 text-sm font-medium text-foreground">
               <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">02</span>
               Add Your Text
@@ -290,7 +311,7 @@ export function ProductInfo({
               {fontStyles.map((f) => (
                 <button
                   key={f.id}
-                  onClick={() => setFontStyle(f.id)}
+                  onClick={() => { setFontStyle(f.id); const floor = FONT_SIZE_FLOOR[f.id] ?? TEXT_SIZE_MIN; if (textSize < floor) setTextSize(floor) }}
                   className={`px-4 py-2 border text-sm transition-all duration-200 ${
                     fontStyle === f.id
                       ? 'bg-primary text-primary-foreground border-primary'
@@ -302,30 +323,37 @@ export function ProductInfo({
               ))}
             </div>
             <p className="text-xs text-muted-foreground">{embroideryText.length}/40 characters</p>
-          </div>
+          </div>}
 
           {/* 03 · Size */}
-          <div className="flex flex-col gap-3">
+          {showTextStep && <div className="flex flex-col gap-3">
             <p className="flex items-center gap-2 text-sm font-medium text-foreground">
               <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">03</span>
               Text Size
             </p>
-            <div className="flex gap-2">
-              {textSizes.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => setTextSize(s.id)}
-                  className={`flex-1 py-3 border text-sm font-medium transition-all duration-200 ${
-                    textSize === s.id
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'bg-background text-foreground border-border hover:border-primary/50'
-                  }`}
-                >
-                  {s.label}
-                </button>
-              ))}
+            <div className="flex items-center gap-2">
+              {(() => {
+                const effectiveMin = Math.max(TEXT_SIZE_MIN, FONT_SIZE_FLOOR[fontStyle] ?? 0)
+                return (<>
+                  <button
+                    onClick={() => setTextSize(Math.max(effectiveMin, parseFloat((textSize - TEXT_SIZE_STEP).toFixed(2))))}
+                    disabled={textSize <= effectiveMin}
+                    className="flex-1 py-3 border text-sm font-medium transition-all duration-200 hover:border-primary/50 disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    −
+                  </button>
+                  <span className="flex-1 text-center text-sm text-muted-foreground">{textSize.toFixed(2)} in</span>
+                  <button
+                    onClick={() => setTextSize(Math.min(TEXT_SIZE_MAX, parseFloat((textSize + TEXT_SIZE_STEP).toFixed(2))))}
+                    disabled={textSize >= TEXT_SIZE_MAX}
+                    className="flex-1 py-3 border text-sm font-medium transition-all duration-200 hover:border-primary/50 disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    +
+                  </button>
+                </>)
+              })()}
             </div>
-          </div>
+          </div>}
 
           {/* 04 · Motifs (hidden for classic / statement) */}
           {showMotifStep && (
@@ -378,13 +406,22 @@ export function ProductInfo({
 
           {/* ── Add to Basket ────────────────────────────────────────────────── */}
           <div className="flex gap-4 pt-2 border-t border-border">
-            <Button
-              className="flex-1 py-6 text-base bg-primary hover:bg-primary/90 text-primary-foreground"
-              disabled={isSubmitting}
-              onClick={handleAddToBasket}
-            >
-              {isSubmitting ? 'Adding…' : 'Add to Basket'}
-            </Button>
+            {available ? (
+              <Button
+                className="flex-1 py-6 text-base bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-40"
+                disabled={isSubmitting || !hasInput}
+                onClick={handleAddToBasket}
+              >
+                {isSubmitting ? 'Adding…' : 'Add to Basket'}
+              </Button>
+            ) : (
+              <Button
+                className="flex-1 py-6 text-base"
+                disabled
+              >
+                Sold Out
+              </Button>
+            )}
           </div>
         </div>
       )}

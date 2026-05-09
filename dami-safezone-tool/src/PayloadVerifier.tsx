@@ -6,9 +6,19 @@ const MINI_W = 560
 const MINI_H = 700  // 4:5
 
 const FONT_CSS: Record<string, string> = {
-  'Cursive Script': 'Caveat, "Brush Script MT", cursive',
-  'Classic Serif':  '"Cormorant Garamond", Georgia, serif',
-  'Fine Block':     '"Helvetica Neue", Helvetica, Arial, sans-serif',
+  'Bold Script':    'Ballantines, "Brush Script MT", cursive',
+  'Playful Script': 'Katelyn, Caveat, cursive',
+  'Elegant Script': 'Edwardian, "Brush Script MT", cursive',
+  'Delicate Script':'Chateauneuf, Caveat, cursive',
+  'Classic Serif':  'Garamond, "Cormorant Garamond", Georgia, serif',
+  'Modern Block':   'Block, "Helvetica Neue", Helvetica, Arial, sans-serif',
+}
+
+// Must match FONT_SCALE_MULTIPLIERS in CanvasEditor / FixedCanvasEditor × 1.7 global
+const FONT_SIZE_MULTIPLIERS: Record<string, number> = {
+  'Elegant Script':  1.2 * 1.7,
+  'Delicate Script': 1.2 * 1.7,
+  'Bold Script':     1.4 * 1.7,
 }
 
 interface CustomizerData {
@@ -20,6 +30,8 @@ interface CustomizerData {
   physical_height_inches:     number
   text_x_percent:             number
   text_y_percent:             number
+  text_align?:                'center' | 'right'
+  text_max_width_inches?:     number
   motif_physical_size_inches: number
   motifs: { icon: string; x_percent: number; y_percent: number }[]
 }
@@ -102,12 +114,16 @@ export default function PayloadVerifier() {
     fc.add(new Rect({ left: px - 0.5, top: py - C, width: 1, height: C * 2, fill: 'rgba(239,68,68,0.8)', selectable: false, evented: false }))
 
     const ppi        = computePPI(sz.width, preset.physicalWidthInches)
-    const targetPx   = data.physical_height_inches * ppi
+    const multiplier = FONT_SIZE_MULTIPLIERS[data.font] ?? 1.7
+    const targetPx   = data.physical_height_inches * multiplier * ppi
     const baseFont   = Math.round(MINI_W * 0.075)
-    const fontFamily = FONT_CSS[data.font] ?? FONT_CSS['Cursive Script']
+    const fontFamily = FONT_CSS[data.font] ?? FONT_CSS['Bold Script']
+    const textAlign  = data.text_align ?? 'center'
+    const originX    = textAlign === 'right' ? 'right' : 'center'
     await document.fonts.load(`${baseFont}px ${fontFamily.split(',')[0].trim()}`)
     const textObj    = new FabricText(data.text || '—', {
-      left: px, top: py, originX: 'center', originY: 'center',
+      left: px, top: py, originX, originY: 'center',
+      textAlign,
       fontSize: baseFont,
       fontFamily: fontFamily,
       fill: data.thread_color,

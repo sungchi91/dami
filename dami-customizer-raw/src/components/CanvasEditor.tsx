@@ -39,26 +39,69 @@ const FONT_MAP: Record<string, string> = {
   'garamond':    'Garamond, Georgia, serif',
 }
 
-// Physical embroidery height targets in inches: S=1", M=1.5", L=2"
-const PHYSICAL_HEIGHT_INCHES: Record<TextSize, number> = { S: 1, M: 1.5, L: 2 }
-
 const MOTIF_PHYSICAL_INCHES = 2.0
 const MOTIF_ID_KEY           = '__motifId'
 const BRAND_BLUE             = '#7594B4'
 const FRAME_STONE            = '#C9B99A'
 
-/**
- * Compute the uniform scale needed to render text at a physically accurate height.
- */
+const FONT_SCALE_MULTIPLIERS: Record<string, number> = {
+  'edwardian':   1.2,
+  'chateauneuf': 1.2,
+  'ballantines': 1.4,
+}
+
 function physicalScale(
   obj:                FabricObject,
   textSize:           TextSize,
+  fontStyle:          string,
   szPixelWidth:       number,
   physicalWidthInches: number,
 ): number {
-  const ppi      = computePPI(szPixelWidth, physicalWidthInches)
-  const targetPx = PHYSICAL_HEIGHT_INCHES[textSize] * ppi
+  const ppi        = computePPI(szPixelWidth, physicalWidthInches)
+  const multiplier = (FONT_SCALE_MULTIPLIERS[fontStyle] ?? 1) * 1.7
+  const targetPx   = textSize * multiplier * ppi
   return targetPx / (obj.height ?? 1)
+}
+
+/**
+ * Position the text and apply a fixed-anchor max-width clip.
+ *
+ * The clip is a fixed box centered on (anchorX, anchorY) with width =
+ * maxTextWidth. When rendered text exceeds maxWidth, the text is shifted
+ * rightward by half the overflow so its left edge lands at the box's left
+ * bound — short text stays visually centered, long text gets cropped only
+ * from the right.
+ *
+ * The clip is padded by SIDE_BEARING_RATIO * fontSize on each side so
+ * cursive/italic glyph overhangs aren't clipped at the edges.
+ *
+ * Returns the applied xShift so callers can keep an anchor↔obj.left mapping
+ * across drag interactions (anchor = obj.left - xShift).
+ */
+const SIDE_BEARING_RATIO = 0.18
+
+function positionAndClip(
+  obj: FabricObject, scale: number, anchorX: number, anchorY: number,
+  szPixelWidth: number, physicalWidth: number, maxTextWidth: number,
+): number {
+  const ppi         = computePPI(szPixelWidth, physicalWidth)
+  const maxWidthPx  = maxTextWidth * ppi
+  const tallPx      = (obj.height ?? 100) * scale * 3
+  const sideBearing = ((obj as IText).fontSize ?? 22) * scale * SIDE_BEARING_RATIO
+  const renderedW   = (obj.width ?? 0) * scale
+  const xShift      = renderedW > maxWidthPx ? (renderedW - maxWidthPx) / 2 : 0
+
+  obj.set({ left: anchorX + xShift, top: anchorY })
+  obj.clipPath = new Rect({
+    left:    anchorX - maxWidthPx / 2 - sideBearing,
+    top:     anchorY - tallPx / 2,
+    width:   maxWidthPx + sideBearing * 2,
+    height:  tallPx,
+    originX: 'left',
+    originY: 'top',
+    absolutePositioned: true,
+  })
+  return xShift
 }
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -105,6 +148,58 @@ function constrainToSafeZone(
   cbRef.current({
     x: Math.max(0, Math.min(1, (left - sz.left) / sz.width)),
     y: Math.max(0, Math.min(1, (top  - sz.top)  / sz.height)),
+  })
+}
+
+/**
+ * Clamp a draggable text object so its **visible region** (the maxWidth clip
+ * box centered on the anchor) stays inside the safe zone, then re-apply the
+ * absolute-positioned clip at the new anchor and report the anchor as a
+ * fraction of the safe zone.
+ *
+ * Anchor = obj.left - xShift. The clip is fixed in canvas coords, so it does
+ * not follow obj.left during drag — we must rebuild it after every move.
+ */
+function constrainTextAnchor(
+  obj:          FabricObject,
+  sz:           SafeZonePx,
+  cbRef:        { current: (pos: { x: number; y: number }) => void },
+  xShift:       number,
+  selectedItem: number,
+) {
+  const itemName    = ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]
+  const config      = PRODUCT_CONFIG[itemName]
+  const ppi         = computePPI(sz.width, config.physicalWidth)
+  const maxWidthPx  = config.maxTextWidth * ppi
+  const sideBearing = ((obj as IText).fontSize ?? 22) * (obj.scaleX ?? 1) * SIDE_BEARING_RATIO
+
+  const renderedW  = (obj.width  ?? 0) * (obj.scaleX ?? 1)
+  const renderedH  = (obj.height ?? 0) * (obj.scaleY ?? 1)
+  const halfW      = Math.min(renderedW, maxWidthPx) / 2
+  const halfH      = renderedH / 2
+
+  const anchorX        = (obj.left ?? 0) - xShift
+  const anchorY        = (obj.top  ?? 0)
+  const clampedAnchorX = Math.max(sz.left + halfW, Math.min(sz.left + sz.width  - halfW, anchorX))
+  const clampedAnchorY = Math.max(sz.top  + halfH, Math.min(sz.top  + sz.height - halfH, anchorY))
+
+  obj.set({ left: clampedAnchorX + xShift, top: clampedAnchorY })
+  obj.setCoords()
+
+  const tallPx = renderedH * 3
+  obj.clipPath = new Rect({
+    left:    clampedAnchorX - maxWidthPx / 2 - sideBearing,
+    top:     clampedAnchorY - tallPx / 2,
+    width:   maxWidthPx + sideBearing * 2,
+    height:  tallPx,
+    originX: 'left',
+    originY: 'top',
+    absolutePositioned: true,
+  })
+
+  cbRef.current({
+    x: Math.max(0, Math.min(1, (clampedAnchorX - sz.left) / sz.width)),
+    y: Math.max(0, Math.min(1, (clampedAnchorY - sz.top)  / sz.height)),
   })
 }
 
@@ -292,14 +387,20 @@ export function CanvasEditor({
   const szObjectsRef          = useRef<FabricObject[]>([])
   const motifsMapRef          = useRef<Map<string, FabricText>>(new Map())
   const prevSelectedItemRef   = useRef(selectedItem)
+  const selectedItemRef       = useRef(selectedItem)
   const onChangeCb            = useRef(onPositionChange)
   const onMotifPositionChangeCb = useRef(onMotifPositionChange)
   const onRemoveCb            = useRef(onRemoveMotif)
   const canvasSizeRef         = useRef({ w: 400, h: 500 })
+  // Offset between the text's geometric center (obj.left) and the anchor (visible
+  // center of the maxWidth clip box). Non-zero only when text overflows maxWidth.
+  // Keeps anchor recoverable across Fabric drag events: anchor = obj.left - xShift.
+  const xShiftRef             = useRef(0)
 
   useEffect(() => { onChangeCb.current              = onPositionChange })
   useEffect(() => { onMotifPositionChangeCb.current  = onMotifPositionChange })
   useEffect(() => { onRemoveCb.current               = onRemoveMotif })
+  useEffect(() => { selectedItemRef.current          = selectedItem })
 
   // ── Canvas initialisation (mount only) ────────────────────────────────────
   useEffect(() => {
@@ -344,7 +445,7 @@ export function CanvasEditor({
       if (motifId) {
         constrainMotifToSafeZone(e.target, safeZoneRef.current, motifId, onMotifPositionChangeCb)
       } else {
-        constrainToSafeZone(e.target, safeZoneRef.current, onChangeCb)
+        constrainTextAnchor(e.target, safeZoneRef.current, onChangeCb, xShiftRef.current, selectedItemRef.current)
       }
     })
 
@@ -439,7 +540,7 @@ export function CanvasEditor({
       const absY = sz.top  + entry.position.y * sz.height
       const m    = createMotifObject(
         entry.emoji, entry.id, absX, absY,
-        sz.width, config.safeZonePhysicalWidthInches,
+        sz.width, config.physicalWidth,
       )
       motifsMapRef.current.set(entry.id, m)
       fc.add(m)
@@ -475,12 +576,20 @@ export function CanvasEditor({
       if (!fcRef.current) return
 
       if (textRef.current) {
+        // Recover the visible-center anchor from the previous render's xShift.
+        const anchorX = (textRef.current.left ?? 0) - xShiftRef.current
+        const anchorY = (textRef.current.top  ?? 0)
         textRef.current.set({ text: embroideryText, fill: textColor, fontFamily })
+        const scale = physicalScale(textRef.current, textSize, fontStyle, sz.width, config.physicalWidth)
+        textRef.current.set({ scaleX: scale, scaleY: scale })
+        xShiftRef.current = positionAndClip(textRef.current, scale, anchorX, anchorY, sz.width, config.physicalWidth, config.maxTextWidth)
         textRef.current.setCoords()
       } else {
+        const anchorX = sz.left + sz.width  / 2
+        const anchorY = sz.top  + sz.height / 2
         const t = new IText(embroideryText, {
-          left:         sz.left + sz.width  / 2,
-          top:          sz.top  + sz.height / 2,
+          left:         anchorX,
+          top:          anchorY,
           originX:      'center',
           originY:      'center',
           fontSize,
@@ -498,8 +607,9 @@ export function CanvasEditor({
           hoverCursor:  'move',
           moveCursor:   'grabbing',
         })
-        const scale = physicalScale(t, textSize, sz.width, config.safeZonePhysicalWidthInches)
+        const scale = physicalScale(t, textSize, fontStyle, sz.width, config.physicalWidth)
         t.set({ scaleX: scale, scaleY: scale })
+        xShiftRef.current = positionAndClip(t, scale, anchorX, anchorY, sz.width, config.physicalWidth, config.maxTextWidth)
         textRef.current = t
         fc.add(t)
         fc.setActiveObject(t)
@@ -518,10 +628,13 @@ export function CanvasEditor({
 
     const sz     = safeZoneRef.current
     const config = PRODUCT_CONFIG[ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]]
-    const scale  = physicalScale(t, textSize, sz.width, config.safeZonePhysicalWidthInches)
+    const anchorX = (t.left ?? 0) - xShiftRef.current
+    const anchorY = (t.top  ?? 0)
+    const scale  = physicalScale(t, textSize, fontStyle, sz.width, config.physicalWidth)
     t.set({ scaleX: scale, scaleY: scale })
+    xShiftRef.current = positionAndClip(t, scale, anchorX, anchorY, sz.width, config.physicalWidth, config.maxTextWidth)
     t.setCoords()
-    constrainToSafeZone(t, safeZoneRef.current, onChangeCb)
+    constrainTextAnchor(t, safeZoneRef.current, onChangeCb, xShiftRef.current, selectedItem)
     fc.renderAll()
   }, [textSize, selectedItem])
 

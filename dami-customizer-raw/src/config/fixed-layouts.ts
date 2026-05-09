@@ -1,4 +1,4 @@
-export type FixedLayoutType = 'classic' | 'statement' | 'sidenote' | 'crown' | 'pedestal'
+export type FixedLayoutType = 'classic' | 'statement' | 'sidenote' | 'crown' | 'pedestal' | 'side-motif' | 'side-font' | 'classic-motif'
 
 interface Pos { x: number; y: number }
 
@@ -6,16 +6,20 @@ export interface ClassicLayout   { text: Pos }
 export interface StatementLayout { text: Pos }
 export interface SidenoteLayout  { text: Pos; motif: Pos }
 export interface RowLayout       { text: Pos; motifRow: { centerX: number; y: number } }
+export interface SideMotifLayout { motif: Pos }
 
-export type AnyFixedLayout = ClassicLayout | StatementLayout | SidenoteLayout | RowLayout
+export type AnyFixedLayout = ClassicLayout | StatementLayout | SidenoteLayout | RowLayout | SideMotifLayout
 
 export interface ProductFixedLayouts {
-  motifInches?: number   // physical motif size — defaults to 1.0
-  classic?:   ClassicLayout
-  statement?: StatementLayout
-  sidenote?:  SidenoteLayout
-  crown?:     RowLayout
-  pedestal?:  RowLayout
+  motifInches?:   number
+  classic?:       ClassicLayout
+  statement?:     StatementLayout
+  sidenote?:      SidenoteLayout
+  crown?:         RowLayout
+  pedestal?:      RowLayout
+  'side-motif'?:  SideMotifLayout
+  'side-font'?:   ClassicLayout
+  'classic-motif'?: SideMotifLayout
 }
 
 // Center-to-center distance as a multiple of motif diameter
@@ -35,14 +39,20 @@ export function isRowLayout(layout: AnyFixedLayout): layout is RowLayout {
 }
 
 export function isSidenoteLayout(layout: AnyFixedLayout): layout is SidenoteLayout {
-  return 'motif' in layout
+  return 'motif' in layout && 'text' in layout
+}
+
+export function isSideMotifLayout(layout: AnyFixedLayout): layout is SideMotifLayout {
+  return 'motif' in layout && !('text' in layout)
 }
 
 function resolveKey(productTitle: string): string | undefined {
   const lower = productTitle.toLowerCase()
-  return Object.keys(FIXED_LAYOUTS).find(k =>
+  const matches = Object.keys(FIXED_LAYOUTS).filter(k =>
     lower.includes(k.toLowerCase()) || k.toLowerCase().includes(lower)
   )
+  matches.sort((a, b) => b.length - a.length)
+  return matches[0]
 }
 
 /** Find layout by contains match — key contained in title or title contained in key. */
@@ -91,18 +101,19 @@ export const FIXED_LAYOUTS: Record<string, ProductFixedLayouts> = {
     pedestal:  { text: { x: 0.50, y: 0.80 }, motifRow: { centerX: 0.50, y: 0.20 } },
   },
   'Waffle Pouch': {
+    motifInches: 0.75,
     classic:   { text: { x: 0.50, y: 0.50 } },
     statement: { text: { x: 0.50, y: 0.50 } },
-    sidenote:  { text: { x: 0.35, y: 0.50 }, motif: { x: 0.75, y: 0.50 } },
-    crown:     { text: { x: 0.50, y: 0.20 }, motifRow: { centerX: 0.50, y: 0.80 } },
-    pedestal:  { text: { x: 0.50, y: 0.80 }, motifRow: { centerX: 0.50, y: 0.20 } },
+    sidenote:  { text: { x: 0.52, y: 0.50 }, motif: { x: 0.87, y: 0.82 } },
+    crown:     { text: { x: 0.52, y: 0.60 }, motifRow: { centerX: 0.52, y: 0.33 } },
+    pedestal:  { text: { x: 0.51, y: 0.34 }, motifRow: { centerX: 0.52, y: 0.62 } },
   },
   'Grand Waffle Pouch': {
     classic:   { text: { x: 0.50, y: 0.50 } },
     statement: { text: { x: 0.50, y: 0.50 } },
-    sidenote:  { text: { x: 0.35, y: 0.50 }, motif: { x: 0.75, y: 0.50 } },
-    crown:     { text: { x: 0.50, y: 0.20 }, motifRow: { centerX: 0.50, y: 0.80 } },
-    pedestal:  { text: { x: 0.50, y: 0.80 }, motifRow: { centerX: 0.50, y: 0.20 } },
+    sidenote:  { text: { x: 0.51, y: 0.48 }, motif: { x: 0.90, y: 0.84 } },
+    crown:     { text: { x: 0.51, y: 0.58 }, motifRow: { centerX: 0.51, y: 0.34 } },
+    pedestal:  { text: { x: 0.52, y: 0.37 }, motifRow: { centerX: 0.52, y: 0.60 } },
   },
   'Seersucker Pouch': {
     classic:   { text: { x: 0.50, y: 0.50 } },
@@ -112,11 +123,14 @@ export const FIXED_LAYOUTS: Record<string, ProductFixedLayouts> = {
     pedestal:  { text: { x: 0.50, y: 0.80 }, motifRow: { centerX: 0.50, y: 0.20 } },
   },
   'Linen Cocktail Napkin': {
-    classic:   { text: { x: 0.50, y: 0.50 } },
-    statement: { text: { x: 0.50, y: 0.50 } },
-    sidenote:  { text: { x: 0.35, y: 0.50 }, motif: { x: 0.75, y: 0.50 } },
-    crown:     { text: { x: 0.50, y: 0.20 }, motifRow: { centerX: 0.50, y: 0.80 } },
-    pedestal:  { text: { x: 0.50, y: 0.80 }, motifRow: { centerX: 0.50, y: 0.20 } },
+    classic:          { text: { x: 0.50, y: 0.50 } },
+    statement:        { text: { x: 0.50, y: 0.50 } },
+    sidenote:         { text: { x: 0.35, y: 0.50 }, motif: { x: 0.75, y: 0.50 } },
+    crown:            { text: { x: 0.50, y: 0.20 }, motifRow: { centerX: 0.50, y: 0.80 } },
+    pedestal:         { text: { x: 0.50, y: 0.80 }, motifRow: { centerX: 0.50, y: 0.20 } },
+    'side-font':      { text: { x: 0.92, y: 0.92 } },
+    'side-motif':     { motif: { x: 0.88, y: 0.87 } },
+    'classic-motif':  { motif: { x: 0.52, y: 0.50 } },
   },
   'The Oxford': {
     classic:   { text: { x: 0.50, y: 0.50 } },

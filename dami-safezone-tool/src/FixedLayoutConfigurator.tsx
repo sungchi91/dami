@@ -3,39 +3,52 @@ import { PRESETS, type Preset } from './presets'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
-export type LayoutType = 'classic' | 'statement' | 'sidenote' | 'crown' | 'pedestal'
+export type LayoutType = 'classic' | 'statement' | 'sidenote' | 'crown' | 'pedestal' | 'side-font' | 'side-motif' | 'classic-motif'
 
-const LAYOUT_TYPES: LayoutType[] = ['classic', 'statement', 'sidenote', 'crown', 'pedestal']
+const STANDARD_LAYOUT_TYPES: LayoutType[] = ['classic', 'statement', 'sidenote', 'crown', 'pedestal']
+const NAPKIN_EXTRA_TYPES:    LayoutType[] = ['side-font', 'side-motif', 'classic-motif']
+
+function getLayoutTypes(productName: string): LayoutType[] {
+  return productName === 'Linen Cocktail Napkin'
+    ? [...STANDARD_LAYOUT_TYPES, ...NAPKIN_EXTRA_TYPES]
+    : STANDARD_LAYOUT_TYPES
+}
 
 const DESCRIPTIONS: Record<LayoutType, string> = {
-  classic:   'Text only · fixed center',
-  statement: 'Text only · fixed spot',
-  sidenote:  'Text + 1 motif · two fixed spots',
-  crown:     'Text top + motif row bottom',
-  pedestal:  'Motif row top + text bottom',
+  classic:          'Text only · fixed center',
+  statement:        'Text only · fixed spot',
+  sidenote:         'Text + 1 motif · two fixed spots',
+  crown:            'Text top + motif row bottom',
+  pedestal:         'Motif row top + text bottom',
+  'side-font':      'Text only · side placement (napkin)',
+  'side-motif':     'Motif only · corner placement (napkin)',
+  'classic-motif':  'Motif only · center placement (napkin)',
 }
 
 interface Pos { x: number; y: number }
 
-// motifRow.x = centerX of the row
 interface LayoutState {
-  text:      Pos
-  motif?:    Pos   // sidenote
-  motifRow?: Pos   // crown / pedestal  (x = centerX, y = row y)
+  text?:     Pos
+  motif?:    Pos
+  motifRow?: Pos
 }
 
 const DEFAULTS: Record<LayoutType, LayoutState> = {
-  classic:   { text: { x: 0.50, y: 0.50 } },
-  statement: { text: { x: 0.50, y: 0.50 } },
-  sidenote:  { text: { x: 0.35, y: 0.50 }, motif:    { x: 0.75, y: 0.50 } },
-  crown:     { text: { x: 0.50, y: 0.20 }, motifRow: { x: 0.50, y: 0.80 } },
-  pedestal:  { text: { x: 0.50, y: 0.80 }, motifRow: { x: 0.50, y: 0.20 } },
+  classic:          { text: { x: 0.50, y: 0.50 } },
+  statement:        { text: { x: 0.50, y: 0.50 } },
+  sidenote:         { text: { x: 0.35, y: 0.50 }, motif:    { x: 0.75, y: 0.50 } },
+  crown:            { text: { x: 0.50, y: 0.20 }, motifRow: { x: 0.50, y: 0.80 } },
+  pedestal:         { text: { x: 0.50, y: 0.80 }, motifRow: { x: 0.50, y: 0.20 } },
+  'side-font':      { text: { x: 0.50, y: 0.50 } },
+  'side-motif':     { motif: { x: 0.75, y: 0.75 } },
+  'classic-motif':  { motif: { x: 0.50, y: 0.50 } },
 }
 
-type LayoutMap   = Record<string, Partial<Record<LayoutType, LayoutState>>>
-type MotifMap    = Record<string, number>
+type LayoutMap = Record<string, Partial<Record<LayoutType, LayoutState>>>
+type MotifMap  = Record<string, number>
 
-const MOTIF_GAP_MULTIPLIER = 1.2
+const MOTIF_GAP_MULTIPLIER  = 1.2
+const MAX_TEXT_WIDTH_INCHES = 5  // matches PRODUCT_CONFIG.maxTextWidth in the customizer
 
 // ── Coordinate helpers ─────────────────────────────────────────────────────────
 
@@ -64,21 +77,25 @@ function fp(n: number) { return n.toFixed(2) }
 function fPos(p: Pos)  { return `{ x: ${fp(p.x)}, y: ${fp(p.y)} }` }
 
 function buildSnippet(s: LayoutState, type: LayoutType): string {
-  if (type === 'classic' || type === 'statement')
-    return `${type}: { text: ${fPos(s.text)} }`
+  const key = type.includes('-') ? `'${type}'` : type
+  if (type === 'classic' || type === 'statement' || type === 'side-font')
+    return `${key}: { text: ${fPos(s.text!)} }`
   if (type === 'sidenote')
-    return `sidenote: { text: ${fPos(s.text)}, motif: ${fPos(s.motif!)} }`
-  return `${type}: { text: ${fPos(s.text)}, motifRow: { centerX: ${fp(s.motifRow!.x)}, y: ${fp(s.motifRow!.y)} } }`
+    return `sidenote: { text: ${fPos(s.text!)}, motif: ${fPos(s.motif!)} }`
+  if (type === 'side-motif' || type === 'classic-motif')
+    return `${key}: { motif: ${fPos(s.motif!)} }`
+  return `${key}: { text: ${fPos(s.text!)}, motifRow: { centerX: ${fp(s.motifRow!.x)}, y: ${fp(s.motifRow!.y)} } }`
 }
 
 function buildAllSnippet(layouts: LayoutMap, motifMap: MotifMap): string {
   const lines: string[] = []
   for (const p of PRESETS) {
-    const pl = layouts[p.name]
-    const mi = motifMap[p.name] ?? 1.0
+    const pl   = layouts[p.name]
+    const mi   = motifMap[p.name] ?? 1.0
+    const types = getLayoutTypes(p.name)
     lines.push(`  '${p.name}': {`)
     if (mi !== 1.0) lines.push(`    motifInches: ${fp(mi)},`)
-    for (const t of LAYOUT_TYPES) {
+    for (const t of types) {
       const s = pl?.[t]
       if (s) lines.push(`    ${buildSnippet(s, t)},`)
     }
@@ -90,8 +107,9 @@ function buildAllSnippet(layouts: LayoutMap, motifMap: MotifMap): string {
 // ── Seeded positions (keep in sync with fixed-layouts.ts) ─────────────────────
 
 const SEEDED_MOTIF_INCHES: Record<string, number> = {
-  'Grand Tote':      1.5,
-  'Signature Tote':  1.25,
+  'Grand Tote':     1.5,
+  'Signature Tote': 1.25,
+  'Waffle Pouch':   0.75,
 }
 
 const SEEDED_LAYOUTS: Record<string, Partial<Record<LayoutType, LayoutState>>> = {
@@ -116,6 +134,30 @@ const SEEDED_LAYOUTS: Record<string, Partial<Record<LayoutType, LayoutState>>> =
     crown:     { text: { x: 0.53, y: 0.24 }, motifRow: { x: 0.53, y: 0.12 } },
     pedestal:  { text: { x: 0.52, y: 0.11 }, motifRow: { x: 0.52, y: 0.24 } },
   },
+  'Waffle Pouch': {
+    classic:   { text: { x: 0.50, y: 0.50 } },
+    statement: { text: { x: 0.50, y: 0.50 } },
+    sidenote:  { text: { x: 0.52, y: 0.50 }, motif:    { x: 0.87, y: 0.82 } },
+    crown:     { text: { x: 0.52, y: 0.60 }, motifRow: { x: 0.52, y: 0.33 } },
+    pedestal:  { text: { x: 0.51, y: 0.34 }, motifRow: { x: 0.52, y: 0.62 } },
+  },
+  'Grand Waffle Pouch': {
+    classic:   { text: { x: 0.50, y: 0.50 } },
+    statement: { text: { x: 0.50, y: 0.50 } },
+    sidenote:  { text: { x: 0.51, y: 0.48 }, motif:    { x: 0.90, y: 0.84 } },
+    crown:     { text: { x: 0.51, y: 0.58 }, motifRow: { x: 0.51, y: 0.34 } },
+    pedestal:  { text: { x: 0.52, y: 0.37 }, motifRow: { x: 0.52, y: 0.60 } },
+  },
+  'Linen Cocktail Napkin': {
+    classic:          { text: { x: 0.50, y: 0.50 } },
+    statement:        { text: { x: 0.50, y: 0.50 } },
+    sidenote:         { text: { x: 0.35, y: 0.50 }, motif: { x: 0.75, y: 0.50 } },
+    crown:            { text: { x: 0.50, y: 0.20 }, motifRow: { x: 0.50, y: 0.80 } },
+    pedestal:         { text: { x: 0.50, y: 0.80 }, motifRow: { x: 0.50, y: 0.20 } },
+    'side-font':      { text: { x: 0.92, y: 0.92 } },
+    'side-motif':     { motif: { x: 0.88, y: 0.87 } },
+    'classic-motif':  { motif: { x: 0.52, y: 0.50 } },
+  },
 }
 
 // ── Init ───────────────────────────────────────────────────────────────────────
@@ -125,7 +167,10 @@ function initLayouts(): LayoutMap {
     PRESETS.map(p => [
       p.name,
       Object.fromEntries(
-        LAYOUT_TYPES.map(t => [t, SEEDED_LAYOUTS[p.name]?.[t] ?? JSON.parse(JSON.stringify(DEFAULTS[t]))])
+        getLayoutTypes(p.name).map(t => [
+          t,
+          SEEDED_LAYOUTS[p.name]?.[t] ?? JSON.parse(JSON.stringify(DEFAULTS[t])),
+        ])
       ),
     ])
   )
@@ -140,14 +185,27 @@ export default function FixedLayoutConfigurator() {
   const [motifMap,     setMotifMap]     = useState<MotifMap>(() =>
     Object.fromEntries(PRESETS.map(p => [p.name, SEEDED_MOTIF_INCHES[p.name] ?? 1.0]))
   )
-  const [copied,       setCopied]       = useState(false)
-  const [copiedAll,    setCopiedAll]    = useState(false)
+  const [copied,    setCopied]    = useState(false)
+  const [copiedAll, setCopiedAll] = useState(false)
 
   const canvasRef   = useRef<HTMLDivElement>(null)
   const draggingRef = useRef<'text' | 'motif' | 'motifRow' | null>(null)
 
+  const availableTypes = getLayoutTypes(activePreset.name)
+
+  // When product changes, clamp layoutType to the available set
+  const handlePresetChange = (name: string) => {
+    const preset = PRESETS.find(p => p.name === name)!
+    setActivePreset(preset)
+    if (!getLayoutTypes(preset.name).includes(layoutType)) setLayoutType('classic')
+  }
+
   const current: LayoutState =
     layouts[activePreset.name]?.[layoutType] ?? JSON.parse(JSON.stringify(DEFAULTS[layoutType]))
+
+  const isMotifOnly = layoutType === 'side-motif' || layoutType === 'classic-motif'
+  const hasMotif    = layoutType === 'sidenote' || isMotifOnly
+  const hasMotifRow = layoutType === 'crown' || layoutType === 'pedestal'
 
   const updatePos = useCallback((handle: 'text' | 'motif' | 'motifRow', pos: Pos) => {
     setLayouts(prev => {
@@ -178,15 +236,15 @@ export default function FixedLayoutConfigurator() {
 
   const stopDrag = useCallback(() => { draggingRef.current = null }, [])
 
-  const textCanvasPos     = szToCanvas(current.text, activePreset)
-  const motifCanvasPos    = current.motif    ? szToCanvas(current.motif,    activePreset) : null
+  const textCanvasPos     = current.text    ? szToCanvas(current.text,    activePreset) : null
+  const motifCanvasPos    = current.motif   ? szToCanvas(current.motif,   activePreset) : null
   const motifRowCanvasPos = current.motifRow ? szToCanvas(current.motifRow, activePreset) : null
 
-  const motifInches   = motifMap[activePreset.name] ?? 1.0
-  const ppi           = activePreset.widthRatio / activePreset.physicalWidthInches  // safe-zone fraction per physical inch
-  const motifSizePct  = motifInches * ppi * 100 * 0.5                              // 50% of physical size for readability
-  const textSizePct   = 1.0         * ppi * 100 * 0.5                              // S size (1") at 50% scale
-  const szGap         = MOTIF_GAP_MULTIPLIER * (motifInches / activePreset.physicalWidthInches)
+  const motifInches  = motifMap[activePreset.name] ?? 1.0
+  const ppi          = activePreset.widthRatio / activePreset.physicalWidthInches
+  const motifSizePct = motifInches * ppi * 100 * 0.5
+  const textSizePct  = 1.0         * ppi * 100 * 0.5
+  const szGap        = MOTIF_GAP_MULTIPLIER * (motifInches / activePreset.physicalWidthInches)
 
   const snippet    = buildSnippet(current, layoutType)
   const allSnippet = buildAllSnippet(layouts, motifMap)
@@ -216,7 +274,7 @@ export default function FixedLayoutConfigurator() {
           <div>
             <label style={labelStyle}>Product</label>
             <select style={selectStyle} value={activePreset.name}
-              onChange={e => setActivePreset(PRESETS.find(p => p.name === e.target.value)!)}>
+              onChange={e => handlePresetChange(e.target.value)}>
               {PRESETS.map(p => <option key={p.name}>{p.name}</option>)}
             </select>
           </div>
@@ -224,7 +282,7 @@ export default function FixedLayoutConfigurator() {
           <div>
             <label style={labelStyle}>Layout Type</label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-              {LAYOUT_TYPES.map(t => (
+              {availableTypes.map(t => (
                 <button key={t} onClick={() => setLayoutType(t)} style={{
                   padding: '0.45rem 0.75rem', borderRadius: '0.5rem', border: '1px solid',
                   textAlign: 'left', cursor: 'pointer',
@@ -242,7 +300,7 @@ export default function FixedLayoutConfigurator() {
           </div>
 
           {/* Motif size */}
-          {(layoutType === 'sidenote' || layoutType === 'crown' || layoutType === 'pedestal') && (
+          {(layoutType === 'sidenote' || layoutType === 'crown' || layoutType === 'pedestal' || isMotifOnly) && (
             <div>
               <label style={labelStyle}>Motif size (inches)</label>
               <input
@@ -256,11 +314,10 @@ export default function FixedLayoutConfigurator() {
 
           {/* Legend */}
           <div style={{ fontSize: '0.75rem', color: '#64748b', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-            <Dot color="#7594B4" label="Text — drag handle · dashed circle = S-size height" />
-            {layoutType === 'sidenote' && <Dot color="#10b981" label="Motif — drag handle · dashed circle = physical motif size" />}
-            {(layoutType === 'crown' || layoutType === 'pedestal') && (
-              <Dot color="#10b981" label="Motif row center — drag · circles = auto-spaced at physical size" />
-            )}
+            {!isMotifOnly && layoutType !== 'side-font' && <Dot color="#7594B4" label="Text — drag handle · dashed circle = S-size height" />}
+            {layoutType === 'side-font' && <Dot color="#7594B4" label={`Text right anchor — text right-aligns to handle, max ${MAX_TEXT_WIDTH_INCHES}″ wide growing left`} />}
+            {(hasMotif || isMotifOnly) && <Dot color="#10b981" label="Motif — drag handle · dashed circle = physical motif size" />}
+            {hasMotifRow && <Dot color="#10b981" label="Motif row center — drag · circles = auto-spaced at physical size" />}
           </div>
 
           {/* Snippet */}
@@ -313,19 +370,48 @@ export default function FixedLayoutConfigurator() {
               pointerEvents: 'none',
             }} />
 
-            {/* Ghost text circle (all layouts) */}
-            {(() => {
-              const cp = szToCanvas(current.text, activePreset)
+            {/* Ghost text indicator */}
+            {!isMotifOnly && textCanvasPos && current.text && layoutType !== 'side-font' && (
+              <div style={{
+                position: 'absolute',
+                left: `${textCanvasPos.left}%`, top: `${textCanvasPos.top}%`,
+                transform: 'translate(-50%, -50%)',
+                width: `${textSizePct}%`, aspectRatio: '1',
+                borderRadius: '50%',
+                border: '2px dashed rgba(117,148,180,0.55)',
+                pointerEvents: 'none',
+              }} />
+            )}
+
+            {/* Right-anchored max-width box (side-font) */}
+            {layoutType === 'side-font' && textCanvasPos && current.text && (() => {
+              const maxFractionSZ = MAX_TEXT_WIDTH_INCHES / activePreset.physicalWidthInches
+              const leftSZ        = current.text.x - maxFractionSZ
+              const leftCanvas    = szToCanvas({ x: leftSZ, y: current.text.y }, activePreset)
+              const boxWidthPct   = textCanvasPos.left - leftCanvas.left
+              const boxHeightPct  = textSizePct
               return (
-                <div style={{
-                  position: 'absolute',
-                  left: `${cp.left}%`, top: `${cp.top}%`,
-                  transform: 'translate(-50%, -50%)',
-                  width: `${textSizePct}%`, aspectRatio: '1',
-                  borderRadius: '50%',
-                  border: '2px dashed rgba(117,148,180,0.55)',
-                  pointerEvents: 'none',
-                }} />
+                <>
+                  {/* 5-inch box extending leftward from the right anchor */}
+                  <div style={{
+                    position: 'absolute',
+                    left: `${leftCanvas.left}%`, top: `${textCanvasPos.top}%`,
+                    transform: 'translate(0, -50%)',
+                    width: `${boxWidthPct}%`, height: `${boxHeightPct}%`,
+                    border: '2px dashed rgba(117,148,180,0.55)',
+                    background: 'rgba(117,148,180,0.04)',
+                    pointerEvents: 'none',
+                  }} />
+                  {/* Right-anchor tick — solid line at the handle position */}
+                  <div style={{
+                    position: 'absolute',
+                    left: `${textCanvasPos.left}%`, top: `${textCanvasPos.top}%`,
+                    transform: 'translate(-50%, -50%)',
+                    width: 3, height: `${boxHeightPct * 1.4}%`,
+                    background: '#7594B4',
+                    pointerEvents: 'none',
+                  }} />
+                </>
               )
             })()}
 
@@ -349,25 +435,25 @@ export default function FixedLayoutConfigurator() {
                 )
               })
             })()}
-            {/* Ghost motif circle (sidenote) */}
-            {current.motif && (() => {
-              const canvasPos = szToCanvas(current.motif, activePreset)
-              return (
-                <div style={{
-                  position: 'absolute',
-                  left: `${canvasPos.left}%`, top: `${canvasPos.top}%`,
-                  transform: 'translate(-50%, -50%)',
-                  width: `${motifSizePct}%`, aspectRatio: '1',
-                  borderRadius: '50%',
-                  border: '2px dashed rgba(16,185,129,0.55)',
-                  pointerEvents: 'none',
-                }} />
-              )
-            })()}
+
+            {/* Ghost motif circle (sidenote / side-motif / classic-motif) */}
+            {current.motif && motifCanvasPos && (
+              <div style={{
+                position: 'absolute',
+                left: `${motifCanvasPos.left}%`, top: `${motifCanvasPos.top}%`,
+                transform: 'translate(-50%, -50%)',
+                width: `${motifSizePct}%`, aspectRatio: '1',
+                borderRadius: '50%',
+                border: '2px dashed rgba(16,185,129,0.55)',
+                pointerEvents: 'none',
+              }} />
+            )}
 
             {/* Handles */}
-            <DragHandle label="T" color="#7594B4" pos={textCanvasPos}
-              onDown={() => { draggingRef.current = 'text' }} />
+            {!isMotifOnly && textCanvasPos && (
+              <DragHandle label="T" color="#7594B4" pos={textCanvasPos}
+                onDown={() => { draggingRef.current = 'text' }} />
+            )}
             {motifCanvasPos && (
               <DragHandle label="M" color="#10b981" pos={motifCanvasPos}
                 onDown={() => { draggingRef.current = 'motif' }} />

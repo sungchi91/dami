@@ -11,6 +11,7 @@ import {
   getMotifInches,
   isRowLayout,
   isSidenoteLayout,
+  isSideMotifLayout,
   calcMotifRowPositions,
   type FixedLayoutType,
 } from '@/config/fixed-layouts'
@@ -27,7 +28,6 @@ const FONT_MAP: Record<string, string> = {
   'garamond':    'Garamond, Georgia, serif',
 }
 
-const PHYSICAL_HEIGHT_INCHES: Record<TextSize, number> = { S: 1, M: 1.5, L: 2 }
 const DEFAULT_MOTIF_INCHES = 1.0
 const MOTIF_ID_KEY           = '__motifId'
 const BRAND_BLUE             = '#7594B4'
@@ -51,12 +51,74 @@ export interface FixedCanvasEditorProps {
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
+const FONT_SCALE_MULTIPLIERS: Record<string, number> = {
+  'edwardian':   1.2,
+  'chateauneuf': 1.2,
+  'ballantines': 1.4,
+}
+
 function physicalScale(
-  obj: FabricText, textSize: TextSize, szPixelWidth: number, physicalWidthInches: number,
+  obj: FabricText, textSize: TextSize, fontStyle: string, szPixelWidth: number, physicalWidthInches: number,
 ): number {
-  const ppi      = computePPI(szPixelWidth, physicalWidthInches)
-  const targetPx = PHYSICAL_HEIGHT_INCHES[textSize] * ppi
+  const ppi        = computePPI(szPixelWidth, physicalWidthInches)
+  const multiplier = (FONT_SCALE_MULTIPLIERS[fontStyle] ?? 1) * 1.7
+  const targetPx   = textSize * multiplier * ppi
   return targetPx / (obj.height ?? 1)
+}
+
+/**
+ * Position the text and apply a fixed-anchor max-width clip in one step.
+ *
+ * For centered text: the clip is a fixed box centered on (anchorX, anchorY)
+ * with width = maxTextWidth. When rendered text exceeds maxWidth, the text is
+ * shifted rightward by half the overflow so its left edge lands at the box's
+ * left bound — short text stays visually centered, long text gets cropped
+ * only from the right.
+ *
+ * For right-anchored text (side-font): the clip's right edge sits at anchorX
+ * and extends leftward by maxWidth.
+ *
+ * The clip is padded by SIDE_BEARING_RATIO * fontSize on each side to keep
+ * cursive/italic glyphs (whose strokes extend beyond the geometric bounding
+ * box) from being clipped at the edges.
+ */
+const SIDE_BEARING_RATIO = 0.18
+
+function positionAndClip(
+  obj: FabricText, scale: number, anchorX: number, anchorY: number,
+  szPixelWidth: number, physicalWidth: number, maxTextWidth: number,
+  align: 'center' | 'right' = 'center',
+) {
+  const ppi         = computePPI(szPixelWidth, physicalWidth)
+  const maxWidthPx  = maxTextWidth * ppi
+  const tallPx      = (obj.height ?? 100) * scale * 3
+  const sideBearing = (obj.fontSize ?? 22) * scale * SIDE_BEARING_RATIO
+
+  if (align === 'right') {
+    obj.set({ left: anchorX, top: anchorY })
+    obj.clipPath = new Rect({
+      left:    anchorX - maxWidthPx - sideBearing,
+      top:     anchorY - tallPx / 2,
+      width:   maxWidthPx + sideBearing * 2,
+      height:  tallPx,
+      originX: 'left',
+      originY: 'top',
+      absolutePositioned: true,
+    })
+  } else {
+    const renderedW = (obj.width ?? 0) * scale
+    const xShift    = renderedW > maxWidthPx ? (renderedW - maxWidthPx) / 2 : 0
+    obj.set({ left: anchorX + xShift, top: anchorY })
+    obj.clipPath = new Rect({
+      left:    anchorX - maxWidthPx / 2 - sideBearing,
+      top:     anchorY - tallPx / 2,
+      width:   maxWidthPx + sideBearing * 2,
+      height:  tallPx,
+      originX: 'left',
+      originY: 'top',
+      absolutePositioned: true,
+    })
+  }
 }
 
 async function applyBackground(
@@ -203,7 +265,9 @@ export function FixedCanvasEditor({
     const fc = fcRef.current
     if (!fc) return
 
-    if (!embroideryText.trim()) {
+    const isMotifOnly = customizerType === 'side-motif' || customizerType === 'classic-motif'
+
+    if (isMotifOnly || !embroideryText.trim()) {
       if (textRef.current) { fc.remove(textRef.current); textRef.current = null }
       fc.renderAll()
       return
@@ -220,23 +284,33 @@ export function FixedCanvasEditor({
     const fontSize    = Math.round(Math.max(22, sz.width * 0.085))
     const primaryFont = fontFamily.split(',')[0].trim()
 
+    const isSideFont = customizerType === 'side-font'
+    const originX:   'center' | 'right' = isSideFont ? 'right' : 'center'
+    const textAlign: 'center' | 'right' = isSideFont ? 'right' : 'center'
+    const clipAlign: 'center' | 'right' = isSideFont ? 'right' : 'center'
+
     ;(async () => {
       await document.fonts.load(`${fontSize}px "${primaryFont}"`)
       if (!fcRef.current) return
 
       if (textRef.current) {
-        textRef.current.set({ text: embroideryText, fill: textColor, fontFamily, left: absX, top: absY })
+        textRef.current.set({ text: embroideryText, fill: textColor, fontFamily, originX, textAlign })
+        const scale = physicalScale(textRef.current, textSize, fontStyle, sz.width, config.physicalWidth)
+        textRef.current.set({ scaleX: scale, scaleY: scale })
+        positionAndClip(textRef.current, scale, absX, absY, sz.width, config.physicalWidth, config.maxTextWidth, clipAlign)
         textRef.current.setCoords()
       } else {
         const t = new FabricText(embroideryText, {
           left: absX, top: absY,
-          originX: 'center', originY: 'center',
+          originX, originY: 'center',
+          textAlign,
           fontSize, fontFamily, fill: textColor,
           editable: false, selectable: false, evented: false,
           hasControls: false, hasBorders: false,
         })
-        const scale = physicalScale(t, textSize, sz.width, config.safeZonePhysicalWidthInches)
+        const scale = physicalScale(t, textSize, fontStyle, sz.width, config.physicalWidth)
         t.set({ scaleX: scale, scaleY: scale })
+        positionAndClip(t, scale, absX, absY, sz.width, config.physicalWidth, config.maxTextWidth, clipAlign)
         textRef.current = t
         fc.add(t)
       }
@@ -250,13 +324,20 @@ export function FixedCanvasEditor({
     const fc = fcRef.current
     const t  = textRef.current
     if (!fc || !t) return
-    const sz     = safeZoneRef.current
-    const config = PRODUCT_CONFIG[ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]]
-    const scale  = physicalScale(t, textSize, sz.width, config.safeZonePhysicalWidthInches)
+    const sz       = safeZoneRef.current
+    const itemName = ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]
+    const config   = PRODUCT_CONFIG[itemName]
+    const layout   = getFixedLayout(itemName, customizerType as FixedLayoutType)
+    const textPos  = (layout && 'text' in layout && layout.text) ? layout.text : { x: 0.5, y: 0.5 }
+    const absX     = sz.left + textPos.x * sz.width
+    const absY     = sz.top  + textPos.y * sz.height
+    const scale    = physicalScale(t, textSize, fontStyle, sz.width, config.physicalWidth)
+    const clipAlign: 'center' | 'right' = customizerType === 'side-font' ? 'right' : 'center'
     t.set({ scaleX: scale, scaleY: scale })
+    positionAndClip(t, scale, absX, absY, sz.width, config.physicalWidth, config.maxTextWidth, clipAlign)
     t.setCoords()
     fc.renderAll()
-  }, [textSize, selectedItem])
+  }, [textSize, selectedItem]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Motif sync (re-layout all on any change) ───────────────────────────────
   useEffect(() => {
@@ -280,10 +361,14 @@ export function FixedCanvasEditor({
       let absX: number, absY: number
 
       if (isRowLayout(layout)) {
-        const xs = calcMotifRowPositions(layout.motifRow.centerX, motifEntries.length, motifInches, config.safeZonePhysicalWidthInches)
+        const xs = calcMotifRowPositions(layout.motifRow.centerX, motifEntries.length, motifInches, config.physicalWidth)
         absX = sz.left + xs[index] * sz.width
         absY = sz.top  + layout.motifRow.y * sz.height
       } else if (isSidenoteLayout(layout)) {
+        if (index > 0) return
+        absX = sz.left + layout.motif.x * sz.width
+        absY = sz.top  + layout.motif.y * sz.height
+      } else if (isSideMotifLayout(layout)) {
         if (index > 0) return
         absX = sz.left + layout.motif.x * sz.width
         absY = sz.top  + layout.motif.y * sz.height
@@ -293,7 +378,7 @@ export function FixedCanvasEditor({
 
       const m = createMotifObj(
         entry.emoji, entry.id, absX, absY,
-        sz.width, config.safeZonePhysicalWidthInches, motifInches,
+        sz.width, config.physicalWidth, motifInches,
       )
       motifsMapRef.current.set(entry.id, m)
       fc.add(m)

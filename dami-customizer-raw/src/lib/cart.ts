@@ -19,7 +19,7 @@
 import { ITEM_TYPES, PRODUCT_CONFIG, resolveItemType } from '@/config/products'
 import {
   getFixedLayout, getMotifInches,
-  isRowLayout, isSidenoteLayout, calcMotifRowPositions,
+  isRowLayout, isSidenoteLayout, isSideMotifLayout, calcMotifRowPositions,
   type FixedLayoutType,
 } from '@/config/fixed-layouts'
 import type { TextPosition, TextSize, MotifEntry } from '@/hooks/useCustomizer'
@@ -35,8 +35,6 @@ const FONT_LABELS: Record<string, string> = {
   'garamond':    'Classic Serif',
 }
 
-const PHYSICAL_HEIGHT_INCHES: Record<TextSize, number> = { S: 1, M: 1.5, L: 2 }
-const SIZE_LABELS:            Record<TextSize, string> = { S: 'Small', M: 'Medium', L: 'Large' }
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -55,6 +53,8 @@ export interface CustomizerData {
   physical_height_inches:     number
   text_x_percent:             number
   text_y_percent:             number
+  text_align:                 'center' | 'right'
+  text_max_width_inches:      number
   motif_physical_size_inches: number
   motifs:                     MotifPayload[]
 }
@@ -106,25 +106,32 @@ export function buildCartPayload(params: {
   const layout  = isFixed ? getFixedLayout(itemName, customizerType as FixedLayoutType) : null
 
   if (isFixed && layout) {
-    // Fixed layout — positions come from the config, not from drag state
-    const textPos = toCanvasRelative(layout.text, selectedItem)
-    text_x = textPos.x
-    text_y = textPos.y
-
     motifPhysicalInches = getMotifInches(itemName)
-    const physW = config.safeZonePhysicalWidthInches
+    const physW = config.physicalWidth
 
-    if (isRowLayout(layout) && motifEntries.length > 0) {
-      const xs = calcMotifRowPositions(layout.motifRow.centerX, motifEntries.length, motifPhysicalInches, physW)
-      motifs = motifEntries.map((entry, i) => {
-        const { x, y } = toCanvasRelative({ x: xs[i], y: layout.motifRow.y }, selectedItem)
-        return { icon: entry.emoji, x_percent: x, y_percent: y }
-      })
-    } else if (isSidenoteLayout(layout) && motifEntries.length > 0) {
-      const { x, y } = toCanvasRelative(layout.motif, selectedItem)
-      motifs = [{ icon: motifEntries[0].emoji, x_percent: x, y_percent: y }]
+    if (isSideMotifLayout(layout)) {
+      // Motif-only — no text position
+      text_x = 0.5; text_y = 0.5
+      motifs = motifEntries.length > 0
+        ? [{ icon: motifEntries[0].emoji, ...(() => { const { x, y } = toCanvasRelative(layout.motif, selectedItem); return { x_percent: x, y_percent: y } })() }]
+        : []
     } else {
-      motifs = []
+      const textPos = toCanvasRelative(layout.text, selectedItem)
+      text_x = textPos.x
+      text_y = textPos.y
+
+      if (isRowLayout(layout) && motifEntries.length > 0) {
+        const xs = calcMotifRowPositions(layout.motifRow.centerX, motifEntries.length, motifPhysicalInches, physW)
+        motifs = motifEntries.map((entry, i) => {
+          const { x, y } = toCanvasRelative({ x: xs[i], y: layout.motifRow.y }, selectedItem)
+          return { icon: entry.emoji, x_percent: x, y_percent: y }
+        })
+      } else if (isSidenoteLayout(layout) && motifEntries.length > 0) {
+        const { x, y } = toCanvasRelative(layout.motif, selectedItem)
+        motifs = [{ icon: motifEntries[0].emoji, x_percent: x, y_percent: y }]
+      } else {
+        motifs = []
+      }
     }
   } else {
     // Freeform — positions come from drag state
@@ -138,16 +145,20 @@ export function buildCartPayload(params: {
     })
   }
 
+  const text_align: 'center' | 'right' = customizerType === 'side-font' ? 'right' : 'center'
+
   return {
     _customizer_data: {
       item_base:                  itemName,
       text:                       embroideryText,
       font:                       FONT_LABELS[fontStyle] ?? fontStyle,
       thread_color:               textColor,
-      size:                       SIZE_LABELS[textSize],
-      physical_height_inches:     PHYSICAL_HEIGHT_INCHES[textSize],
+      size:                       `${textSize.toFixed(2)} in`,
+      physical_height_inches:     textSize,
       text_x_percent:             text_x,
       text_y_percent:             text_y,
+      text_align,
+      text_max_width_inches:      config.maxTextWidth,
       motif_physical_size_inches: motifPhysicalInches,
       motifs,
     },
@@ -155,6 +166,10 @@ export function buildCartPayload(params: {
 }
 
 export async function submitToCart(variantId: number, payload: CartPayload): Promise<void> {
+  if (!variantId || variantId <= 0) {
+    throw new Error('No product variant selected. Please refresh the page and try again.')
+  }
+
   const d = payload._customizer_data
   const hasCustomization = d.text.length > 0 || d.motifs.length > 0
 

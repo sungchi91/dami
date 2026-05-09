@@ -6,7 +6,8 @@ export interface TextPosition {
   y: number
 }
 
-export type TextSize = 'S' | 'M' | 'L'
+/** Text size in embroidery inches (e.g. 0.5 = half inch). */
+export type TextSize = number
 
 export interface MotifEntry {
   id:       string
@@ -34,8 +35,8 @@ export interface CustomizerState {
 export function useCustomizer(): CustomizerState {
   const [embroideryText, setEmbroideryText] = useState('')
   const [textColor,      setTextColor]      = useState('#7594B4') // Ember Lane Blue
-  const [fontStyle,      setFontStyle]      = useState('edwardian')
-  const [textSize,       setTextSize]       = useState<TextSize>('M')
+  const [fontStyle,      setFontStyle]      = useState('ballantines')
+  const [textSize,       setTextSize]       = useState<TextSize>(0.5)
   const [textPosition,   setTextPosition]   = useState<TextPosition>({ x: 0.5, y: 0.5 })
   const [motifEntries,   setMotifEntries]   = useState<MotifEntry[]>([])
 

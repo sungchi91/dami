@@ -47,6 +47,18 @@ function getProductKey(title: string): string | null {
   return null
 }
 
+const CDN_PRODUCT_IMAGE: Record<string, string> = {
+  'napkin':      'https://cdn.shopify.com/s/files/1/0990/0326/9486/files/napkin_0.png?v=1777862163',
+  'grand waffle': 'https://cdn.shopify.com/s/files/1/0990/0326/9486/files/large_waffle_pouch_blank.png?v=1778311848',
+  'waffle':      'https://cdn.shopify.com/s/files/1/0990/0326/9486/files/small_waffle_pouch_blank.png?v=1778311848',
+}
+
+function getProductCanvasImage(title: string): string | null {
+  const t = title.toLowerCase()
+  const key = Object.keys(CDN_PRODUCT_IMAGE).find(k => t.includes(k))
+  return key ? CDN_PRODUCT_IMAGE[key] : null
+}
+
 function getCDNCanvasImage(productTitle: string, colorName: string): string | null {
   const productKey = getProductKey(productTitle)
   if (!productKey) return null
@@ -104,6 +116,7 @@ function readDataset() {
   return {
     selectedItem:  idx >= 0 ? idx : 0,
     variantId:     d.currentVariantId ? parseInt(d.currentVariantId, 10) : 0,
+    available:     d.available !== 'false',
     productPrice:  d.productPrice   ?? '',
     canvasImage:   d.canvasImage    ?? '',
     canvasBgColor: d.canvasBgColor  ?? '',
@@ -118,6 +131,8 @@ function readDataset() {
     feature1:      d['feature-1']   ?? '',
     feature2:      d['feature-2']   ?? '',
     feature3:      d['feature-3']   ?? '',
+    dimension:     d.dimension      ?? '',
+    care:          d.care           ?? '',
     colors: (() => {
 try {
         const parsed = JSON.parse(d.colors ?? '[]')
@@ -138,8 +153,8 @@ export default function CustomizerWidget() {
   const {
     selectedItem, variantId, productPrice, canvasImage,
     canvasBgColor, customizerType, maxMotifs, categoryLabel, tagline,
-    description, founderQuote, founderName, colors,
-    feature1, feature2, feature3,
+    description, founderQuote, founderName, colors, available,
+    feature1, feature2, feature3, dimension, care,
   } = shopifyData
 
   const {
@@ -158,8 +173,10 @@ export default function CustomizerWidget() {
   const [selectedColor,   setSelectedColor]   = useState(0)
 
   // Canvas prefers CDN mockup image, then variant image, then product cover
-  const activeCanvasImage  = colors[selectedColor]?.canvasImageUrl || colors[selectedColor]?.imageUrl || canvasImage || undefined
+  const productTitle       = ITEM_TYPES[selectedItem] ?? ''
+  const activeCanvasImage  = colors[selectedColor]?.canvasImageUrl || getProductCanvasImage(productTitle) || colors[selectedColor]?.imageUrl || canvasImage || undefined
   const activeVariantId    = colors[selectedColor]?.variantId ?? variantId
+  const activeAvailable    = colors[selectedColor]?.available ?? available
 
   const handleColorChange = useCallback((mediaId: string, imageUrl: string, colorIdx: number) => {
     setSelectedColor(colorIdx)
@@ -218,6 +235,7 @@ export default function CustomizerWidget() {
         textSize={textSize}
         setTextSize={setTextSize}
         variantId={activeVariantId}
+        available={activeAvailable}
         selectedItem={selectedItem}
         productPrice={productPrice}
         textPosition={textPosition}
@@ -236,6 +254,8 @@ export default function CustomizerWidget() {
         feature1={feature1}
         feature2={feature2}
         feature3={feature3}
+        dimension={dimension}
+        care={care}
         customizerType={customizerType}
       />
 

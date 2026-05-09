@@ -41,6 +41,7 @@
     endif
   -%}
   <div class="card-wrapper product-card-wrapper underline-links-hover">
+    {%- assign el_customizer_type = card_product.metafields.custom.customizer_type.value | default: card_product.metafields.custom.customizer_type -%}
     <div
       class="
         card card--{{ settings.card_style }}
@@ -51,8 +52,22 @@
         {% if card_product.featured_media == nil and settings.card_style == 'card' %} ratio{% endif %}
         {% if horizontal_class %} card--horizontal{% endif %}
       "
-      style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
+      style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%; position: relative;"
     >
+      {%- if el_customizer_type != blank -%}
+        <span
+          class="el-personalize-badge"
+          aria-label="Personalizable"
+          style="position:absolute;top:0.75rem;right:0.75rem;z-index:5;display:inline-flex;align-items:center;gap:0.35rem;padding:0.3rem 0.75rem;background:#fce8e4;border:1px solid #f5c6be;border-radius:999px;font-size:0.72rem;letter-spacing:0.03em;color:#6b3a34;pointer-events:none;white-space:nowrap;line-height:1;"
+        >
+          personalize
+          <svg width="15" height="15" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true" style="flex-shrink:0;">
+            <path d="M28 14h-2v-2a2 2 0 0 0-2-2h-8.17A6 6 0 0 0 4 12v2H2a1 1 0 0 0 0 2h2v2a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2v-2h2a1 1 0 0 0 0-2zM6 12a4 4 0 0 1 8 0v6H6zm10 6v-8h8v8z"/>
+            <circle cx="23" cy="22" r="2"/>
+            <path d="M4 24h16v2H4z"/>
+          </svg>
+        </span>
+      {%- endif -%}
       <div
         class="card__inner {% if settings.card_style == 'standard' %}color-{{ settings.card_color_scheme }} gradient{% endif %}{% if card_product.featured_media or settings.card_style == 'standard' %} ratio{% endif %}"
         style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
