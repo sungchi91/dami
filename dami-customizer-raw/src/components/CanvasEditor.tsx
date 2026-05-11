@@ -329,25 +329,27 @@ async function applyBackground(
   fc.renderAll()
 }
 
-/** Create a motif FabricText object for an emoji entry at absolute pixel coords. */
-function createMotifObject(
-  emoji:    string,
+/** Create a motif FabricImage object for a PNG URL at absolute pixel coords. */
+async function createMotifObject(
+  url:      string,
   id:       string,
   absX:     number,
   absY:     number,
   szWidth:  number,
   physicalWidthInches: number,
-): FabricText {
-  const ppi        = computePPI(szWidth, physicalWidthInches)
-  const targetPx   = MOTIF_PHYSICAL_INCHES * ppi
-  const base       = Math.round(szWidth * 0.18)
-  const m = new FabricText(emoji, {
+): Promise<FabricImage> {
+  const ppi      = computePPI(szWidth, physicalWidthInches)
+  const targetPx = MOTIF_PHYSICAL_INCHES * ppi
+  const m = await FabricImage.fromURL(url, { crossOrigin: 'anonymous' })
+  const naturalSize = Math.max(m.width ?? 1, m.height ?? 1)
+  const scale = targetPx / naturalSize
+  m.set({
     left:         absX,
     top:          absY,
     originX:      'center',
     originY:      'center',
-    fontSize:     base,
-    editable:     false,
+    scaleX:       scale,
+    scaleY:       scale,
     lockScalingX: true,
     lockScalingY: true,
     lockRotation: true,
@@ -358,8 +360,6 @@ function createMotifObject(
     hoverCursor:  'move',
     moveCursor:   'grabbing',
   })
-  const scale = targetPx / (m.height || base)
-  m.set({ scaleX: scale, scaleY: scale })
   ;(m as any)[MOTIF_ID_KEY] = id
   return m
 }
@@ -385,7 +385,7 @@ export function CanvasEditor({
   const textRef               = useRef<IText | null>(null)
   const safeZoneRef           = useRef<SafeZonePx>({ left: 0, top: 0, width: 0, height: 0 })
   const szObjectsRef          = useRef<FabricObject[]>([])
-  const motifsMapRef          = useRef<Map<string, FabricText>>(new Map())
+  const motifsMapRef          = useRef<Map<string, FabricImage>>(new Map())
   const prevSelectedItemRef   = useRef(selectedItem)
   const selectedItemRef       = useRef(selectedItem)
   const onChangeCb            = useRef(onPositionChange)
@@ -533,21 +533,22 @@ export function CanvasEditor({
     })
 
     // Add Fabric objects for entries that don't yet have one
-    for (const entry of motifEntries) {
-      if (motifsMapRef.current.has(entry.id)) continue
+    const newEntries = motifEntries.filter(e => !motifsMapRef.current.has(e.id))
+    if (newEntries.length === 0) { fc.renderAll(); return }
 
+    void Promise.all(newEntries.map(async entry => {
       const absX = sz.left + entry.position.x * sz.width
       const absY = sz.top  + entry.position.y * sz.height
-      const m    = createMotifObject(
-        entry.emoji, entry.id, absX, absY,
+      const m    = await createMotifObject(
+        entry.url, entry.id, absX, absY,
         sz.width, config.physicalWidth,
       )
+      if (!fcRef.current) return
       motifsMapRef.current.set(entry.id, m)
       fc.add(m)
       fc.bringObjectToFront(m)
-    }
-
-    fc.renderAll()
+      fc.renderAll()
+    }))
   }, [motifEntries, selectedItem])
 
   // ── Sync text content, color, and font ───────────────────────────────────

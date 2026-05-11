@@ -11,7 +11,8 @@ export type TextSize = number
 
 export interface MotifEntry {
   id:       string
-  emoji:    string
+  url:      string
+  label:    string
   position: TextPosition
 }
 
@@ -27,7 +28,7 @@ export interface CustomizerState {
   textPosition:          TextPosition
   onPositionChange:      (pos: TextPosition) => void
   motifEntries:          MotifEntry[]
-  addMotif:              (emoji: string) => void
+  addMotif:              (url: string, label: string) => void
   removeMotif:           (id: string) => void
   updateMotifPosition:   (id: string, pos: TextPosition) => void
 }
@@ -42,15 +43,14 @@ export function useCustomizer(): CustomizerState {
 
   const onPositionChange = useCallback((pos: TextPosition) => setTextPosition(pos), [])
 
-  const addMotif = useCallback((emoji: string) => {
+  const addMotif = useCallback((url: string, label: string) => {
     setMotifEntries(prev => {
       // Stagger each new motif diagonally so they're never invisibly stacked.
-      // step ≈ 0.035 safe-zone fractions ≈ 15px on a ~430px safe zone.
       const step   = 0.035
       const offset = prev.length * step
       const x = Math.min(0.85, Math.max(0.15, 0.5 + offset))
       const y = Math.min(0.85, Math.max(0.15, 0.5 + offset))
-      return [...prev, { id: crypto.randomUUID(), emoji, position: { x, y } }]
+      return [...prev, { id: crypto.randomUUID(), url, label, position: { x, y } }]
     })
   }, [])
 

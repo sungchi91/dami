@@ -38,7 +38,7 @@ export const PRODUCT_CONFIG: Record<ItemType, ProductConfig> = {
   'Grand Tote': {
     safeZone: { widthRatio: 0.80, heightRatio: 0.33, offsetX: -0.02, offsetY: 0.09 },
     physicalWidth: 25,
-    maxTextWidth:  5,
+    maxTextWidth:  6.75,
   },
 
   'Signature Tote': {
@@ -50,7 +50,7 @@ export const PRODUCT_CONFIG: Record<ItemType, ProductConfig> = {
   'Petite Tote': {
     safeZone: { widthRatio: 0.62, heightRatio: 0.37, offsetX: -0.01, offsetY: 0.10 },
     physicalWidth: 13.5,
-    maxTextWidth:  5,
+    maxTextWidth:  4,
   },
 
   'Petite Crossbody': {
@@ -62,25 +62,25 @@ export const PRODUCT_CONFIG: Record<ItemType, ProductConfig> = {
   'Waffle Pouch': {
     safeZone: { widthRatio: 0.85, heightRatio: 0.33, offsetX: -0.01, offsetY: 0.01 },
     physicalWidth: 7.9,
-    maxTextWidth:  5,
+    maxTextWidth:  6,
   },
 
   'Grand Waffle Pouch': {
     safeZone: { widthRatio: 0.84, heightRatio: 0.47, offsetX: -0.01, offsetY: 0.01 },
     physicalWidth: 9,
-    maxTextWidth:  5,
+    maxTextWidth:  7,
   },
 
   'Seersucker Pouch': {
     safeZone: { widthRatio: 0.60, heightRatio: 0.26, offsetX: 0.04, offsetY: 0.13 },
     physicalWidth: 11,
-    maxTextWidth:  5,
+    maxTextWidth:  7,
   },
 
   'Linen Cocktail Napkin': {
     safeZone: { widthRatio: 0.53, heightRatio: 0.45, offsetX: 0.00, offsetY: -0.01 },
     physicalWidth: 6,
-    maxTextWidth:  5,
+    maxTextWidth:  4,
   },
 
   'The Oxford': {

@@ -5,11 +5,13 @@ type ConfigMap = Record<string, Preset>
 
 function isModified(current: Preset, original: Preset) {
   return (
-    current.widthRatio        !== original.widthRatio  ||
-    current.heightRatio       !== original.heightRatio ||
-    current.offsetX           !== original.offsetX     ||
-    current.offsetY           !== original.offsetY     ||
-    current.physicalWidthInches !== original.physicalWidthInches
+    current.widthRatio          !== original.widthRatio          ||
+    current.heightRatio         !== original.heightRatio         ||
+    current.offsetX             !== original.offsetX             ||
+    current.offsetY             !== original.offsetY             ||
+    current.physicalWidthInches !== original.physicalWidthInches ||
+    current.maxTextWidthInches  !== original.maxTextWidthInches  ||
+    current.motifSizeInches     !== original.motifSizeInches
   )
 }
 
@@ -50,18 +52,22 @@ export default function SafeZoneConfigurator() {
   offsetX:     ${config.offsetX.toFixed(2)},
   offsetY:     ${config.offsetY.toFixed(2)},
 },
-safeZonePhysicalWidthInches: ${config.physicalWidthInches},`
+physicalWidth: ${config.physicalWidthInches},
+maxTextWidth:  ${config.maxTextWidthInches},
+motifInches:   ${config.motifSizeInches},`
 
   const allJson = JSON.stringify(
     Object.fromEntries(
       PRESETS.map(p => {
         const c = configs[p.name]
         return [p.name, {
-          widthRatio:          c.widthRatio,
-          heightRatio:         c.heightRatio,
-          offsetX:             c.offsetX,
-          offsetY:             c.offsetY,
+          widthRatio:         c.widthRatio,
+          heightRatio:        c.heightRatio,
+          offsetX:            c.offsetX,
+          offsetY:            c.offsetY,
           physicalWidthInches: c.physicalWidthInches,
+          maxTextWidthInches:  c.maxTextWidthInches,
+          motifSizeInches:     c.motifSizeInches,
         }]
       })
     ),
@@ -136,6 +142,36 @@ safeZonePhysicalWidthInches: ${config.physicalWidthInches},`
               name="physicalWidthInches"
               value={config.physicalWidthInches}
               min={0.5} max={40} step={0.25}
+              onChange={handleSliderChange}
+              style={{ width: '100%', padding: '0.5rem 0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem', fontSize: '0.875rem', fontFamily: 'monospace', boxSizing: 'border-box' }}
+            />
+          </div>
+
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.35rem' }}>
+              <label style={labelStyle}>Max Text Width (inches)</label>
+              <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>caps embroidery text width</span>
+            </div>
+            <input
+              type="number"
+              name="maxTextWidthInches"
+              value={config.maxTextWidthInches}
+              min={0.5} max={20} step={0.25}
+              onChange={handleSliderChange}
+              style={{ width: '100%', padding: '0.5rem 0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem', fontSize: '0.875rem', fontFamily: 'monospace', boxSizing: 'border-box' }}
+            />
+          </div>
+
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.35rem' }}>
+              <label style={labelStyle}>Motif Size (inches)</label>
+              <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>physical embroidery motif size</span>
+            </div>
+            <input
+              type="number"
+              name="motifSizeInches"
+              value={config.motifSizeInches}
+              min={0.25} max={10} step={0.25}
               onChange={handleSliderChange}
               style={{ width: '100%', padding: '0.5rem 0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem', fontSize: '0.875rem', fontFamily: 'monospace', boxSizing: 'border-box' }}
             />

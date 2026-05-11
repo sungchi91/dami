@@ -164,21 +164,22 @@ function drawSafeZone(fc: Canvas, sz: SafeZonePx, w: number, h: number): FabricT
   return [label]
 }
 
-function createMotifObj(
-  emoji: string, id: string, absX: number, absY: number,
+async function createMotifObj(
+  url: string, id: string, absX: number, absY: number,
   szWidth: number, physicalWidthInches: number, motifInches: number,
-): FabricText {
+): Promise<FabricImage> {
   const ppi      = computePPI(szWidth, physicalWidthInches)
   const targetPx = motifInches * ppi
-  const base     = Math.round(szWidth * 0.18)
-  const m = new FabricText(emoji, {
+  const m = await FabricImage.fromURL(url, { crossOrigin: 'anonymous' })
+  const naturalSize = Math.max(m.width ?? 1, m.height ?? 1)
+  const scale = targetPx / naturalSize
+  m.set({
     left: absX, top: absY,
     originX: 'center', originY: 'center',
-    fontSize: base,
-    editable: false, selectable: false, evented: false,
+    scaleX: scale, scaleY: scale,
+    selectable: false, evented: false,
     hasControls: false, hasBorders: false,
   })
-  m.set({ scaleX: targetPx / (m.height || base), scaleY: targetPx / (m.height || base) })
   ;(m as any)[MOTIF_ID_KEY] = id
   return m
 }
@@ -201,7 +202,7 @@ export function FixedCanvasEditor({
   const fcRef            = useRef<Canvas | null>(null)
   const textRef          = useRef<FabricText | null>(null)
   const safeZoneRef      = useRef<SafeZonePx>({ left: 0, top: 0, width: 0, height: 0 })
-  const motifsMapRef     = useRef<Map<string, FabricText>>(new Map())
+  const motifsMapRef     = useRef<Map<string, FabricImage>>(new Map())
   const canvasSizeRef    = useRef({ w: 400, h: 500 })
 
   // ── Mount ──────────────────────────────────────────────────────────────────
@@ -357,6 +358,7 @@ export function FixedCanvasEditor({
     const motifInches = getMotifInches(itemName) ?? DEFAULT_MOTIF_INCHES
     if (!layout) { fc.renderAll(); return }
 
+    const tasks: Promise<void>[] = []
     motifEntries.forEach((entry, index) => {
       let absX: number, absY: number
 
@@ -376,17 +378,22 @@ export function FixedCanvasEditor({
         return
       }
 
-      const m = createMotifObj(
-        entry.emoji, entry.id, absX, absY,
-        sz.width, config.physicalWidth, motifInches,
+      tasks.push(
+        createMotifObj(entry.url, entry.id, absX, absY, sz.width, config.physicalWidth, motifInches)
+          .then(m => {
+            if (!fcRef.current) return
+            motifsMapRef.current.set(entry.id, m)
+            fc.add(m)
+            fc.bringObjectToFront(m)
+          })
       )
-      motifsMapRef.current.set(entry.id, m)
-      fc.add(m)
-      fc.bringObjectToFront(m)
     })
 
-    if (textRef.current) fc.bringObjectToFront(textRef.current)
-    fc.renderAll()
+    void Promise.all(tasks).then(() => {
+      if (!fcRef.current) return
+      if (textRef.current) fc.bringObjectToFront(textRef.current)
+      fc.renderAll()
+    })
   }, [motifEntries, selectedItem, customizerType]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

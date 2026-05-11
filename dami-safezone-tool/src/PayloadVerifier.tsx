@@ -33,7 +33,7 @@ interface CustomizerData {
   text_align?:                'center' | 'right'
   text_max_width_inches?:     number
   motif_physical_size_inches: number
-  motifs: { icon: string; x_percent: number; y_percent: number }[]
+  motifs: { icon: string; url?: string; x_percent: number; y_percent: number }[]
 }
 
 function computeSafeZonePx(w: number, h: number, p: { widthRatio: number; heightRatio: number; offsetX: number; offsetY: number }) {
@@ -136,16 +136,27 @@ export default function PayloadVerifier() {
     if (data.motifs?.length > 0 && data.motif_physical_size_inches > 0) {
       const motifPPI      = computePPI(sz.width, preset.physicalWidthInches)
       const motifTargetPx = data.motif_physical_size_inches * motifPPI
-      const motifBase     = Math.round(MINI_W * 0.18)
       for (const motif of data.motifs) {
-        const mx  = motif.x_percent * MINI_W
-        const my  = motif.y_percent * MINI_H
-        const obj = new FabricText(motif.icon, {
-          left: mx, top: my, originX: 'center', originY: 'center',
-          fontSize: motifBase, selectable: false, evented: false,
-        })
-        obj.set({ scaleX: motifTargetPx / (obj.height || motifBase), scaleY: motifTargetPx / (obj.height || motifBase) })
-        fc.add(obj)
+        const mx = motif.x_percent * MINI_W
+        const my = motif.y_percent * MINI_H
+        if (motif.url) {
+          const img = await FabricImage.fromURL(motif.url, { crossOrigin: 'anonymous' })
+          const naturalSize = Math.max(img.width ?? 1, img.height ?? 1)
+          img.set({
+            left: mx, top: my, originX: 'center', originY: 'center',
+            scaleX: motifTargetPx / naturalSize, scaleY: motifTargetPx / naturalSize,
+            selectable: false, evented: false,
+          })
+          fc.add(img)
+        } else {
+          const motifBase = Math.round(MINI_W * 0.18)
+          const obj = new FabricText(motif.icon, {
+            left: mx, top: my, originX: 'center', originY: 'center',
+            fontSize: motifBase, selectable: false, evented: false,
+          })
+          obj.set({ scaleX: motifTargetPx / (obj.height || motifBase), scaleY: motifTargetPx / (obj.height || motifBase) })
+          fc.add(obj)
+        }
       }
     }
 

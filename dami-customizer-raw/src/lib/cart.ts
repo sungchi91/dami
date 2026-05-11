@@ -35,11 +35,40 @@ const FONT_LABELS: Record<string, string> = {
   'garamond':    'Classic Serif',
 }
 
+const THREAD_COLOR_NAMES: Record<string, string> = {
+  '#7594B4': 'Ember Lane Blue',
+  '#223A59': 'Deep Navy',
+  '#BBD0E3': 'Pale Sky',
+  '#96A1C6': 'Periwinkle',
+  '#4B5B75': 'French Indigo',
+  '#C43634': 'Thread Red',
+  '#D84836': 'Tomato Red',
+  '#9A2A2B': 'Deep Crimson',
+  '#C68798': 'Dusty Rose',
+  '#DFB1BE': 'Petal Pink',
+  '#3E7756': 'Clover Green',
+  '#85A384': 'Sage Leaf',
+  '#214D32': 'Forest Pine',
+  '#DBAD53': 'Golden Sun',
+  '#EBCDA3': 'Pale Butter',
+  '#C46D42': 'Terracotta',
+  '#87634B': 'Vintage Wood',
+  '#2C3338': 'Soft Ink',
+  '#1A1A1A': 'True Black',
+  '#FAF8F5': 'Linen White',
+  '#FFFFFF': 'Crisp White',
+  '#E1DCD3': 'Canvas Stone',
+  '#C8AD92': 'Warm Sand',
+  '#A6A9A7': 'Silver Shell',
+  '#D1D5D6': 'Dove Gray',
+}
+
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface MotifPayload {
   icon:      string
+  url:       string
   x_percent: number
   y_percent: number
 }
@@ -113,7 +142,7 @@ export function buildCartPayload(params: {
       // Motif-only — no text position
       text_x = 0.5; text_y = 0.5
       motifs = motifEntries.length > 0
-        ? [{ icon: motifEntries[0].emoji, ...(() => { const { x, y } = toCanvasRelative(layout.motif, selectedItem); return { x_percent: x, y_percent: y } })() }]
+        ? [{ icon: motifEntries[0].label, url: motifEntries[0].url, ...(() => { const { x, y } = toCanvasRelative(layout.motif, selectedItem); return { x_percent: x, y_percent: y } })() }]
         : []
     } else {
       const textPos = toCanvasRelative(layout.text, selectedItem)
@@ -124,11 +153,11 @@ export function buildCartPayload(params: {
         const xs = calcMotifRowPositions(layout.motifRow.centerX, motifEntries.length, motifPhysicalInches, physW)
         motifs = motifEntries.map((entry, i) => {
           const { x, y } = toCanvasRelative({ x: xs[i], y: layout.motifRow.y }, selectedItem)
-          return { icon: entry.emoji, x_percent: x, y_percent: y }
+          return { icon: entry.label, url: entry.url, x_percent: x, y_percent: y }
         })
       } else if (isSidenoteLayout(layout) && motifEntries.length > 0) {
         const { x, y } = toCanvasRelative(layout.motif, selectedItem)
-        motifs = [{ icon: motifEntries[0].emoji, x_percent: x, y_percent: y }]
+        motifs = [{ icon: motifEntries[0].label, url: motifEntries[0].url, x_percent: x, y_percent: y }]
       } else {
         motifs = []
       }
@@ -141,7 +170,7 @@ export function buildCartPayload(params: {
     motifPhysicalInches = motifEntries.length > 0 ? getMotifInches(itemName) : 0
     motifs = motifEntries.map(entry => {
       const { x, y } = toCanvasRelative(entry.position, selectedItem)
-      return { icon: entry.emoji, x_percent: x, y_percent: y }
+      return { icon: entry.label, url: entry.url, x_percent: x, y_percent: y }
     })
   }
 
@@ -152,7 +181,7 @@ export function buildCartPayload(params: {
       item_base:                  itemName,
       text:                       embroideryText,
       font:                       FONT_LABELS[fontStyle] ?? fontStyle,
-      thread_color:               textColor,
+      thread_color:               THREAD_COLOR_NAMES[textColor] ?? textColor,
       size:                       `${textSize.toFixed(2)} in`,
       physical_height_inches:     textSize,
       text_x_percent:             text_x,
@@ -165,7 +194,7 @@ export function buildCartPayload(params: {
   }
 }
 
-export async function submitToCart(variantId: number, payload: CartPayload): Promise<void> {
+export async function submitToCart(variantId: number, payload: CartPayload, quantity = 1, customizerType = ''): Promise<void> {
   if (!variantId || variantId <= 0) {
     throw new Error('No product variant selected. Please refresh the page and try again.')
   }
@@ -173,14 +202,15 @@ export async function submitToCart(variantId: number, payload: CartPayload): Pro
   const d = payload._customizer_data
   const hasCustomization = d.text.length > 0 || d.motifs.length > 0
 
-  const item: Record<string, unknown> = { id: variantId, quantity: 1 }
+  const motifOnly = customizerType === 'side-motif' || customizerType === 'classic-motif'
+
+  const item: Record<string, unknown> = { id: variantId, quantity }
   if (hasCustomization) {
     item.properties = {
       '_Item':            d.item_base,
-      'Text':             d.text,
-      'Font':             d.font,
-      'Thread Color':     d.thread_color,
-      'Size':             d.size,
+      ...(d.text.length > 0 ? { 'Text': d.text }                              : {}),
+      ...(!motifOnly        ? { 'Font': d.font, 'Thread Color': d.thread_color } : {}),
+      '_Size':            d.size,
       ...(d.motifs.length > 0 ? { 'Motifs': d.motifs.map(m => m.icon).join('  ') } : {}),
       '_customizer_data': JSON.stringify(d),
     }

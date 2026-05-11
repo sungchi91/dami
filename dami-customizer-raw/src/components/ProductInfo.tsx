@@ -52,7 +52,10 @@ const FONT_SIZE_FLOOR: Record<string, number> = {
   'edwardian': 1,
 }
 
-const MOTIFS = ['🦞', '🍋', '🎀', '🌷', '🤎', '🍓']
+const MOTIFS: { label: string; url: string }[] = [
+  { label: 'flag', url: 'https://cdn.shopify.com/s/files/1/0990/0326/9486/files/flag.png?v=1778477180' },
+  { label: 'bow',  url: 'https://cdn.shopify.com/s/files/1/0990/0326/9486/files/bow.png?v=1778477603' },
+]
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
@@ -133,13 +136,14 @@ export function ProductInfo({
 }: ProductInfoProps) {
   const [isSubmitting,    setIsSubmitting]    = useState(false)
   const [exceededWarning, setExceededWarning] = useState(false)
+  const [quantity,        setQuantity]        = useState(1)
 
   const handleAddToBasket = async (e: React.MouseEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     try {
       const payload = buildCartPayload({ selectedItem, embroideryText, fontStyle, textColor, textSize, textPosition, motifEntries, customizerType })
-      await submitToCart(variantId, payload)
+      await submitToCart(variantId, payload, quantity, customizerType)
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error'
       console.error('Add to basket failed:', err)
@@ -162,7 +166,7 @@ export function ProductInfo({
   const motifCounts = useMemo(() => {
     const counts: Record<string, number> = {}
     for (const entry of motifEntries) {
-      counts[entry.emoji] = (counts[entry.emoji] ?? 0) + 1
+      counts[entry.url] = (counts[entry.url] ?? 0) + 1
     }
     return counts
   }, [motifEntries])
@@ -170,8 +174,8 @@ export function ProductInfo({
   const totalMotifs = motifEntries.length
   const atMax       = totalMotifs >= effectiveMaxMotifs
 
-  const handleRemoveLastOfEmoji = (emoji: string) => {
-    const last = [...motifEntries].reverse().find(e => e.emoji === emoji)
+  const handleRemoveLastOfUrl = (url: string) => {
+    const last = [...motifEntries].reverse().find(e => e.url === url)
     if (last) { onRemoveMotif(last.id); setExceededWarning(false) }
   }
 
@@ -247,6 +251,30 @@ export function ProductInfo({
               {feature3 && <div className="flex items-center gap-3 text-sm text-muted-foreground"><div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center shrink-0"><Gift className="w-4 h-4 text-primary" /></div><span>{feature3}</span></div>}
             </div>
           )}
+
+          <div className="flex flex-col gap-3 text-xs text-muted-foreground border-t border-border pt-4">
+            <div className="flex gap-3">
+              <span className="font-medium text-foreground shrink-0 w-32">Production Time</span>
+              <span>Ships within 5–7 business days.</span>
+            </div>
+            <div className="flex gap-3">
+              <span className="font-medium text-foreground shrink-0 w-32">Return</span>
+              <span>All items are made to order and final sale. No returns or exchanges.</span>
+            </div>
+            <div className="flex gap-3">
+              <span className="font-medium text-foreground shrink-0 w-32">Disclaimer</span>
+              <span className="leading-relaxed">
+                Mockups are approximate. Minor variations may occur in the final embroidered result.
+                <br /><br />
+                Font rendering varies by device and browser. The stitched result follows the font name and reference images shown in the Custom Font section.
+                <br /><br />
+                Thread color selections are final once the order is placed. Light thread colors on light backgrounds may result in low contrast, particularly on fine-line or detailed designs. For best visibility, choose a darker thread color.
+                {(ITEM_TYPES[selectedItem] ?? '').toLowerCase().includes('tote') && (
+                  <><br /><br />Embroidery placed on the front pocket will close the pocket opening.</>
+                )}
+              </span>
+            </div>
+          </div>
         </div>
       )}
 
@@ -264,7 +292,7 @@ export function ProductInfo({
           </button>
 
           {/* 01 · Thread */}
-          <div className="flex flex-col gap-3">
+          {!isMotifOnly && <div className="flex flex-col gap-3">
             <p className="flex items-center gap-2 text-sm font-medium text-foreground">
               <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">01</span>
               Choose a Thread
@@ -290,7 +318,7 @@ export function ProductInfo({
                 />
               ))}
             </div>
-          </div>
+          </div>}
 
           {/* 02 · Text */}
           {showTextStep && <div className="flex flex-col gap-3">
@@ -342,7 +370,6 @@ export function ProductInfo({
                   >
                     −
                   </button>
-                  <span className="flex-1 text-center text-sm text-muted-foreground">{textSize.toFixed(2)} in</span>
                   <button
                     onClick={() => setTextSize(Math.min(TEXT_SIZE_MAX, parseFloat((textSize + TEXT_SIZE_STEP).toFixed(2))))}
                     disabled={textSize >= TEXT_SIZE_MAX}
@@ -355,11 +382,11 @@ export function ProductInfo({
             </div>
           </div>}
 
-          {/* 04 · Motifs (hidden for classic / statement) */}
+          {/* Motifs */}
           {showMotifStep && (
           <div className="flex flex-col gap-3">
             <p className="flex items-center gap-2 text-sm font-medium text-foreground">
-              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">04</span>
+              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{isMotifOnly ? '01' : '04'}</span>
               Add Motifs
               <span className="text-xs text-muted-foreground font-normal">({totalMotifs}/{effectiveMaxMotifs})</span>
             </p>
@@ -371,26 +398,27 @@ export function ProductInfo({
             )}
 
             <div className="flex flex-wrap gap-3">
-              {MOTIFS.map((emoji) => {
-                const count = motifCounts[emoji] ?? 0
+              {MOTIFS.map((motif) => {
+                const count = motifCounts[motif.url] ?? 0
                 return (
-                  <div key={emoji} className="flex flex-col items-center gap-1.5">
+                  <div key={motif.url} className="flex flex-col items-center gap-1.5">
                     <button
-                      onClick={() => { if (!atMax) { onAddMotif(emoji); setExceededWarning(false) } else setExceededWarning(true) }}
-                      aria-label={`Add ${emoji}`}
-                      className={`w-11 h-11 text-xl border transition-all duration-200 ${
+                      onClick={() => { if (!atMax) { onAddMotif(motif.url, motif.label); setExceededWarning(false) } else setExceededWarning(true) }}
+                      aria-label={`Add ${motif.label}`}
+                      className={`w-16 h-16 border transition-all duration-200 flex items-center justify-center p-1 ${
                         count > 0 ? 'border-primary bg-primary/10' :
                         atMax ? 'border-border bg-background opacity-40 cursor-not-allowed' :
                         'border-border bg-background hover:border-primary/50 hover:scale-105'
                       }`}
                     >
-                      {emoji}
+                      <img src={motif.url} alt={motif.label} className="w-full h-full object-contain" />
                     </button>
+                    <span className="text-xs text-muted-foreground">{motif.label}</span>
                     {count > 0 && (
                       <div className="flex items-center gap-1">
-                        <button onClick={() => handleRemoveLastOfEmoji(emoji)} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">−</button>
+                        <button onClick={() => handleRemoveLastOfUrl(motif.url)} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">−</button>
                         <span className="w-4 text-center text-xs font-medium tabular-nums">{count}</span>
-                        <button onClick={() => { if (!atMax) { onAddMotif(emoji); setExceededWarning(false) } else setExceededWarning(true) }} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">+</button>
+                        <button onClick={() => { if (!atMax) { onAddMotif(motif.url, motif.label); setExceededWarning(false) } else setExceededWarning(true) }} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">+</button>
                       </div>
                     )}
                   </div>
@@ -403,6 +431,27 @@ export function ProductInfo({
             )}
           </div>
           )}
+
+          {/* ── Quantity ─────────────────────────────────────────────────────── */}
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-medium text-foreground">Quantity</p>
+            <div className="flex items-center w-fit border border-border">
+              <button
+                onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                disabled={quantity <= 1}
+                className="px-4 py-2 text-sm font-medium transition-all duration-200 hover:border-primary/50 disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                −
+              </button>
+              <span className="px-4 py-2 text-sm text-center min-w-[2.5rem]">{quantity}</span>
+              <button
+                onClick={() => setQuantity(q => q + 1)}
+                className="px-4 py-2 text-sm font-medium transition-all duration-200 hover:border-primary/50"
+              >
+                +
+              </button>
+            </div>
+          </div>
 
           {/* ── Add to Basket ────────────────────────────────────────────────── */}
           <div className="flex gap-4 pt-2 border-t border-border">

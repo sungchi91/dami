@@ -67,33 +67,35 @@
     .ig-section .ig-cta a:hover { opacity: 0.7; }                                                                                                                
   </style>
                                                                                                                                                                  
-  {%- assign gallery_image = 'Image_May_1_2026_07_21_44_PM.png' | file_url -%}                                                                                   
-  {%- assign gallery_count = '1,2,3,4,5,6' | split: ',' -%}
-                                                                                                                                                                 
-  <section class="ig-section">                                                                                                                                   
-    <div class="ig-inner">                                                                                                                                       
-                                                                                                                                                                 
+  {%- assign gallery_fallback = 'Image_May_1_2026_07_21_44_PM.png' | file_url -%}
+  {%- assign gallery_images = 'https://cdn.shopify.com/s/files/1/0990/0326/9486/files/Screen_Shot_2026-05-10_at_8.05.33_PM.png?v=1778468772,https://cdn.shopify.com/s/files/1/0990/0326/9486/files/IMG_5407.jpg?v=1778468772,https://cdn.shopify.com/s/files/1/0990/0326/9486/files/IMG_5294.jpg?v=1778468771' | split: ',' -%}
+  {%- assign gallery_count = '0,1,2,3,4,5' | split: ',' -%}
+
+  <section class="ig-section">
+    <div class="ig-inner">
+
       <div class="ig-header">
         <span class="ig-handle">@shopemberlane</span>
-        <h2 class="ig-heading">In the Wild</h2>                                                                                                                  
+        <h2 class="ig-heading">In the Wild</h2>
       </div>
-                                                                                                                                                                 
+
       <div class="ig-grid">
-        {%- for i in gallery_count -%}
-          {%- assign tilt = '' -%}                                                                                                                               
+        {%- for idx in gallery_count -%}
+          {%- assign tilt = '' -%}
           {%- if forloop.index0 == 2 -%}{%- assign tilt = 'ig-item--tilt-left' -%}{%- endif -%}
-          {%- if forloop.index0 == 4 -%}{%- assign tilt = 'ig-item--tilt-right' -%}{%- endif -%}                                                                 
-                                                                                                                                                                 
-          <div class="ig-item {{ tilt }}">                                                                                                                       
+          {%- if forloop.index0 == 4 -%}{%- assign tilt = 'ig-item--tilt-right' -%}{%- endif -%}
+          {%- assign img_src = gallery_images[forloop.index0] | default: gallery_fallback -%}
+
+          <div class="ig-item {{ tilt }}">
             <img
-              width="200px"                           
-              height="200px"                                                                                                                      
-              src="{{ gallery_image }}"                                                                                                                          
+              width="200px"
+              height="200px"
+              src="{{ img_src }}"
               alt="Emberlane in the wild"
-              loading="lazy"                                                                                                                                     
+              loading="lazy"
             />
-            <div class="ig-overlay"></div>                                                                                                                       
-          </div>  
+            <div class="ig-overlay"></div>
+          </div>
         {%- endfor -%}
       </div>
                                                                                                                                                                  
