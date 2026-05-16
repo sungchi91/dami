@@ -48,9 +48,7 @@ const TEXT_SIZE_MIN  = 0.5
 const TEXT_SIZE_MAX  = 2.5
 const TEXT_SIZE_STEP = 0.25
 
-const FONT_SIZE_FLOOR: Record<string, number> = {
-  'edwardian': 1,
-}
+const FONT_SIZE_FLOOR: Record<string, number> = {}
 
 const MOTIFS: { label: string; url: string }[] = [
   { label: 'flag', url: 'https://cdn.shopify.com/s/files/1/0990/0326/9486/files/flag.png?v=1778477180' },
