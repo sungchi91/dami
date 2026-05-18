@@ -8,31 +8,16 @@ import { buildCartPayload, submitToCart } from '@/lib/cart'
 // ── Thread swatches ────────────────────────────────────────────────────────────
 
 export const threadSwatches = [
-  { name: 'Ember Lane Blue', color: '#7594B4' },
-  { name: 'Deep Navy',     color: '#223A59' },
-  { name: 'Pale Sky',      color: '#BBD0E3' },
-  { name: 'Periwinkle',    color: '#96A1C6' },
-  { name: 'French Indigo', color: '#4B5B75' },
-  { name: 'Thread Red',    color: '#C43634' },
-  { name: 'Tomato Red',    color: '#D84836' },
-  { name: 'Deep Crimson',  color: '#9A2A2B' },
-  { name: 'Dusty Rose',    color: '#C68798' },
-  { name: 'Petal Pink',    color: '#DFB1BE' },
-  { name: 'Clover Green',  color: '#3E7756' },
-  { name: 'Sage Leaf',     color: '#85A384' },
-  { name: 'Forest Pine',   color: '#214D32' },
-  { name: 'Golden Sun',    color: '#DBAD53' },
-  { name: 'Pale Butter',   color: '#EBCDA3' },
-  { name: 'Terracotta',    color: '#C46D42' },
-  { name: 'Vintage Wood',  color: '#87634B' },
-  { name: 'Soft Ink',      color: '#2C3338' },
-  { name: 'True Black',    color: '#1A1A1A' },
-  { name: 'Linen White',   color: '#FAF8F5' },
-  { name: 'Crisp White',   color: '#FFFFFF' },
-  { name: 'Canvas Stone',  color: '#E1DCD3' },
-  { name: 'Warm Sand',     color: '#C8AD92' },
-  { name: 'Silver Shell',  color: '#A6A9A7' },
-  { name: 'Dove Gray',     color: '#D1D5D6' },
+  { name: 'Linen White',     color: '#F5EDD8' },
+  { name: 'Forest Pine',     color: '#183823' },
+  { name: 'Thread Red',      color: '#B80606' },
+  { name: 'Deep Navy',       color: '#1B2F4A' },
+  { name: 'Vintage Wood',    color: '#5C2B1E' },
+  { name: 'Ember Lane Blue', color: '#476E87' },
+  { name: 'Bordeaux',        color: '#9A1019' },
+  { name: 'Canvas Stone',    color: '#EBEBDA' },
+  { name: 'True Black',      color: '#1A1A1A' },
+  { name: 'Pale Sky',        color: '#C5DCEC' },
 ]
 
 const fontStyles = [
@@ -190,10 +175,10 @@ export function ProductInfo({
             <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{description.trim()}</p>
           )}
           {dimension && (
-            <p className="text-xs text-muted-foreground">{dimension}</p>
+            <p className="text-sm text-muted-foreground">{dimension}</p>
           )}
           {care && (
-            <p className="text-xs text-muted-foreground">{care}</p>
+            <p className="text-sm text-muted-foreground">{care}</p>
           )}
 
           {founderQuote && (
@@ -250,7 +235,7 @@ export function ProductInfo({
             </div>
           )}
 
-          <div className="flex flex-col gap-3 text-xs text-muted-foreground border-t border-border pt-4">
+          <div className="flex flex-col gap-3 text-sm text-muted-foreground border-t border-border pt-4">
             <div className="flex gap-3">
               <span className="font-medium text-foreground shrink-0 w-32">Production Time</span>
               <span>Ships within 5–7 business days.</span>
@@ -311,7 +296,7 @@ export function ProductInfo({
                   style={{
                     backgroundColor: swatch.color,
                     boxShadow: textColor === swatch.color ? '0 4px 12px rgba(0,0,0,0.18)' : '0 2px 6px rgba(0,0,0,0.12)',
-                    border: swatch.color === '#FAF8F5' ? '1px solid #E1DCD3' : 'none',
+                    border: ['#F5EDD8', '#EBEBDA', '#C5DCEC', '#FFFFFF'].includes(swatch.color) ? '1px solid #ccc' : 'none',
                   }}
                 />
               ))}
