@@ -337,9 +337,10 @@ async function createMotifObject(
   absY:     number,
   szWidth:  number,
   physicalWidthInches: number,
+  widthInches: number,
 ): Promise<FabricImage> {
   const ppi      = computePPI(szWidth, physicalWidthInches)
-  const targetPx = MOTIF_PHYSICAL_INCHES * ppi
+  const targetPx = widthInches * ppi
   const m = await FabricImage.fromURL(url, { crossOrigin: 'anonymous' })
   const naturalSize = Math.max(m.width ?? 1, m.height ?? 1)
   const scale = targetPx / naturalSize
@@ -541,7 +542,7 @@ export function CanvasEditor({
       const absY = sz.top  + entry.position.y * sz.height
       const m    = await createMotifObject(
         entry.url, entry.id, absX, absY,
-        sz.width, config.physicalWidth,
+        sz.width, config.physicalWidth, entry.widthInches,
       )
       if (!fcRef.current) return
       motifsMapRef.current.set(entry.id, m)

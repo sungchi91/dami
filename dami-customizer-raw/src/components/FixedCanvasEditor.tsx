@@ -355,15 +355,15 @@ export function FixedCanvasEditor({
     const itemName    = ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]
     const config      = PRODUCT_CONFIG[itemName]
     const layout      = getFixedLayout(itemName, customizerType as FixedLayoutType)
-    const motifInches = getMotifInches(itemName) ?? DEFAULT_MOTIF_INCHES
     if (!layout) { fc.renderAll(); return }
 
+    const rowSpacingInches = getMotifInches(itemName) ?? DEFAULT_MOTIF_INCHES
     const tasks: Promise<void>[] = []
     motifEntries.forEach((entry, index) => {
       let absX: number, absY: number
 
       if (isRowLayout(layout)) {
-        const xs = calcMotifRowPositions(layout.motifRow.centerX, motifEntries.length, motifInches, config.physicalWidth)
+        const xs = calcMotifRowPositions(layout.motifRow.centerX, motifEntries.length, rowSpacingInches, config.physicalWidth)
         absX = sz.left + xs[index] * sz.width
         absY = sz.top  + layout.motifRow.y * sz.height
       } else if (isSidenoteLayout(layout)) {
@@ -379,7 +379,7 @@ export function FixedCanvasEditor({
       }
 
       tasks.push(
-        createMotifObj(entry.url, entry.id, absX, absY, sz.width, config.physicalWidth, motifInches)
+        createMotifObj(entry.url, entry.id, absX, absY, sz.width, config.physicalWidth, entry.widthInches)
           .then(m => {
             if (!fcRef.current) return
             motifsMapRef.current.set(entry.id, m)

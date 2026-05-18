@@ -10,10 +10,11 @@ export interface TextPosition {
 export type TextSize = number
 
 export interface MotifEntry {
-  id:       string
-  url:      string
-  label:    string
-  position: TextPosition
+  id:          string
+  url:         string
+  label:       string
+  widthInches: number
+  position:    TextPosition
 }
 
 export interface CustomizerState {
@@ -28,7 +29,7 @@ export interface CustomizerState {
   textPosition:          TextPosition
   onPositionChange:      (pos: TextPosition) => void
   motifEntries:          MotifEntry[]
-  addMotif:              (url: string, label: string) => void
+  addMotif:              (url: string, label: string, widthInches: number) => void
   removeMotif:           (id: string) => void
   updateMotifPosition:   (id: string, pos: TextPosition) => void
 }
@@ -43,14 +44,14 @@ export function useCustomizer(): CustomizerState {
 
   const onPositionChange = useCallback((pos: TextPosition) => setTextPosition(pos), [])
 
-  const addMotif = useCallback((url: string, label: string) => {
+  const addMotif = useCallback((url: string, label: string, widthInches: number) => {
     setMotifEntries(prev => {
       // Stagger each new motif diagonally so they're never invisibly stacked.
       const step   = 0.035
       const offset = prev.length * step
       const x = Math.min(0.85, Math.max(0.15, 0.5 + offset))
       const y = Math.min(0.85, Math.max(0.15, 0.5 + offset))
-      return [...prev, { id: crypto.randomUUID(), url, label, position: { x, y } }]
+      return [...prev, { id: crypto.randomUUID(), url, label, widthInches, position: { x, y } }]
     })
   }, [])
 
