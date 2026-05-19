@@ -533,6 +533,19 @@ export function CanvasEditor({
       }
     })
 
+    // Re-scale existing motifs whose widthInches may have changed
+    const ppi = computePPI(sz.width, config.physicalWidth)
+    motifEntries.forEach(entry => {
+      const obj = motifsMapRef.current.get(entry.id)
+      if (!obj) return
+      const naturalSize = Math.max(obj.width ?? 1, obj.height ?? 1)
+      const newScale    = (entry.widthInches * ppi) / naturalSize
+      if (Math.abs((obj.scaleX ?? 1) - newScale) > 0.001) {
+        obj.set({ scaleX: newScale, scaleY: newScale })
+        obj.setCoords()
+      }
+    })
+
     // Add Fabric objects for entries that don't yet have one
     const newEntries = motifEntries.filter(e => !motifsMapRef.current.has(e.id))
     if (newEntries.length === 0) { fc.renderAll(); return }

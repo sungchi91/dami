@@ -115,6 +115,7 @@ function readDataset() {
   const idx      = ITEM_TYPES.indexOf(resolved)
   return {
     selectedItem:  idx >= 0 ? idx : 0,
+    sectionId:     d.sectionId ?? '',
     variantId:     d.currentVariantId ? parseInt(d.currentVariantId, 10) : 0,
     available:     d.available !== 'false',
     productPrice:  d.productPrice   ?? '',
@@ -134,14 +135,20 @@ function readDataset() {
     dimension:     d.dimension      ?? '',
     care:          d.care           ?? '',
     colors: (() => {
-try {
+      try {
         const parsed = JSON.parse(d.colors ?? '[]')
         if (!Array.isArray(parsed)) return []
-        return parsed.map((c: { name: string; color?: string; available?: boolean; variantId?: number; mediaId?: string; imageUrl?: string }) => ({
+        return parsed.map((c: { name: string; color?: string; available?: boolean; variantId?: number; variantsByCount?: Record<string, { id: number; price: string }>; mediaId?: string; imageUrl?: string }) => ({
           ...c,
           color: c.color || colorNameToHex(c.name ?? ''),
           canvasImageUrl: getCDNCanvasImage(title, c.name ?? '') ?? undefined,
-        })) as { name: string; color: string; available?: boolean; variantId?: number; mediaId?: string; imageUrl?: string; canvasImageUrl?: string }[]
+        })) as { name: string; color: string; available?: boolean; variantId?: number; variantsByCount?: Record<string, { id: number; price: string }>; mediaId?: string; imageUrl?: string; canvasImageUrl?: string }[]
+      } catch { return [] }
+    })(),
+    motifCountOptions: (() => {
+      try {
+        const parsed = JSON.parse(d.motifCountOptions ?? '[]')
+        return Array.isArray(parsed) ? parsed as string[] : []
       } catch { return [] }
     })(),
   }
@@ -154,7 +161,7 @@ export default function CustomizerWidget() {
     selectedItem, variantId, productPrice, canvasImage,
     canvasBgColor, customizerType, maxMotifs, categoryLabel, tagline,
     description, founderQuote, founderName, colors, available,
-    feature1, feature2, feature3, dimension, care,
+    feature1, feature2, feature3, dimension, care, motifCountOptions,
   } = shopifyData
 
   const {
@@ -165,18 +172,37 @@ export default function CustomizerWidget() {
     textSize,        setTextSize,
     textPosition,    onPositionChange,
     motifEntries,    addMotif,
-    removeMotif,     updateMotifPosition,
+    removeMotif,     updateMotifPosition,  updateMotifsByBaseName,
   } = useCustomizer()
 
-  const [showPersonalize, setShowPersonalize] = useState(false)
-  const [hasPersonalized, setHasPersonalized] = useState(false)
-  const [selectedColor,   setSelectedColor]   = useState(0)
+  const [showPersonalize,    setShowPersonalize]    = useState(false)
+  const [hasPersonalized,    setHasPersonalized]    = useState(false)
+  const [selectedColor,      setSelectedColor]      = useState(0)
+  const [selectedMotifCount, setSelectedMotifCount] = useState<string>(motifCountOptions[0] ?? '')
 
   // Canvas prefers CDN mockup image, then variant image, then product cover
-  const productTitle       = ITEM_TYPES[selectedItem] ?? ''
-  const activeCanvasImage  = colors[selectedColor]?.canvasImageUrl || getProductCanvasImage(productTitle) || colors[selectedColor]?.imageUrl || canvasImage || undefined
-  const activeVariantId    = colors[selectedColor]?.variantId ?? variantId
-  const activeAvailable    = colors[selectedColor]?.available ?? available
+  const productTitle      = ITEM_TYPES[selectedItem] ?? ''
+  const activeCanvasImage = colors[selectedColor]?.canvasImageUrl || getProductCanvasImage(productTitle) || colors[selectedColor]?.imageUrl || canvasImage || undefined
+  const activeAvailable   = colors[selectedColor]?.available ?? available
+
+  // Resolve variant + price from (color × motif count) combination
+  const activeVariantEntry = colors[selectedColor]?.variantsByCount?.[selectedMotifCount]
+  const activeVariantId    = activeVariantEntry?.id ?? colors[selectedColor]?.variantId ?? variantId
+  const activePrice        = activeVariantEntry?.price ?? productPrice
+
+  // Push active variant ID and price into the theme's existing DOM elements
+  useEffect(() => {
+    const sectionId = shopifyData.sectionId
+    // Update the hidden variant ID input so the theme's add-to-cart form is in sync
+    const variantInput = document.querySelector<HTMLInputElement>('input[name="id"]')
+    if (variantInput && activeVariantId) variantInput.value = String(activeVariantId)
+
+    // Update the theme's price display element
+    const priceEl = sectionId
+      ? document.querySelector(`#price-${sectionId} .price-item--regular`)
+      : document.querySelector('.price--large .price-item--regular')
+    if (priceEl) priceEl.textContent = activePrice
+  }, [activeVariantId, activePrice])
 
   const handleColorChange = useCallback((mediaId: string, imageUrl: string, colorIdx: number) => {
     setSelectedColor(colorIdx)
@@ -237,11 +263,12 @@ export default function CustomizerWidget() {
         variantId={activeVariantId}
         available={activeAvailable}
         selectedItem={selectedItem}
-        productPrice={productPrice}
+        productPrice={activePrice}
         textPosition={textPosition}
         motifEntries={motifEntries}
         onAddMotif={addMotif}
         onRemoveMotif={removeMotif}
+        onUpdateMotifsByBaseName={updateMotifsByBaseName}
         maxMotifs={maxMotifs}
         categoryLabel={categoryLabel}
         tagline={tagline}
@@ -251,6 +278,9 @@ export default function CustomizerWidget() {
         colors={colors}
         selectedColor={selectedColor}
         onColorChange={handleColorChange}
+        motifCountOptions={motifCountOptions}
+        selectedMotifCount={selectedMotifCount}
+        onMotifCountChange={setSelectedMotifCount}
         feature1={feature1}
         feature2={feature2}
         feature3={feature3}

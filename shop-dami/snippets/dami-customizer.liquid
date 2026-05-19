@@ -19,14 +19,32 @@
   }
 </style>
 
-{%- comment -%} Build colors array from the Color variant option {%- endcomment -%}
+{%- comment -%} Find Color and "Number of Motifs" option indices {%- endcomment -%}
 {%- assign el_color_idx = nil -%}
+{%- assign el_motif_count_idx = nil -%}
 {%- for o in product.options -%}
   {%- assign o_lower = o | downcase -%}
   {%- if o_lower == 'color' or o_lower == 'colour' or o_lower == 'colors' -%}
     {%- assign el_color_idx = forloop.index0 -%}
   {%- endif -%}
+  {%- if o_lower contains 'motif' -%}
+    {%- assign el_motif_count_idx = forloop.index0 -%}
+  {%- endif -%}
 {%- endfor -%}
+
+{%- comment -%} Collect unique motif count option values {%- endcomment -%}
+{%- assign el_count_seen = '' -%}
+{%- assign el_count_opts_arr = '' -%}
+{%- if el_motif_count_idx != nil -%}
+  {%- for v in product.variants -%}
+    {%- assign cv = v.options[el_motif_count_idx] -%}
+    {%- unless el_count_seen contains cv -%}
+      {%- assign el_count_seen = el_count_seen | append: cv | append: '|' -%}
+      {%- if el_count_opts_arr != '' -%}{%- assign el_count_opts_arr = el_count_opts_arr | append: ',' -%}{%- endif -%}
+      {%- assign el_count_opts_arr = el_count_opts_arr | append: '"' | append: cv | append: '"' -%}
+    {%- endunless -%}
+  {%- endfor -%}
+{%- endif -%}
 
 {%- assign el_colors_arr = '' -%}
 {%- if el_color_idx != nil -%}
@@ -40,7 +58,23 @@
       {%- assign el_img_url = '' -%}
       {%- if v.featured_image != nil -%}{%- assign el_img_url = v.featured_image | image_url: width: 1200 -%}{%- endif -%}
       {%- assign el_hex = v.metafields.custom.color.value | default: '' -%}
-      {%- capture el_entry -%}{"name":{{ cv | json }},"available":{{ v.available }},"variantId":{{ v.id }},"mediaId":{{ el_media_id | json }},"imageUrl":{{ el_img_url | json }},"color":{{ el_hex | json }}}{%- endcapture -%}
+      {%- comment -%} Build variantsByCount: {"1": variantId, "2": variantId, ...} {%- endcomment -%}
+      {%- assign el_vbc = '' -%}
+      {%- if el_motif_count_idx != nil -%}
+        {%- for v2 in product.variants -%}
+          {%- if v2.options[el_color_idx] == cv -%}
+            {%- assign el_count_key = v2.options[el_motif_count_idx] -%}
+            {%- if el_vbc != '' -%}{%- assign el_vbc = el_vbc | append: ',' -%}{%- endif -%}
+            {%- capture el_v2_price_json -%}{{ v2.price | money | json }}{%- endcapture -%}
+            {%- assign el_vbc = el_vbc | append: '"' | append: el_count_key | append: '":{"id":' | append: v2.id | append: ',"price":' | append: el_v2_price_json | append: '}' -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+      {%- assign el_vbc_field = '' -%}
+      {%- if el_vbc != '' -%}
+        {%- assign el_vbc_field = ',"variantsByCount":{' | append: el_vbc | append: '}' -%}
+      {%- endif -%}
+      {%- capture el_entry -%}{"name":{{ cv | json }},"available":{{ v.available }},"variantId":{{ v.id }}{{ el_vbc_field }},"mediaId":{{ el_media_id | json }},"imageUrl":{{ el_img_url | json }},"color":{{ el_hex | json }}}{%- endcapture -%}
       {%- if el_colors_arr == '' -%}
         {%- assign el_colors_arr = el_entry -%}
       {%- else -%}
@@ -54,6 +88,7 @@
   id="ember-lane-customizer"
   data-customizer-type="{{ customizer_type }}"
   data-product-title="{{ product.title | escape }}"
+  data-section-id="{{ section.id }}"
   data-current-variant-id="{{ product.selected_or_first_available_variant.id }}"
   data-available="{{ product.selected_or_first_available_variant.available }}"
   data-product-price="{{ product.selected_or_first_available_variant.price | money }}"
@@ -73,5 +108,6 @@
   data-cover-media-id="{{ section.id }}-{{ product.featured_media.id }}"
   data-color-option="{{ product.options | join: ',' | escape }}"
   data-colors="{{ '[' | append: el_colors_arr | append: ']' | escape }}"
+  data-motif-count-options="{{ '[' | append: el_count_opts_arr | append: ']' | escape }}"
 ></div>
 <script src="{{ 'customizer-bundle.js' | asset_url }}" defer="defer"></script>

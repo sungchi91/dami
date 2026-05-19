@@ -38,79 +38,85 @@ const FONT_SIZE_FLOOR: Record<string, number> = {}
 const CDN = 'https://cdn.shopify.com/s/files/1/0990/0326/9486/files/'
 const CB  = '?v=20260517'
 
-type MotifDef = { label: string; url: string; widthInches: number }
+function parseSz(s: string): number { return parseFloat(s.replace('p', '.')) }
+// Each motif has a single PNG file named with its MIN size suffix; we re-scale on canvas for larger sizes.
+function motifUrl(motif: { baseName: string; sizes: string[] }): string {
+  return `${CDN}${motif.baseName}_${motif.sizes[0]}.png${CB}`
+}
+
+type MotifDef = { label: string; baseName: string; sizes: string[] }
 
 const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
   { group: 'Drinks', motifs: [
-    { label: 'Aperol Spritz',    url: CDN + 'motif_aperolSpritz_1p57.png'   + CB, widthInches: 1.57 },
-    { label: 'Champagne',        url: CDN + 'motif_champagne_1p5.png'        + CB, widthInches: 1.5  },
-    { label: 'Espresso Martini', url: CDN + 'motif_espressoMartini_1p57.png' + CB, widthInches: 1.57 },
-    { label: 'Gin & Tonic',      url: CDN + 'motif_ginAndTonic_1p57.png'     + CB, widthInches: 1.57 },
-    { label: 'Martini',          url: CDN + 'motif_martini_1p5.png'          + CB, widthInches: 1.5  },
-    { label: 'Spicy Marg',       url: CDN + 'motif_spicyMarg_1.png'          + CB, widthInches: 1.0  },
-    { label: 'Tequila',          url: CDN + 'motif_tequila_1.png'            + CB, widthInches: 1.0  },
+    { label: 'Aperol Spritz',    baseName: 'motif_aperolSpritz',    sizes: ['1p57','1p97'] },
+    { label: 'Champagne',        baseName: 'motif_champagne',        sizes: ['1p5','2','2p5'] },
+    { label: 'Espresso Martini', baseName: 'motif_espressoMartini',  sizes: ['1p57','1p97'] },
+    { label: 'Gin & Tonic',      baseName: 'motif_ginAndTonic',      sizes: ['1p57','1p97'] },
+    { label: 'Martini',          baseName: 'motif_martini',          sizes: ['1p5','2','2p5'] },
+    { label: 'Spicy Marg',       baseName: 'motif_spicyMarg',        sizes: ['1'] },
+    { label: 'Tequila',          baseName: 'motif_tequila',          sizes: ['1'] },
   ]},
   { group: 'Food', motifs: [
-    { label: 'Crab',             url: CDN + 'motif_crab_1.png'               + CB, widthInches: 1.0  },
-    { label: 'Hamburger',        url: CDN + 'motif_hamburger_1.png'          + CB, widthInches: 1.0  },
-    { label: 'Hot Dog',          url: CDN + 'motif_hotDog_1.png'             + CB, widthInches: 1.0  },
-    { label: 'Lemons',           url: CDN + 'motif_lemons_1.png'             + CB, widthInches: 1.0  },
-    { label: 'Lobster',          url: CDN + 'motif_lobster_1.png'            + CB, widthInches: 1.0  },
-    { label: 'Olive Branch',     url: CDN + 'motif_oliveBranch_1.png'        + CB, widthInches: 1.0  },
-    { label: 'Olive Oil',        url: CDN + 'motif_oliveOil_1.png'           + CB, widthInches: 1.0  },
-    { label: 'Olive Pick',       url: CDN + 'motif_olivePick_1.png'          + CB, widthInches: 1.0  },
-    { label: 'Oysters',          url: CDN + 'motif_oysters_1.png'            + CB, widthInches: 1.0  },
-    { label: 'Pizza',            url: CDN + 'motif_pizza_1.png'              + CB, widthInches: 1.0  },
-    { label: 'Sardines',         url: CDN + 'motif_sardines_1.png'           + CB, widthInches: 1.0  },
-    { label: 'Taco',             url: CDN + 'motif_taco_1.png'               + CB, widthInches: 1.0  },
-    { label: 'Tomatoes',         url: CDN + 'motif_tomatoes_1.png'           + CB, widthInches: 1.0  },
+    { label: 'Crab',             baseName: 'motif_crab',             sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Hamburger',        baseName: 'motif_hamburger',        sizes: ['1','1p5','2'] },
+    { label: 'Hot Dog',          baseName: 'motif_hotDog',           sizes: ['1','1p5','2'] },
+    { label: 'Lemons',           baseName: 'motif_lemons',           sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Lobster',          baseName: 'motif_lobster',          sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Olive Branch',     baseName: 'motif_oliveBranch',      sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Olive Oil',        baseName: 'motif_oliveOil',         sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Olive Pick',       baseName: 'motif_olivePick',        sizes: ['1','1p5','2'] },
+    { label: 'Oysters',          baseName: 'motif_oysters',          sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Pizza',            baseName: 'motif_pizza',            sizes: ['1','1p5','2'] },
+    { label: 'Sardines',         baseName: 'motif_sardines',         sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Taco',             baseName: 'motif_taco',             sizes: ['1','1p5','2'] },
+    { label: 'Tomatoes',         baseName: 'motif_tomatoes',         sizes: ['1','1p5','2','2p5','3'] },
   ]},
   { group: 'Beauty', motifs: [
-    { label: 'Brush',            url: CDN + 'motif_brush_1p4.png'            + CB, widthInches: 1.4  },
-    { label: 'Cream',            url: CDN + 'motif_cream_1.png'              + CB, widthInches: 1.0  },
-    { label: 'Eye Shadow',       url: CDN + 'motif_eyeShadow_1p2.png'        + CB, widthInches: 1.2  },
-    { label: 'Eyelash Curler',   url: CDN + 'motif_eyelashCurler_1p2.png'    + CB, widthInches: 1.2  },
-    { label: 'Face Mask',        url: CDN + 'motif_faceMask_1p4.png'         + CB, widthInches: 1.4  },
-    { label: 'Facial Massager',  url: CDN + 'motif_facialMassager_1p4.png'   + CB, widthInches: 1.4  },
-    { label: 'Gua Sha',          url: CDN + 'motif_guaSha_1.png'             + CB, widthInches: 1.0  },
-    { label: 'Hand Cream',       url: CDN + 'motif_handCream_1p4.png'        + CB, widthInches: 1.4  },
-    { label: 'Lip Gloss',        url: CDN + 'motif_lipGloss_1p4.png'         + CB, widthInches: 1.4  },
-    { label: 'Lips',             url: CDN + 'motif_lips_1.png'               + CB, widthInches: 1.0  },
-    { label: 'Lipstick',         url: CDN + 'motif_lipstick_1p2.png'         + CB, widthInches: 1.2  },
-    { label: 'Mirror',           url: CDN + 'motif_mirror_1p2.png'           + CB, widthInches: 1.2  },
-    { label: 'Perfume',          url: CDN + 'motif_perfume_1p2.png'          + CB, widthInches: 1.2  },
-    { label: 'Perfume (Clean)',  url: CDN + 'motif_perfumeClean_1p2.png'     + CB, widthInches: 1.2  },
-    { label: 'Red Lipstick',     url: CDN + 'motif_redLipstick_1.png'        + CB, widthInches: 1.0  },
-    { label: 'Serum',            url: CDN + 'motif_serum_1p4.png'            + CB, widthInches: 1.4  },
-    { label: 'Vintage Perfume',  url: CDN + 'motif_vintagePerfume_1.png'     + CB, widthInches: 1.0  },
+    { label: 'Brush',            baseName: 'motif_brush',            sizes: ['1p4','1p6','2'] },
+    { label: 'Cream',            baseName: 'motif_cream',            sizes: ['1','1p2','1p6'] },
+    { label: 'Eye Shadow',       baseName: 'motif_eyeShadow',        sizes: ['1p2','1p4','1p8'] },
+    { label: 'Eyelash Curler',   baseName: 'motif_eyelashCurler',    sizes: ['1p2','1p4','1p8'] },
+    { label: 'Face Mask',        baseName: 'motif_faceMask',         sizes: ['1p4','1p6','2'] },
+    { label: 'Facial Massager',  baseName: 'motif_facialMassager',   sizes: ['1p4','1p6','2'] },
+    { label: 'Gua Sha',          baseName: 'motif_guaSha',           sizes: ['1','1p2','1p6'] },
+    { label: 'Hand Cream',       baseName: 'motif_handCream',        sizes: ['1p4','1p6','2'] },
+    { label: 'Lip Gloss',        baseName: 'motif_lipGloss',         sizes: ['1p4','1p6','2'] },
+    { label: 'Lips',             baseName: 'motif_lips',             sizes: ['1','1p2','1p6'] },
+    { label: 'Lipstick',         baseName: 'motif_lipstick',         sizes: ['1p2','1p4','1p8'] },
+    { label: 'Mirror',           baseName: 'motif_mirror',           sizes: ['1p2','1p4','1p8'] },
+    { label: 'Perfume',          baseName: 'motif_perfume',          sizes: ['1p2','1p4','1p8'] },
+    { label: 'Perfume (Clean)',  baseName: 'motif_perfumeClean',     sizes: ['1p2','1p4','1p8'] },
+    { label: 'Red Lipstick',     baseName: 'motif_redLipstick',      sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Serum',            baseName: 'motif_serum',            sizes: ['1p4','1p6','2'] },
+    { label: 'Vintage Perfume',  baseName: 'motif_vintagePerfume',   sizes: ['1','1p5','2','2p5','3'] },
   ]},
   { group: 'Fashion', motifs: [
-    { label: 'Bow',              url: CDN + 'motif_bow_0p94.png'             + CB, widthInches: 0.94 },
-    { label: 'Flat Hair Clip',   url: CDN + 'motif_flatHairClip_1p4.png'     + CB, widthInches: 1.4  },
-    { label: 'Hair Clip',        url: CDN + 'motif_hairClip_1p2.png'         + CB, widthInches: 1.2  },
-    { label: 'Hair Comb',        url: CDN + 'motif_hairComb_1p2.png'         + CB, widthInches: 1.2  },
-    { label: 'Handbag',          url: CDN + 'motif_handbag_1.png'            + CB, widthInches: 1.0  },
-    { label: 'Heel',             url: CDN + 'motif_heel_1.png'               + CB, widthInches: 1.0  },
-    { label: 'Scarf',            url: CDN + 'motif_scarf_1.png'              + CB, widthInches: 1.0  },
-    { label: 'Scrunchie',        url: CDN + 'motif_scrunchie_1p2.png'        + CB, widthInches: 1.2  },
-    { label: 'Sunglasses',       url: CDN + 'motif_sunglasses_1.png'         + CB, widthInches: 1.0  },
+    { label: 'Bow',              baseName: 'motif_bow',              sizes: ['0p94','1p1','1p46','1p73','1p97','2p32','2p72','3p27','3p9'] },
+    { label: 'Flat Hair Clip',   baseName: 'motif_flatHairClip',     sizes: ['1p4','1p6','2'] },
+    { label: 'Hair Clip',        baseName: 'motif_hairClip',         sizes: ['1p2','1p4','1p8'] },
+    { label: 'Hair Comb',        baseName: 'motif_hairComb',         sizes: ['1p2','1p4','1p8'] },
+    { label: 'Handbag',          baseName: 'motif_handbag',          sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Heel',             baseName: 'motif_heel',             sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Scarf',            baseName: 'motif_scarf',            sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Scrunchie',        baseName: 'motif_scrunchie',        sizes: ['1p2','1p4','1p8'] },
+    { label: 'Sunglasses',       baseName: 'motif_sunglasses',       sizes: ['1','1p5','2','2p5','3'] },
   ]},
   { group: 'Golf', motifs: [
-    { label: 'Golf Cart',        url: CDN + 'motif_golfCart_1.png'           + CB, widthInches: 1.0  },
-    { label: 'Golf Club Bag',    url: CDN + 'motif_golfClubBag_1.png'        + CB, widthInches: 1.0  },
-    { label: 'Golf Flag',        url: CDN + 'motif_golfFlag_1.png'           + CB, widthInches: 1.0  },
+    { label: 'Golf Cart',        baseName: 'motif_golfCart',         sizes: ['1','1p5','2','2p5'] },
+    { label: 'Golf Club Bag',    baseName: 'motif_golfClubBag',      sizes: ['1','1p5','2','2p5'] },
+    { label: 'Golf Flag',        baseName: 'motif_golfFlag',         sizes: ['1','1p5','2','2p5'] },
   ]},
   { group: 'NYC', motifs: [
-    { label: 'NYC Apple',        url: CDN + 'motif_nycApple_1p25.png'        + CB, widthInches: 1.25 },
-    { label: 'NYC Crown',        url: CDN + 'motif_nycCrown_1.png'           + CB, widthInches: 1.0  },
-    { label: 'NYC Empire',       url: CDN + 'motif_nycEmpire_1p5.png'        + CB, widthInches: 1.5  },
-    { label: 'NYC Taxi',         url: CDN + 'motif_nycTaxi_1p5.png'          + CB, widthInches: 1.5  },
+    { label: 'NYC Apple',        baseName: 'motif_nycApple',         sizes: ['1p25','1p75','2p25'] },
+    { label: 'NYC Crown',        baseName: 'motif_nycCrown',         sizes: ['1','1p5','2'] },
+    { label: 'NYC Empire',       baseName: 'motif_nycEmpire',        sizes: ['1p5','2','2p5'] },
+    { label: 'NYC Taxi',         baseName: 'motif_nycTaxi',          sizes: ['1p5','2','2p5'] },
   ]},
   { group: 'Lifestyle', motifs: [
-    { label: 'Cigarette',        url: CDN + 'motif_cigarette_1.png'          + CB, widthInches: 1.0  },
-    { label: 'Heart',            url: CDN + 'motif_heart_0p8.png'            + CB, widthInches: 0.8  },
-    { label: 'Palm Tree',        url: CDN + 'motif_palmTree_1.png'           + CB, widthInches: 1.0  },
-    { label: 'Pomeranian',       url: CDN + 'motif_pomeranian_2p2.png'       + CB, widthInches: 2.2  },
+    { label: 'Cigarette',        baseName: 'motif_cigarette',        sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Heart',            baseName: 'motif_heart',            sizes: ['0p8','1','1p4'] },
+    { label: 'Palm Tree',        baseName: 'motif_palmTree',         sizes: ['1','2'] },
+    { label: 'Pomeranian',       baseName: 'motif_pomeranian',       sizes: ['2p2','2p8','3p8'] },
   ]},
 ]
 
@@ -133,17 +139,21 @@ interface ProductInfoProps {
   productPrice:      string
   textPosition:      TextPosition
   motifEntries:      MotifEntry[]
-  onAddMotif:        (url: string, label: string, widthInches: number) => void
-  onRemoveMotif:     (id: string) => void
+  onAddMotif:           (url: string, label: string, baseName: string, widthInches: number) => void
+  onRemoveMotif:        (id: string) => void
+  onUpdateMotifsByBaseName: (baseName: string, newUrl: string, newWidthInches: number) => void
   maxMotifs:         number
   categoryLabel:     string
   tagline:           string
   description:       string
   founderQuote:      string
   founderName:       string
-  colors:            { name: string; color: string; available?: boolean; variantId?: number; mediaId?: string; imageUrl?: string }[]
+  colors:            { name: string; color: string; available?: boolean; variantId?: number; variantsByCount?: Record<string, { id: number; price: string }>; mediaId?: string; imageUrl?: string }[]
   selectedColor:     number
   onColorChange:     (mediaId: string, imageUrl: string, idx: number) => void
+  motifCountOptions:    string[]
+  selectedMotifCount:   string
+  onMotifCountChange:   (v: string) => void
   feature1:          string
   feature2:          string
   feature3:          string
@@ -174,6 +184,7 @@ export function ProductInfo({
   motifEntries,
   onAddMotif,
   onRemoveMotif,
+  onUpdateMotifsByBaseName,
   maxMotifs,
   categoryLabel,
   tagline,
@@ -183,6 +194,9 @@ export function ProductInfo({
   colors,
   selectedColor,
   onColorChange,
+  motifCountOptions,
+  selectedMotifCount,
+  onMotifCountChange,
   feature1,
   feature2,
   feature3,
@@ -194,6 +208,7 @@ export function ProductInfo({
   const [isSubmitting,    setIsSubmitting]    = useState(false)
   const [exceededWarning, setExceededWarning] = useState(false)
   const [quantity,        setQuantity]        = useState(1)
+  const [motifSizeIdx,    setMotifSizeIdx]    = useState<Record<string, number>>({})
 
   const handleAddToBasket = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -218,12 +233,14 @@ export function ProductInfo({
 
   const hasInput = (showTextStep && embroideryText.trim().length > 0)
     || (showMotifStep && motifEntries.length > 0)
-  const effectiveMaxMotifs = (customizerType === 'sidenote' || customizerType === 'side-motif' || customizerType === 'classic-motif') ? 1 : maxMotifs
+  const layoutMax = (customizerType === 'sidenote' || customizerType === 'side-motif' || customizerType === 'classic-motif') ? 1 : maxMotifs
+  const countMax  = selectedMotifCount ? parseInt(selectedMotifCount, 10) : Infinity
+  const effectiveMaxMotifs = Math.min(layoutMax, isFinite(countMax) ? countMax : layoutMax)
 
   const motifCounts = useMemo(() => {
     const counts: Record<string, number> = {}
     for (const entry of motifEntries) {
-      counts[entry.url] = (counts[entry.url] ?? 0) + 1
+      counts[entry.baseName] = (counts[entry.baseName] ?? 0) + 1
     }
     return counts
   }, [motifEntries])
@@ -231,9 +248,17 @@ export function ProductInfo({
   const totalMotifs = motifEntries.length
   const atMax       = totalMotifs >= effectiveMaxMotifs
 
-  const handleRemoveLastOfUrl = (url: string) => {
-    const last = [...motifEntries].reverse().find(e => e.url === url)
+  const handleRemoveLastOfBaseName = (baseName: string) => {
+    const last = [...motifEntries].reverse().find(e => e.baseName === baseName)
     if (last) { onRemoveMotif(last.id); setExceededWarning(false) }
+  }
+
+  const handleSizeChange = (motif: MotifDef, delta: number) => {
+    const cur = motifSizeIdx[motif.baseName] ?? 0
+    const next = Math.max(0, Math.min(motif.sizes.length - 1, cur + delta))
+    if (next === cur) return
+    setMotifSizeIdx(prev => ({ ...prev, [motif.baseName]: next }))
+    onUpdateMotifsByBaseName(motif.baseName, motifUrl(motif), parseSz(motif.sizes[next]))
   }
 
   const selectedThreadIndex = threadSwatches.findIndex(s => s.color === textColor)
@@ -287,6 +312,29 @@ export function ProductInfo({
                     />
                   )
                 })}
+              </div>
+            </div>
+          )}
+
+          {motifCountOptions.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-medium text-foreground">
+                Number of Motifs: <span className="text-muted-foreground font-normal">{selectedMotifCount}</span>
+              </p>
+              <div className="flex gap-2 flex-wrap">
+                {motifCountOptions.map((opt) => (
+                  <button
+                    key={opt}
+                    onClick={() => onMotifCountChange(opt)}
+                    className={`w-10 h-10 rounded-full text-sm font-medium transition-all duration-200 ${
+                      selectedMotifCount === opt
+                        ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 scale-110'
+                        : 'bg-secondary text-foreground hover:bg-secondary/70 hover:scale-105'
+                    }`}
+                  >
+                    {opt}
+                  </button>
+                ))}
               </div>
             </div>
           )}
@@ -460,11 +508,14 @@ export function ProductInfo({
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-2">{group}</p>
                   <div className="flex flex-wrap gap-3">
                     {motifs.map((motif) => {
-                      const count = motifCounts[motif.url] ?? 0
+                      const count    = motifCounts[motif.baseName] ?? 0
+                      const sizeIdx  = motifSizeIdx[motif.baseName] ?? 0
+                      const curUrl   = motifUrl(motif)
+                      const curWidth = parseSz(motif.sizes[sizeIdx])
                       return (
-                        <div key={motif.url} className="flex flex-col items-center gap-1.5">
+                        <div key={motif.baseName} className="flex flex-col items-center gap-1.5">
                           <button
-                            onClick={() => { if (!atMax) { onAddMotif(motif.url, motif.label, motif.widthInches); setExceededWarning(false) } else setExceededWarning(true) }}
+                            onClick={() => { if (!atMax) { onAddMotif(curUrl, motif.label, motif.baseName, curWidth); setExceededWarning(false) } else setExceededWarning(true) }}
                             aria-label={`Add ${motif.label}`}
                             className={`w-16 h-16 border transition-all duration-200 flex items-center justify-center p-1 ${
                               count > 0 ? 'border-primary bg-primary/10' :
@@ -472,14 +523,23 @@ export function ProductInfo({
                               'border-border bg-background hover:border-primary/50 hover:scale-105'
                             }`}
                           >
-                            <img src={motif.url} alt={motif.label} className="w-full h-full object-contain" />
+                            <img src={curUrl} alt={motif.label} className="w-full h-full object-contain" />
                           </button>
                           <span className="text-xs text-muted-foreground text-center leading-tight max-w-[4rem]">{motif.label}</span>
                           {count > 0 && (
-                            <div className="flex items-center gap-1">
-                              <button onClick={() => handleRemoveLastOfUrl(motif.url)} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">−</button>
-                              <span className="w-4 text-center text-xs font-medium tabular-nums">{count}</span>
-                              <button onClick={() => { if (!atMax) { onAddMotif(motif.url, motif.label, motif.widthInches); setExceededWarning(false) } else setExceededWarning(true) }} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">+</button>
+                            <div className="flex flex-col items-center gap-1">
+                              <div className="flex items-center gap-1">
+                                <button onClick={() => handleRemoveLastOfBaseName(motif.baseName)} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">−</button>
+                                <span className="w-4 text-center text-xs font-medium tabular-nums">{count}</span>
+                                <button onClick={() => { if (!atMax) { onAddMotif(curUrl, motif.label, motif.baseName, curWidth); setExceededWarning(false) } else setExceededWarning(true) }} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">+</button>
+                              </div>
+                              {motif.sizes.length > 1 && (
+                                <div className="flex items-center gap-1">
+                                  <button onClick={() => handleSizeChange(motif, -1)} disabled={sizeIdx === 0} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs disabled:opacity-30">‹</button>
+                                  <span className="w-4 text-center" style={{ fontSize: '0.6rem', color: 'var(--muted-foreground)' }}>size</span>
+                                  <button onClick={() => handleSizeChange(motif, 1)} disabled={sizeIdx === motif.sizes.length - 1} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs disabled:opacity-30">›</button>
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>

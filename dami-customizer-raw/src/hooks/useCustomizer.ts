@@ -13,6 +13,7 @@ export interface MotifEntry {
   id:          string
   url:         string
   label:       string
+  baseName:    string
   widthInches: number
   position:    TextPosition
 }
@@ -29,9 +30,10 @@ export interface CustomizerState {
   textPosition:          TextPosition
   onPositionChange:      (pos: TextPosition) => void
   motifEntries:          MotifEntry[]
-  addMotif:              (url: string, label: string, widthInches: number) => void
+  addMotif:              (url: string, label: string, baseName: string, widthInches: number) => void
   removeMotif:           (id: string) => void
   updateMotifPosition:   (id: string, pos: TextPosition) => void
+  updateMotifsByBaseName:(baseName: string, newUrl: string, newWidthInches: number) => void
 }
 
 export function useCustomizer(): CustomizerState {
@@ -44,15 +46,21 @@ export function useCustomizer(): CustomizerState {
 
   const onPositionChange = useCallback((pos: TextPosition) => setTextPosition(pos), [])
 
-  const addMotif = useCallback((url: string, label: string, widthInches: number) => {
+  const addMotif = useCallback((url: string, label: string, baseName: string, widthInches: number) => {
     setMotifEntries(prev => {
       // Stagger each new motif diagonally so they're never invisibly stacked.
       const step   = 0.035
       const offset = prev.length * step
       const x = Math.min(0.85, Math.max(0.15, 0.5 + offset))
       const y = Math.min(0.85, Math.max(0.15, 0.5 + offset))
-      return [...prev, { id: crypto.randomUUID(), url, label, widthInches, position: { x, y } }]
+      return [...prev, { id: crypto.randomUUID(), url, label, baseName, widthInches, position: { x, y } }]
     })
+  }, [])
+
+  const updateMotifsByBaseName = useCallback((baseName: string, newUrl: string, newWidthInches: number) => {
+    setMotifEntries(prev => prev.map(e =>
+      e.baseName === baseName ? { ...e, url: newUrl, widthInches: newWidthInches } : e
+    ))
   }, [])
 
   const removeMotif = useCallback((id: string) => {
@@ -71,5 +79,6 @@ export function useCustomizer(): CustomizerState {
     textPosition,      onPositionChange,
     motifEntries,      addMotif,
     removeMotif,       updateMotifPosition,
+    updateMotifsByBaseName,
   }
 }
