@@ -79,7 +79,7 @@ export const PRODUCT_CONFIG: Record<ItemType, ProductConfig> = {
 
   'Linen Cocktail Napkin': {
     safeZone: { widthRatio: 0.53, heightRatio: 0.45, offsetX: 0.00, offsetY: -0.01 },
-    physicalWidth: 6,
+    physicalWidth: 4.25,
     maxTextWidth:  4,
   },
 

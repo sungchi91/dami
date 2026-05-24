@@ -216,13 +216,15 @@ export default function CustomizerWidget() {
       return
     }
 
-    // Variant images hidden from gallery — swap the active slide's img src directly
-    if (imageUrl) {
-      const activeImg = gallery.querySelector('.product__media-item.is-active img') as HTMLImageElement | null
-      if (activeImg) {
-        activeImg.src = imageUrl
-        activeImg.srcset = ''
-      }
+    // Variant images hidden from gallery — go to first slide and swap its img src
+    const firstItem = gallery.querySelector('.product__media-item') as HTMLElement | null
+    const firstMediaId = firstItem?.dataset.mediaId
+    if (firstMediaId) gallery.setActiveMedia?.(firstMediaId, false)
+
+    const firstImg = (firstItem ?? gallery.querySelector('.product__media-item.is-active'))?.querySelector('img') as HTMLImageElement | null
+    if (firstImg && imageUrl) {
+      firstImg.src = imageUrl
+      firstImg.srcset = ''
     }
   }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 

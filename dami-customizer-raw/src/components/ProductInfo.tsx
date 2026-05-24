@@ -40,31 +40,43 @@ const CB  = '?v=20260517'
 
 function parseSz(s: string): number { return parseFloat(s.replace('p', '.')) }
 // Each motif has a single PNG file named with its MIN size suffix; we re-scale on canvas for larger sizes.
-function motifUrl(motif: { baseName: string; sizes: string[] }): string {
+// noSuffix: true means the CDN file has no size suffix (e.g. motif_champagneFlutes.png).
+function motifUrl(motif: { baseName: string; sizes: string[]; noSuffix?: boolean }): string {
+  if (motif.noSuffix) return `${CDN}${motif.baseName}.png${CB}`
   return `${CDN}${motif.baseName}_${motif.sizes[0]}.png${CB}`
 }
 
-type MotifDef = { label: string; baseName: string; sizes: string[] }
+type MotifDef = { label: string; baseName: string; sizes: string[]; noSuffix?: boolean }
 
 const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
   { group: 'Drinks', motifs: [
     { label: 'Aperol Spritz',    baseName: 'motif_aperolSpritz',    sizes: ['1p57','1p97'] },
     { label: 'Champagne',        baseName: 'motif_champagne',        sizes: ['1p5','2','2p5'] },
+    { label: 'Champagne Flutes', baseName: 'motif_champagneFlutes',  sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Espresso Martini', baseName: 'motif_espressoMartini',  sizes: ['1p57','1p97'] },
     { label: 'Gin & Tonic',      baseName: 'motif_ginAndTonic',      sizes: ['1p57','1p97'] },
+    { label: 'Iced Coffee',      baseName: 'motif_icedCoffee',       sizes: ['1p57','1p97','2p36'], noSuffix: true },
     { label: 'Martini',          baseName: 'motif_martini',          sizes: ['1p5','2','2p5'] },
     { label: 'Spicy Marg',       baseName: 'motif_spicyMarg',        sizes: ['1'] },
     { label: 'Tequila',          baseName: 'motif_tequila',          sizes: ['1'] },
+    { label: 'Whiskey Glass',    baseName: 'motif_whiskeyGlass',     sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
+    { label: 'Wine Bottle',      baseName: 'motif_wineBottle',       sizes: ['1p57','1p97','2p36'], noSuffix: true },
+    { label: 'Wine Glass',       baseName: 'motif_wineGlass',        sizes: ['1p57','1p97','2p36'], noSuffix: true },
   ]},
   { group: 'Food', motifs: [
+    { label: 'Cherries',         baseName: 'motif_cherries',         sizes: ['1p18','1p57','1p97'], noSuffix: true },
+    { label: 'Chili Pepper',     baseName: 'motif_chiliPepper',      sizes: ['1p25','1p5','1p75','2','2p25','2p5','2p75','3','3p25','3p5'], noSuffix: true },
     { label: 'Crab',             baseName: 'motif_crab',             sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Croissant',        baseName: 'motif_croissant',        sizes: ['0p75'], noSuffix: true },
     { label: 'Hamburger',        baseName: 'motif_hamburger',        sizes: ['1','1p5','2'] },
     { label: 'Hot Dog',          baseName: 'motif_hotDog',           sizes: ['1','1p5','2'] },
+    { label: 'Ice Cream Cone',   baseName: 'motif_iceCreamCone',     sizes: ['1p57','1p97','2p36'], noSuffix: true },
     { label: 'Lemons',           baseName: 'motif_lemons',           sizes: ['1','1p5','2','2p5','3'] },
     { label: 'Lobster',          baseName: 'motif_lobster',          sizes: ['1','1p5','2','2p5','3'] },
     { label: 'Olive Branch',     baseName: 'motif_oliveBranch',      sizes: ['1','1p5','2','2p5','3'] },
     { label: 'Olive Oil',        baseName: 'motif_oliveOil',         sizes: ['1','1p5','2','2p5','3'] },
     { label: 'Olive Pick',       baseName: 'motif_olivePick',        sizes: ['1','1p5','2'] },
+    { label: 'Olives',           baseName: 'motif_olives',           sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Oysters',          baseName: 'motif_oysters',          sizes: ['1','1p5','2','2p5','3'] },
     { label: 'Pizza',            baseName: 'motif_pizza',            sizes: ['1','1p5','2'] },
     { label: 'Sardines',         baseName: 'motif_sardines',         sizes: ['1','1p5','2','2p5','3'] },
@@ -91,15 +103,28 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Vintage Perfume',  baseName: 'motif_vintagePerfume',   sizes: ['1','1p5','2','2p5','3'] },
   ]},
   { group: 'Fashion', motifs: [
-    { label: 'Bow',              baseName: 'motif_bow',              sizes: ['0p94','1p1','1p46','1p73','1p97','2p32','2p72','3p27','3p9'] },
+    { label: 'Bow',              baseName: 'motif_bow',              sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Flat Hair Clip',   baseName: 'motif_flatHairClip',     sizes: ['1p4','1p6','2'] },
     { label: 'Hair Clip',        baseName: 'motif_hairClip',         sizes: ['1p2','1p4','1p8'] },
     { label: 'Hair Comb',        baseName: 'motif_hairComb',         sizes: ['1p2','1p4','1p8'] },
     { label: 'Handbag',          baseName: 'motif_handbag',          sizes: ['1','1p5','2','2p5','3'] },
     { label: 'Heel',             baseName: 'motif_heel',             sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Neat Bow',         baseName: 'motif_neatBow',          sizes: ['0p5','1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Scarf',            baseName: 'motif_scarf',            sizes: ['1','1p5','2','2p5','3'] },
     { label: 'Scrunchie',        baseName: 'motif_scrunchie',        sizes: ['1p2','1p4','1p8'] },
     { label: 'Sunglasses',       baseName: 'motif_sunglasses',       sizes: ['1','1p5','2','2p5','3'] },
+  ]},
+  { group: 'Travel', motifs: [
+    { label: 'Airplane',         baseName: 'motif_airplane',         sizes: ['1p38','1p77','2p17'], noSuffix: true },
+    { label: 'Anchor',           baseName: 'motif_anchor',           sizes: ['1p18','1p57','1p97'], noSuffix: true },
+    { label: 'Passport',         baseName: 'motif_passport',         sizes: ['1p57','1p97','2p36'], noSuffix: true },
+    { label: 'Sailboat',         baseName: 'motif_sailboat',         sizes: ['1p18','1p57','1p97'], noSuffix: true },
+    { label: 'Suitcase',         baseName: 'motif_suitcase',         sizes: ['1p77','2p17','2p56'], noSuffix: true },
+  ]},
+  { group: 'Fun & Games', motifs: [
+    { label: '8 Ball',           baseName: 'motif_8ball',            sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
+    { label: 'Dice',             baseName: 'motif_dice',             sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
+    { label: 'Playing Cards',    baseName: 'motif_playingCards',     sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
   ]},
   { group: 'Golf', motifs: [
     { label: 'Golf Cart',        baseName: 'motif_golfCart',         sizes: ['1','1p5','2','2p5'] },
@@ -115,8 +140,11 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
   { group: 'Lifestyle', motifs: [
     { label: 'Cigarette',        baseName: 'motif_cigarette',        sizes: ['1','1p5','2','2p5','3'] },
     { label: 'Heart',            baseName: 'motif_heart',            sizes: ['0p8','1','1p4'] },
+    { label: 'Match Box',        baseName: 'motif_matchBox',         sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Palm Tree',        baseName: 'motif_palmTree',         sizes: ['1','2'] },
+    { label: 'Pine Tree',        baseName: 'motif_pineTree',         sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Pomeranian',       baseName: 'motif_pomeranian',       sizes: ['2p2','2p8','3p8'] },
+    { label: 'Wedding Rings',    baseName: 'motif_weddingRings',     sizes: ['0p96','1p42','1p91'], noSuffix: true },
   ]},
 ]
 
@@ -536,8 +564,8 @@ export function ProductInfo({
                               {motif.sizes.length > 1 && (
                                 <div className="flex items-center gap-1">
                                   <button onClick={() => handleSizeChange(motif, -1)} disabled={sizeIdx === 0} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs disabled:opacity-30">‹</button>
-                                  <span className="w-4 text-center" style={{ fontSize: '0.6rem', color: 'var(--muted-foreground)' }}>size</span>
-                                  <button onClick={() => handleSizeChange(motif, 1)} disabled={sizeIdx === motif.sizes.length - 1} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs disabled:opacity-30">›</button>
+                                  <span className="w-8 text-center text-xs" style={{ color: 'var(--muted-foreground)' }}>size</span>
+                                  <button onClick={() => handleSizeChange(motif, 1)} disabled={sizeIdx === motif.sizes.length - 1 || (customizerType === 'side-motif' && parseSz(motif.sizes[sizeIdx + 1] ?? motif.sizes[sizeIdx]) > 1.5)} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs disabled:opacity-30">›</button>
                                 </div>
                               )}
                             </div>

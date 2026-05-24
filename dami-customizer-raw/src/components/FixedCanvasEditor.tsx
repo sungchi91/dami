@@ -378,8 +378,9 @@ export function FixedCanvasEditor({
         return
       }
 
+      const renderInches = isSideMotifLayout(layout) ? Math.min(entry.widthInches, 1.5) : entry.widthInches
       tasks.push(
-        createMotifObj(entry.url, entry.id, absX, absY, sz.width, config.physicalWidth, entry.widthInches)
+        createMotifObj(entry.url, entry.id, absX, absY, sz.width, config.physicalWidth, renderInches)
           .then(m => {
             if (!fcRef.current) return
             motifsMapRef.current.set(entry.id, m)
