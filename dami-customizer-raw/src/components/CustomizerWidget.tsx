@@ -318,6 +318,7 @@ export default function CustomizerWidget() {
               canvasBgColor={canvasBgColor || undefined}
               motifEntries={motifEntries}
               customizerType={customizerType}
+              colorName={colors[selectedColor]?.name}
             />
           )}
         </div>,

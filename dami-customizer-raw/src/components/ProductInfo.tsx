@@ -30,7 +30,7 @@ const fontStyles = [
 ]
 
 const TEXT_SIZE_MIN  = 0.5
-const TEXT_SIZE_MAX  = 2.5
+const TEXT_SIZE_MAX  = 1.75
 const TEXT_SIZE_STEP = 0.25
 
 const FONT_SIZE_FLOOR: Record<string, number> = {}

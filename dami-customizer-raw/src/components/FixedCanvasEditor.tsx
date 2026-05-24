@@ -47,6 +47,7 @@ export interface FixedCanvasEditorProps {
   canvasBgColor?: string
   motifEntries:   MotifEntry[]
   customizerType: string
+  colorName?:     string
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -55,6 +56,30 @@ const FONT_SCALE_MULTIPLIERS: Record<string, number> = {
   'edwardian':   1.2,
   'chateauneuf': 1.2,
   'ballantines': 1.4,
+}
+
+// Horizontal nudge in inches (negative = left) applied per font to correct visual centering
+const FONT_X_NUDGE_INCHES: Record<string, number> = {
+  'edwardian':   -0.5,
+  'chateauneuf': -0.5,
+}
+
+// Additional nudge for specific product + color combinations (all fonts)
+const PRODUCT_COLOR_X_NUDGE: { product: string; color: string; nudgeInches: number }[] = [
+  { product: 'Grand Tote', color: 'navy', nudgeInches: -0.2 },
+]
+
+function colorXNudgePx(szWidth: number, physicalWidth: number, itemName: string, colorName?: string): number {
+  const nudge = PRODUCT_COLOR_X_NUDGE.find(
+    r => itemName.toLowerCase().includes(r.product.toLowerCase()) &&
+         (colorName ?? '').toLowerCase().includes(r.color.toLowerCase())
+  )?.nudgeInches ?? 0
+  return nudge * computePPI(szWidth, physicalWidth)
+}
+
+function fontXNudgePx(fontStyle: string, textSize: TextSize, szWidth: number, physicalWidth: number, itemName: string, colorName?: string): number {
+  const fontNudge = (FONT_X_NUDGE_INCHES[fontStyle] ?? 0) * textSize * computePPI(szWidth, physicalWidth)
+  return fontNudge + colorXNudgePx(szWidth, physicalWidth, itemName, colorName)
 }
 
 function physicalScale(
@@ -196,6 +221,7 @@ export function FixedCanvasEditor({
   canvasBgColor,
   motifEntries,
   customizerType,
+  colorName,
 }: FixedCanvasEditorProps) {
   const wrapperRef       = useRef<HTMLDivElement>(null)
   const canvasRef        = useRef<HTMLCanvasElement>(null)
@@ -280,7 +306,7 @@ export function FixedCanvasEditor({
     const config      = PRODUCT_CONFIG[itemName]
     const layout      = getFixedLayout(itemName, customizerType as FixedLayoutType)
     const textPos     = layout?.text ?? { x: 0.5, y: 0.5 }
-    const absX        = sz.left + textPos.x * sz.width
+    const absX        = sz.left + textPos.x * sz.width + fontXNudgePx(fontStyle, textSize, sz.width, config.physicalWidth, itemName, colorName)
     const absY        = sz.top  + textPos.y * sz.height
     const fontSize    = Math.round(Math.max(22, sz.width * 0.085))
     const primaryFont = fontFamily.split(',')[0].trim()
@@ -330,7 +356,7 @@ export function FixedCanvasEditor({
     const config   = PRODUCT_CONFIG[itemName]
     const layout   = getFixedLayout(itemName, customizerType as FixedLayoutType)
     const textPos  = (layout && 'text' in layout && layout.text) ? layout.text : { x: 0.5, y: 0.5 }
-    const absX     = sz.left + textPos.x * sz.width
+    const absX     = sz.left + textPos.x * sz.width + fontXNudgePx(fontStyle, textSize, sz.width, config.physicalWidth, itemName, colorName)
     const absY     = sz.top  + textPos.y * sz.height
     const scale    = physicalScale(t, textSize, fontStyle, sz.width, config.physicalWidth)
     const clipAlign: 'center' | 'right' = customizerType === 'side-font' ? 'right' : 'center'
@@ -362,17 +388,18 @@ export function FixedCanvasEditor({
     motifEntries.forEach((entry, index) => {
       let absX: number, absY: number
 
+      const xNudge = colorXNudgePx(sz.width, config.physicalWidth, itemName, colorName)
       if (isRowLayout(layout)) {
         const xs = calcMotifRowPositions(layout.motifRow.centerX, motifEntries.length, rowSpacingInches, config.physicalWidth)
-        absX = sz.left + xs[index] * sz.width
+        absX = sz.left + xs[index] * sz.width + xNudge
         absY = sz.top  + layout.motifRow.y * sz.height
       } else if (isSidenoteLayout(layout)) {
         if (index > 0) return
-        absX = sz.left + layout.motif.x * sz.width
+        absX = sz.left + layout.motif.x * sz.width + xNudge
         absY = sz.top  + layout.motif.y * sz.height
       } else if (isSideMotifLayout(layout)) {
         if (index > 0) return
-        absX = sz.left + layout.motif.x * sz.width
+        absX = sz.left + layout.motif.x * sz.width + xNudge
         absY = sz.top  + layout.motif.y * sz.height
       } else {
         return

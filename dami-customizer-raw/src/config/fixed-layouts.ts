@@ -83,7 +83,7 @@ export const FIXED_LAYOUTS: Record<string, ProductFixedLayouts> = {
     classic:   { text: { x: 0.50, y: 0.18 } },
     statement: { text: { x: 0.51, y: 0.59 } },
     sidenote:  { text: { x: 0.49, y: 0.18 }, motif: { x: 0.83, y: 0.85 } },
-    crown:     { text: { x: 0.51, y: 0.26 }, motifRow: { centerX: 0.51, y: 0.16 } },
+    crown:     { text: { x: 0.51, y: 0.26 }, motifRow: { centerX: 0.51, y: 0.15 } },
     pedestal:  { text: { x: 0.50, y: 0.11 }, motifRow: { centerX: 0.50, y: 0.25 } },
   },
   'Petite Tote': {
