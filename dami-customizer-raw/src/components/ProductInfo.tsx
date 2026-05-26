@@ -318,8 +318,12 @@ export function ProductInfo({
     || customizerType === 'crown' || customizerType === 'pedestal' || customizerType === 'sidenote'
     || customizerType === 'side-motif' || customizerType === 'classic-motif'
 
-  const hasInput = (showTextStep && embroideryText.trim().length > 0)
-    || (showMotifStep && motifEntries.length > 0)
+  const textMet  = !showTextStep || embroideryText.trim().length > 0
+  const motifMet = !showMotifStep
+    || (selectedMotifCount
+      ? motifEntries.length >= parseInt(selectedMotifCount, 10)
+      : motifEntries.length > 0)
+  const hasInput = textMet && motifMet
   const layoutMax = (customizerType === 'sidenote' || customizerType === 'side-motif' || customizerType === 'classic-motif') ? 1 : maxMotifs
   const countMax  = selectedMotifCount ? parseInt(selectedMotifCount, 10) : Infinity
   const effectiveMaxMotifs = Math.min(layoutMax, isFinite(countMax) ? countMax : layoutMax)
@@ -669,13 +673,24 @@ export function ProductInfo({
           {/* ── Add to Basket ────────────────────────────────────────────────── */}
           <div className="flex gap-4 pt-2 border-t border-border">
             {available ? (
-              <Button
-                className="flex-1 py-6 text-base bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-40"
-                disabled={isSubmitting || !hasInput}
-                onClick={handleAddToBasket}
-              >
-                {isSubmitting ? 'Adding…' : 'Add to Basket'}
-              </Button>
+              <>
+                {!hasInput && (
+                  <p className="w-full text-sm text-center" style={{ color: 'var(--muted-foreground)' }}>
+                    {!textMet && !motifMet
+                      ? `Please enter your text and add ${selectedMotifCount} motif${parseInt(selectedMotifCount, 10) !== 1 ? 's' : ''} to continue.`
+                      : !textMet
+                        ? 'Please enter your embroidery text to continue.'
+                        : `Please add ${selectedMotifCount} motif${parseInt(selectedMotifCount, 10) !== 1 ? 's' : ''} to continue.`}
+                  </p>
+                )}
+                <Button
+                  className="flex-1 py-6 text-base bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-40"
+                  disabled={isSubmitting || !hasInput}
+                  onClick={handleAddToBasket}
+                >
+                  {isSubmitting ? 'Adding…' : 'Add to Basket'}
+                </Button>
+              </>
             ) : (
               <Button
                 className="flex-1 py-6 text-base"
