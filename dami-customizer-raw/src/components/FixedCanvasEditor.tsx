@@ -425,11 +425,16 @@ export function FixedCanvasEditor({
   }, [motifEntries, selectedItem, customizerType]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div
-      ref={wrapperRef}
-      className="relative aspect-[4/5] w-full max-w-full overflow-hidden shadow-xl"
-    >
-      <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%' }} />
-    </div>
+    <>
+      <div
+        ref={wrapperRef}
+        className="relative aspect-[4/5] w-full max-w-full overflow-hidden shadow-xl"
+      >
+        <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%' }} />
+      </div>
+      <p style={{ fontSize: '1rem', color: 'var(--foreground)', marginTop: '0.5rem', lineHeight: '1.5' }}>
+        Motif positioning is a guide only; exact placement may shift slightly to suit the item's shape and embroidery hoop constraints.
+      </p>
+    </>
   )
 }

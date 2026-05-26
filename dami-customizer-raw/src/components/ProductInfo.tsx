@@ -68,6 +68,7 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Chili Pepper',     baseName: 'motif_chiliPepper',      sizes: ['1p25','1p5','1p75','2','2p25','2p5','2p75','3','3p25','3p5'], noSuffix: true },
     { label: 'Crab',             baseName: 'motif_crab',             sizes: ['1','1p5','2','2p5','3'] },
     { label: 'Croissant',        baseName: 'motif_croissant',        sizes: ['0p75'], noSuffix: true },
+    { label: 'French Fries',     baseName: 'motif_frenchFries',      sizes: ['1','1p5','2'], noSuffix: true },
     { label: 'Hamburger',        baseName: 'motif_hamburger',        sizes: ['1','1p5','2'] },
     { label: 'Hot Dog',          baseName: 'motif_hotDog',           sizes: ['1','1p5','2'] },
     { label: 'Ice Cream Cone',   baseName: 'motif_iceCreamCone',     sizes: ['1p57','1p97','2p36'], noSuffix: true },
@@ -93,7 +94,7 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Gua Sha',          baseName: 'motif_guaSha',           sizes: ['1','1p2','1p6'] },
     { label: 'Hand Cream',       baseName: 'motif_handCream',        sizes: ['1p4','1p6','2'] },
     { label: 'Lip Gloss',        baseName: 'motif_lipGloss',         sizes: ['1p4','1p6','2'] },
-    { label: 'Lips',             baseName: 'motif_lips',             sizes: ['1','1p2','1p6'] },
+    { label: 'Lips',             baseName: 'motif_lips',             sizes: ['1p80','2p80','3p80'], noSuffix: true },
     { label: 'Lipstick',         baseName: 'motif_lipstick',         sizes: ['1p2','1p4','1p8'] },
     { label: 'Mirror',           baseName: 'motif_mirror',           sizes: ['1p2','1p4','1p8'] },
     { label: 'Perfume',          baseName: 'motif_perfume',          sizes: ['1p2','1p4','1p8'] },
@@ -103,7 +104,10 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Vintage Perfume',  baseName: 'motif_vintagePerfume',   sizes: ['1','1p5','2','2p5','3'] },
   ]},
   { group: 'Fashion', motifs: [
+    { label: 'Ballet',           baseName: 'motif_ballet',           sizes: ['1p06','1p22','1p42','1p61','1p81','2p01','2p28','2p56','2p80','3p15','3p70'], noSuffix: true },
+    { label: 'Bikini',            baseName: 'motif_bikini',           sizes: ['2','3','4','5'], noSuffix: true },
     { label: 'Bow',              baseName: 'motif_bow',              sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
+    { label: 'Cowboy Boot',      baseName: 'motif_cowboyBoot',       sizes: ['1','2','3','4','5','6'], noSuffix: true },
     { label: 'Flat Hair Clip',   baseName: 'motif_flatHairClip',     sizes: ['1p4','1p6','2'] },
     { label: 'Hair Clip',        baseName: 'motif_hairClip',         sizes: ['1p2','1p4','1p8'] },
     { label: 'Hair Comb',        baseName: 'motif_hairComb',         sizes: ['1p2','1p4','1p8'] },
@@ -113,6 +117,13 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Scarf',            baseName: 'motif_scarf',            sizes: ['1','1p5','2','2p5','3'] },
     { label: 'Scrunchie',        baseName: 'motif_scrunchie',        sizes: ['1p2','1p4','1p8'] },
     { label: 'Sunglasses',       baseName: 'motif_sunglasses',       sizes: ['1','1p5','2','2p5','3'] },
+  ]},
+  { group: 'Floral', motifs: [
+    { label: 'Clover',           baseName: 'motif_clover',           sizes: ['0p80','1','1p20','1p40'], noSuffix: true },
+    { label: 'Daisy',             baseName: 'motif_daisy',            sizes: ['0p80','1','1p25','1p50','1p75','2','2p25','2p50','2p75','3'], noSuffix: true },
+    { label: 'Rose (Red)',        baseName: 'motif_roseRed',          sizes: ['1p18','1p42','1p65','1p89','2p17','2p48','2p87','3p31'], noSuffix: true },
+    { label: 'Rose (White)',      baseName: 'motif_roseWhite',        sizes: ['1p18','1p42','1p65','1p89','2p17','2p48','2p87','3p31'], noSuffix: true },
+    { label: 'Tulip',            baseName: 'motif_tulip',            sizes: ['1p50','2','3','4','5','6','7'], noSuffix: true },
   ]},
   { group: 'Travel', motifs: [
     { label: 'Airplane',         baseName: 'motif_airplane',         sizes: ['1p38','1p77','2p17'], noSuffix: true },
@@ -124,6 +135,10 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
   { group: 'Fun & Games', motifs: [
     { label: '8 Ball',           baseName: 'motif_8ball',            sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Dice',             baseName: 'motif_dice',             sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
+    { label: 'Horseshoe',        baseName: 'motif_horseshoe',        sizes: ['0p39','0p59','0p79','0p98','1p18','1p38','1p57','1p77','1p97','2p17','2p36','2p76'], noSuffix: true },
+    { label: 'Lucky 777',        baseName: 'motif_lucky777',         sizes: ['2','3','4','5'], noSuffix: true },
+    { label: 'Lucky Dice',       baseName: 'motif_luckyDice',        sizes: ['2','3','4','5'], noSuffix: true },
+    { label: 'Lucky Heart',      baseName: 'motif_luckyHeart',       sizes: ['1','2','3','4','5'], noSuffix: true },
     { label: 'Playing Cards',    baseName: 'motif_playingCards',     sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
   ]},
   { group: 'Golf', motifs: [
@@ -137,14 +152,58 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'NYC Empire',       baseName: 'motif_nycEmpire',        sizes: ['1p5','2','2p5'] },
     { label: 'NYC Taxi',         baseName: 'motif_nycTaxi',          sizes: ['1p5','2','2p5'] },
   ]},
+  { group: 'I♥SF', motifs: [
+    { label: 'Cable Car',        baseName: 'motif_cableCar',         sizes: ['1p50','2','2p50'], noSuffix: true },
+    { label: 'Sea Lion',         baseName: 'motif_seaLion',          sizes: ['1p50','2','2p50'], noSuffix: true },
+    { label: 'Victorian Row',    baseName: 'motif_victorianRow',     sizes: ['1p25','1p75','2p25'], noSuffix: true },
+  ]},
+  { group: 'Bachelorette', motifs: [
+    { label: 'Locket',           baseName: 'motif_locketFrame',          sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Balloon',          baseName: 'motif_bacheloretteBalloon',  sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Bands',            baseName: 'motif_bacheloretteBands',    sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Boots',            baseName: 'motif_bacheloretteBoots',    sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Bow',              baseName: 'motif_bacheloretteBow',      sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Bucket',           baseName: 'motif_bacheloretteBucket',   sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Cake',             baseName: 'motif_bacheloretteCake',     sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Card',             baseName: 'motif_bacheloretteCard',     sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Dice',             baseName: 'motif_bacheloretteDice',     sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Disco',            baseName: 'motif_bacheloretteDisco',    sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Hat',              baseName: 'motif_bacheloretteHat',      sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Lips',             baseName: 'motif_bacheloretteLips',     sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Lipstick',         baseName: 'motif_bacheloretteLipstick', sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Long Bow',         baseName: 'motif_bacheloretteLongBow',  sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Sunnies',          baseName: 'motif_bacheloretteSunnies',  sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Tower',            baseName: 'motif_bacheloretteTower',    sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Vinyl',            baseName: 'motif_bacheloretteVinyl',    sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+    { label: 'Wine',             baseName: 'motif_bacheloretteWine',     sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
+  ]},
+  { group: 'Locket', motifs: [
+    { label: 'Coquette',         baseName: 'motif_locketCoquette',   sizes: ['2','3','4','5','6','7','8'], noSuffix: true },
+    { label: 'Coquette 2',       baseName: 'motif_locketCoquette2',  sizes: ['2','2p50','3','3p50','4','4p50','5','5p50','6','6p50','7'], noSuffix: true },
+    { label: 'Heart 2',          baseName: 'motif_locketHeart2',     sizes: ['2','2p50','3','3p50','4','4p50','5','5p50','6','6p50'], noSuffix: true },
+    { label: 'Heart 3',          baseName: 'motif_locketHeart3',     sizes: ['2','2p50','3','3p50','4','4p50','5','5p50','6'], noSuffix: true },
+  ]},
+  { group: 'Animals', motifs: [
+    { label: 'Bichon Frise',     baseName: 'motif_bichonFrise',      sizes: ['2p80','3p78','4p76'], noSuffix: true },
+    { label: 'Brown Dog',        baseName: 'motif_brownDog',         sizes: ['2p80','3p80','4p80'], noSuffix: true },
+    { label: 'Pomeranian',       baseName: 'motif_pomeranian',       sizes: ['2p2','2p8','3p8'] },
+  ]},
   { group: 'Lifestyle', motifs: [
     { label: 'Cigarette',        baseName: 'motif_cigarette',        sizes: ['1','1p5','2','2p5','3'] },
+    { label: 'Evil Eye',         baseName: 'motif_evilEye',          sizes: ['0p83','1p22','1p62','2p02','2p82','3p61','4p41'], noSuffix: true },
     { label: 'Heart',            baseName: 'motif_heart',            sizes: ['0p8','1','1p4'] },
+    { label: 'Key',               baseName: 'motif_key',              sizes: ['1p10','1p26','1p46','1p73','1p97','2p24','2p60','2p99','3p39','3p82','4p21'], noSuffix: true },
     { label: 'Match Box',        baseName: 'motif_matchBox',         sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Palm Tree',        baseName: 'motif_palmTree',         sizes: ['1','2'] },
     { label: 'Pine Tree',        baseName: 'motif_pineTree',         sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
-    { label: 'Pomeranian',       baseName: 'motif_pomeranian',       sizes: ['2p2','2p8','3p8'] },
+    { label: 'Smile',            baseName: 'motif_smile',            sizes: ['0p80','1','1p20'], noSuffix: true },
+    { label: 'Teddy Bear',       baseName: 'motif_teddyBear',        sizes: ['1','2','3'], noSuffix: true },
+    { label: 'Tennis Racket',    baseName: 'motif_tennisRacket',     sizes: ['2'], noSuffix: true },
     { label: 'Wedding Rings',    baseName: 'motif_weddingRings',     sizes: ['0p96','1p42','1p91'], noSuffix: true },
+    { label: 'XOXO Heart (Red)',  baseName: 'motif_xoxoHeartRed',     sizes: ['1','1p25','1p50','1p75','2','2p25','2p50','3'], noSuffix: true },
+    { label: 'XOXO Heart (Pink)', baseName: 'motif_xoxoHeartPink',    sizes: ['1','1p25','1p50','1p75','2','2p25','2p50','3'], noSuffix: true },
+    { label: 'XOXO Heart (Green)',baseName: 'motif_xoxoHeartGreen',   sizes: ['1','1p25','1p50','1p75','2','2p25','2p50','3'], noSuffix: true },
+    { label: 'XOXO Heart (Blue)', baseName: 'motif_xoxoHeartBlue',    sizes: ['1','1p25','1p50','1p75','2','2p25','2p50','3'], noSuffix: true },
   ]},
 ]
 
@@ -397,11 +456,13 @@ export function ProductInfo({
             <div className="flex gap-3">
               <span className="font-medium text-foreground shrink-0 w-32">Disclaimer</span>
               <span className="leading-relaxed">
-                Mockups are approximate. Minor variations may occur in the final embroidered result.
+                Mockups are approximate. Minor variations may occur in the final embroidered result. Alignment, sizing, and thread color will be adjusted during production for best results.
+                <br /><br />
+                Thread colors displayed on screen may differ from actual thread due to monitor calibration and dye lot variation. Thread color selections are final once the order is placed. Light thread colors on light backgrounds may result in low contrast, particularly on fine-line or detailed designs. For best visibility, choose a darker thread color.
                 <br /><br />
                 Font rendering varies by device and browser. The stitched result follows the font name and reference images shown in the Custom Font section.
                 <br /><br />
-                Thread color selections are final once the order is placed. Light thread colors on light backgrounds may result in low contrast, particularly on fine-line or detailed designs. For best visibility, choose a darker thread color.
+                Please double-check spelling and capitalization before ordering — personalized items cannot be returned or exchanged.
                 {(ITEM_TYPES[selectedItem] ?? '').toLowerCase().includes('tote') && (
                   <><br /><br />Embroidery placed on the front pocket will close the pocket opening.</>
                 )}
