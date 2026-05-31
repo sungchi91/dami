@@ -9,6 +9,7 @@ import {
 import {
   getFixedLayout,
   getMotifInches,
+  getMotifSizeLimits,
   isRowLayout,
   isSidenoteLayout,
   isSideMotifLayout,
@@ -405,7 +406,8 @@ export function FixedCanvasEditor({
         return
       }
 
-      const renderInches = isSideMotifLayout(layout) ? Math.min(entry.widthInches, 1.5) : entry.widthInches
+      const { max: motifMaxInches } = getMotifSizeLimits(itemName, customizerType)
+      const renderInches = Math.min(entry.widthInches, motifMaxInches)
       tasks.push(
         createMotifObj(entry.url, entry.id, absX, absY, sz.width, config.physicalWidth, renderInches)
           .then(m => {
@@ -432,7 +434,7 @@ export function FixedCanvasEditor({
       >
         <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%' }} />
       </div>
-      <p style={{ fontSize: '1rem', color: 'var(--foreground)', marginTop: '0.5rem', lineHeight: '1.5' }}>
+      <p style={{ fontSize: '1.15rem', color: 'var(--foreground)', marginTop: '0.5rem', marginBottom: '1.5rem', lineHeight: '1.6', fontWeight: 500 }}>
         Motif positioning is a guide only; exact placement may shift slightly to suit the item's shape and embroidery hoop constraints.
       </p>
     </>

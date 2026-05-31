@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useRef, useEffect } from 'react'
 import { Truck, Sparkles, Gift, ChevronLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ITEM_TYPES } from '@/config/products'
 import type { TextSize, TextPosition, MotifEntry } from '@/hooks/useCustomizer'
 import { buildCartPayload, submitToCart } from '@/lib/cart'
+import { getMotifSizeLimits } from '@/config/fixed-layouts'
 
 // ── Thread swatches ────────────────────────────────────────────────────────────
 
@@ -21,12 +22,12 @@ export const threadSwatches = [
 ]
 
 const fontStyles = [
-  { id: 'edwardian',    label: 'Elegant Script'  },
-  { id: 'chateauneuf',  label: 'Delicate Script' },
-  { id: 'ballantines',  label: 'Bold Script'     },
-  { id: 'katelyn',      label: 'Playful Script'  },
-  { id: 'garamond',     label: 'Classic Serif'   },
-  { id: 'block',        label: 'Modern Block'    },
+  { id: 'edwardian',    label: 'Elegant Script',  fontFamily: 'Edwardian'   },
+  { id: 'chateauneuf',  label: 'Delicate Script', fontFamily: 'Chateauneuf' },
+  { id: 'ballantines',  label: 'Bold Script',     fontFamily: 'Ballantines' },
+  { id: 'katelyn',      label: 'Playful Script',  fontFamily: 'Katelyn'     },
+  { id: 'garamond',     label: 'Classic Serif',   fontFamily: 'Garamond'    },
+  { id: 'block',        label: 'Modern Block',    fontFamily: 'Block'       },
 ]
 
 const TEXT_SIZE_MIN  = 0.5
@@ -154,7 +155,6 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
   ]},
   { group: 'I♥SF', motifs: [
     { label: 'Cable Car',        baseName: 'motif_cableCar',         sizes: ['1p50','2','2p50'], noSuffix: true },
-    { label: 'Sea Lion',         baseName: 'motif_seaLion',          sizes: ['1p50','2','2p50'], noSuffix: true },
     { label: 'Victorian Row',    baseName: 'motif_victorianRow',     sizes: ['1p25','1p75','2p25'], noSuffix: true },
   ]},
   { group: 'Bachelorette', motifs: [
@@ -177,7 +177,7 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Vinyl',            baseName: 'motif_bacheloretteVinyl',    sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
     { label: 'Wine',             baseName: 'motif_bacheloretteWine',     sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
   ]},
-  { group: 'Locket', motifs: [
+  { group: 'Sentimental', motifs: [
     { label: 'Coquette',         baseName: 'motif_locketCoquette',   sizes: ['2','3','4','5','6','7','8'], noSuffix: true },
     { label: 'Coquette 2',       baseName: 'motif_locketCoquette2',  sizes: ['2','2p50','3','3p50','4','4p50','5','5p50','6','6p50','7'], noSuffix: true },
     { label: 'Heart 2',          baseName: 'motif_locketHeart2',     sizes: ['2','2p50','3','3p50','4','4p50','5','5p50','6','6p50'], noSuffix: true },
@@ -189,8 +189,7 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Pomeranian',       baseName: 'motif_pomeranian',       sizes: ['2p2','2p8','3p8'] },
   ]},
   { group: 'Lifestyle', motifs: [
-    { label: 'Cigarette',        baseName: 'motif_cigarette',        sizes: ['1','1p5','2','2p5','3'] },
-    { label: 'Evil Eye',         baseName: 'motif_evilEye',          sizes: ['0p83','1p22','1p62','2p02','2p82','3p61','4p41'], noSuffix: true },
+{ label: 'Evil Eye',         baseName: 'motif_evilEye',          sizes: ['0p83','1p22','1p62','2p02','2p82','3p61','4p41'], noSuffix: true },
     { label: 'Heart',            baseName: 'motif_heart',            sizes: ['0p8','1','1p4'] },
     { label: 'Key',               baseName: 'motif_key',              sizes: ['1p10','1p26','1p46','1p73','1p97','2p24','2p60','2p99','3p39','3p82','4p21'], noSuffix: true },
     { label: 'Match Box',        baseName: 'motif_matchBox',         sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
@@ -296,12 +295,18 @@ export function ProductInfo({
   const [exceededWarning, setExceededWarning] = useState(false)
   const [quantity,        setQuantity]        = useState(1)
   const [motifSizeIdx,    setMotifSizeIdx]    = useState<Record<string, number>>({})
+  const [activeMotifTab,  setActiveMotifTab]  = useState('')
+  const [notes,           setNotes]           = useState('')
+  const motifScrollRef = useRef<HTMLDivElement>(null)
+  const [motifScroll,    setMotifScroll]     = useState({ left: false, right: false })
+  const tabScrollRef   = useRef<HTMLDivElement>(null)
+  const [tabScroll,     setTabScroll]        = useState({ left: false, right: false })
 
   const handleAddToBasket = async (e: React.MouseEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     try {
-      const payload = buildCartPayload({ selectedItem, embroideryText, fontStyle, textColor, textSize, textPosition, motifEntries, customizerType })
+      const payload = buildCartPayload({ selectedItem, embroideryText, fontStyle, textColor, textSize, textPosition, motifEntries, customizerType, notes })
       await submitToCart(variantId, payload, quantity, customizerType)
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error'
@@ -354,6 +359,121 @@ export function ProductInfo({
 
   const selectedThreadIndex = threadSwatches.findIndex(s => s.color === textColor)
   const threadName = threadSwatches[selectedThreadIndex < 0 ? 0 : selectedThreadIndex].name
+
+  const mergedMotifGroups = useMemo(() => {
+    const title    = (ITEM_TYPES[selectedItem] ?? '').toLowerCase()
+    const isNapkin = title.includes('napkin')
+    const isTote   = title.includes('tote')
+    const isPouch  = title.includes('pouch')
+
+    const TOTE_NAMES:   Record<string, string> = {
+      'Travel': 'Jet Set', 'Golf': 'On the Green', 'Fun & Games': 'Lucky Girl',
+      'Lifestyle': 'Everyday Chic', 'NYC': 'City Girl', 'I♥SF': 'City Girl',
+      'Food': 'Her Favorite Things', 'Drinks': 'Her Favorite Things', 'Fashion': 'Her Favorite Things',
+      'Bachelorette': 'Bach Bag', 'Floral': 'Garden Party', 'Animals': 'Best Friend',
+    }
+    const POUCH_NAMES:  Record<string, string> = {
+      'Beauty': 'Vanity', 'Fashion': 'Getting Dressed', 'Bachelorette': 'Bach Bag',
+      'Drinks': 'Pre-Game', 'Floral': 'Pretty Things',
+      'Food': 'Her Favorite Things', 'Travel': 'Jet Set', 'Fun & Games': 'Lucky Girl',
+      'NYC': 'City Girl', 'I♥SF': 'City Girl', 'Animals': 'Best Friend', 'Lifestyle': 'Everyday Chic',
+    }
+    const NAPKIN_NAMES: Record<string, string> = {
+      'Drinks': 'Cocktail Hour', 'Food': 'On the Table', 'Floral': 'In Bloom',
+      'Golf': 'Club House', 'Fun & Games': 'Game Night', 'Bachelorette': 'Cheers to Her',
+      'NYC': 'City Souvenir', 'I♥SF': 'City Souvenir', 'Lifestyle': 'The Details',
+    }
+    const displayName = (group: string) => {
+      if (isTote)   return TOTE_NAMES[group]   ?? group
+      if (isPouch)  return POUCH_NAMES[group]  ?? group
+      if (isNapkin) return NAPKIN_NAMES[group] ?? group
+      return group
+    }
+    const TOTE_ORDER   = ['Everyday Chic','Garden Party','Bach Bag','Her Favorite Things','Best Friend','Jet Set','On the Green','Lucky Girl','City Girl']
+    const POUCH_ORDER  = ['Vanity','Getting Dressed','Pretty Things','Sentimental','Bach Bag','Pre-Game','Her Favorite Things','Best Friend','Everyday Chic','Jet Set','Lucky Girl','City Girl']
+    const NAPKIN_ORDER = ['Cocktail Hour','On the Table','In Bloom','Cheers to Her','The Details','Game Night','Club House','City Souvenir']
+    const sortOrder = isTote ? TOTE_ORDER : isPouch ? POUCH_ORDER : isNapkin ? NAPKIN_ORDER : []
+
+    const merged: { label: string; motifs: MotifDef[] }[] = []
+    MOTIF_GROUPS.filter(({ group }) => {
+      if ((isTote || isNapkin) && group === 'Beauty')  return false
+      if (isNapkin && (group === 'Fashion' || group === 'Travel' || group === 'Animals')) return false
+      if (isPouch && group === 'Golf') return false
+      return true
+    }).forEach(({ group, motifs }) => {
+      const label = displayName(group)
+      const existing = merged.find(m => m.label === label)
+      if (existing) existing.motifs = [...existing.motifs, ...motifs]
+      else merged.push({ label, motifs: [...motifs] })
+    })
+    if (sortOrder.length) {
+      merged.sort((a, b) => {
+        const ai = sortOrder.indexOf(a.label); const bi = sortOrder.indexOf(b.label)
+        return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi)
+      })
+    }
+    return merged
+  }, [selectedItem])
+
+  const motifLimits = useMemo(() =>
+    getMotifSizeLimits(ITEM_TYPES[selectedItem] ?? '', customizerType ?? ''),
+    [selectedItem, customizerType]
+  )
+
+  const visibleMotifGroups = useMemo(() =>
+    mergedMotifGroups
+      .map(g => ({
+        ...g,
+        motifs: g.motifs.filter(m => {
+          const minIdx = m.sizes.findIndex(s => parseSz(s) >= motifLimits.min)
+          const maxIdx = m.sizes.reduce((b, s, i) => parseSz(s) <= motifLimits.max ? i : b, -1)
+          return minIdx >= 0 && maxIdx >= 0 && minIdx <= maxIdx
+        }),
+      }))
+      .filter(g => g.motifs.length > 0),
+    [mergedMotifGroups, motifLimits]
+  )
+
+  const resolvedTab = visibleMotifGroups.find(g => g.label === activeMotifTab)
+    ? activeMotifTab
+    : visibleMotifGroups[0]?.label ?? ''
+
+  useEffect(() => {
+    const el = motifScrollRef.current
+    if (!el) return
+    el.scrollLeft = 0
+    setMotifScroll({ left: false, right: el.scrollWidth > el.clientWidth + 1 })
+  }, [resolvedTab])
+
+  useEffect(() => {
+    const el = tabScrollRef.current
+    if (!el) return
+    setTabScroll({ left: false, right: el.scrollWidth > el.clientWidth + 1 })
+  }, [visibleMotifGroups])
+
+  const handleMotifScroll = () => {
+    const el = motifScrollRef.current
+    if (!el) return
+    setMotifScroll({
+      left:  el.scrollLeft > 1,
+      right: el.scrollLeft < el.scrollWidth - el.clientWidth - 1,
+    })
+  }
+
+  const handleTabScroll = () => {
+    const el = tabScrollRef.current
+    if (!el) return
+    setTabScroll({
+      left:  el.scrollLeft > 1,
+      right: el.scrollLeft < el.scrollWidth - el.clientWidth - 1,
+    })
+  }
+
+  const scrollMotifs = (dir: number) =>
+    motifScrollRef.current?.scrollBy({ left: dir, behavior: 'smooth' })
+
+  const scrollTabs = (dir: number) =>
+    tabScrollRef.current?.scrollBy({ left: dir, behavior: 'smooth' })
 
   return (
     <div className="flex flex-col gap-6">
@@ -480,23 +600,23 @@ export function ProductInfo({
       {showPersonalize && (
         <div className="flex flex-col gap-6">
 
-          {/* Back link */}
+          {/* Back button */}
           <button
             onClick={onBack}
-            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
+            className="flex items-center gap-2 self-start px-4 py-2 border border-border text-sm font-medium text-foreground hover:border-primary/60 hover:text-primary transition-all duration-200"
           >
             <ChevronLeft className="w-4 h-4" />
-            Back
+            Back to product
           </button>
 
           {/* 01 · Thread */}
           {!isMotifOnly && <div className="flex flex-col gap-3">
-            <p className="flex items-center gap-2 text-sm font-medium text-foreground">
+            <p className="flex items-center gap-2 text-base font-medium text-foreground">
               <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">01</span>
               Choose a Thread
               <span className="ml-1 text-muted-foreground font-normal">—&nbsp;{threadName}</span>
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 32px)', gap: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 32px)', gap: '8px' }}>
               {threadSwatches.map((swatch) => (
                 <button
                   key={swatch.name}
@@ -520,7 +640,7 @@ export function ProductInfo({
 
           {/* 02 · Text */}
           {showTextStep && <div className="flex flex-col gap-3">
-            <label htmlFor="custom-text" className="flex items-center gap-2 text-sm font-medium text-foreground">
+            <label htmlFor="custom-text" className="flex items-center gap-2 text-base font-medium text-foreground">
               <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">02</span>
               Add Your Text
             </label>
@@ -531,18 +651,19 @@ export function ProductInfo({
               value={embroideryText}
               onChange={(e) => setEmbroideryText(e.target.value)}
               placeholder="Type your text here…"
-              className="w-full px-5 py-4 border border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors duration-200 text-base"
+              className="w-full px-4 py-2.5 border border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors duration-200 text-base"
             />
-            <div className="flex flex-wrap gap-2">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
               {fontStyles.map((f) => (
                 <button
                   key={f.id}
                   onClick={() => { setFontStyle(f.id); const floor = FONT_SIZE_FLOOR[f.id] ?? TEXT_SIZE_MIN; if (textSize < floor) setTextSize(floor) }}
-                  className={`px-4 py-2 border text-sm transition-all duration-200 ${
+                  className={`px-3 py-1 border transition-all duration-200 ${
                     fontStyle === f.id
                       ? 'bg-primary text-primary-foreground border-primary'
                       : 'bg-background text-foreground border-border hover:border-primary/50'
                   }`}
+                  style={{ fontFamily: f.fontFamily, fontSize: '1.35rem', lineHeight: '1.2', padding: '4px 6px' }}
                 >
                   {f.label}
                 </button>
@@ -552,38 +673,41 @@ export function ProductInfo({
           </div>}
 
           {/* 03 · Size */}
-          {showTextStep && <div className="flex flex-col gap-3">
-            <p className="flex items-center gap-2 text-sm font-medium text-foreground">
-              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">03</span>
-              Text Size
-            </p>
-            <div className="flex items-center gap-2">
+          {showTextStep && (
+            <div className="flex items-center gap-3">
+              <p className="flex items-center gap-2 text-base font-medium text-foreground">
+                <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">03</span>
+                Text Size
+              </p>
               {(() => {
                 const effectiveMin = Math.max(TEXT_SIZE_MIN, FONT_SIZE_FLOOR[fontStyle] ?? 0)
-                return (<>
-                  <button
-                    onClick={() => setTextSize(Math.max(effectiveMin, parseFloat((textSize - TEXT_SIZE_STEP).toFixed(2))))}
-                    disabled={textSize <= effectiveMin}
-                    className="flex-1 py-3 border text-sm font-medium transition-all duration-200 hover:border-primary/50 disabled:opacity-30 disabled:cursor-not-allowed"
-                  >
-                    −
-                  </button>
-                  <button
-                    onClick={() => setTextSize(Math.min(TEXT_SIZE_MAX, parseFloat((textSize + TEXT_SIZE_STEP).toFixed(2))))}
-                    disabled={textSize >= TEXT_SIZE_MAX}
-                    className="flex-1 py-3 border text-sm font-medium transition-all duration-200 hover:border-primary/50 disabled:opacity-30 disabled:cursor-not-allowed"
-                  >
-                    +
-                  </button>
-                </>)
+                return (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setTextSize(Math.max(effectiveMin, parseFloat((textSize - TEXT_SIZE_STEP).toFixed(2))))}
+                      disabled={textSize <= effectiveMin}
+                      className="w-8 h-8 border text-sm font-medium transition-all duration-200 hover:border-primary/50 disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      −
+                    </button>
+                    <span className="w-8 text-center text-sm tabular-nums" style={{ color: 'var(--muted-foreground)' }}>size</span>
+                    <button
+                      onClick={() => setTextSize(Math.min(TEXT_SIZE_MAX, parseFloat((textSize + TEXT_SIZE_STEP).toFixed(2))))}
+                      disabled={textSize >= TEXT_SIZE_MAX}
+                      className="w-8 h-8 border text-sm font-medium transition-all duration-200 hover:border-primary/50 disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      +
+                    </button>
+                  </div>
+                )
               })()}
             </div>
-          </div>}
+          )}
 
           {/* Motifs */}
           {showMotifStep && (
           <div className="flex flex-col gap-3">
-            <p className="flex items-center gap-2 text-sm font-medium text-foreground">
+            <p className="flex items-center gap-2 text-base font-medium text-foreground">
               <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{isMotifOnly ? '01' : '04'}</span>
               Add Motifs
               <span className="text-xs text-muted-foreground font-normal">({totalMotifs}/{effectiveMaxMotifs})</span>
@@ -595,53 +719,130 @@ export function ProductInfo({
               </p>
             )}
 
-            <div className="flex flex-col gap-4">
-              {MOTIF_GROUPS.map(({ group, motifs }) => (
-                <div key={group}>
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-2">{group}</p>
-                  <div className="flex flex-wrap gap-3">
-                    {motifs.map((motif) => {
-                      const count    = motifCounts[motif.baseName] ?? 0
-                      const sizeIdx  = motifSizeIdx[motif.baseName] ?? 0
-                      const curUrl   = motifUrl(motif)
-                      const curWidth = parseSz(motif.sizes[sizeIdx])
-                      return (
-                        <div key={motif.baseName} className="flex flex-col items-center gap-1.5">
-                          <button
-                            onClick={() => { if (!atMax) { onAddMotif(curUrl, motif.label, motif.baseName, curWidth); setExceededWarning(false) } else setExceededWarning(true) }}
-                            aria-label={`Add ${motif.label}`}
-                            className={`w-16 h-16 border transition-all duration-200 flex items-center justify-center p-1 ${
-                              count > 0 ? 'border-primary bg-primary/10' :
-                              atMax ? 'border-border bg-background opacity-40 cursor-not-allowed' :
-                              'border-border bg-background hover:border-primary/50 hover:scale-105'
-                            }`}
-                          >
-                            <img src={curUrl} alt={motif.label} className="w-full h-full object-contain" />
-                          </button>
-                          <span className="text-xs text-muted-foreground text-center leading-tight max-w-[4rem]">{motif.label}</span>
-                          {count > 0 && (
-                            <div className="flex flex-col items-center gap-1">
-                              <div className="flex items-center gap-1">
-                                <button onClick={() => handleRemoveLastOfBaseName(motif.baseName)} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">−</button>
-                                <span className="w-4 text-center text-xs font-medium tabular-nums">{count}</span>
-                                <button onClick={() => { if (!atMax) { onAddMotif(curUrl, motif.label, motif.baseName, curWidth); setExceededWarning(false) } else setExceededWarning(true) }} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">+</button>
-                              </div>
-                              {motif.sizes.length > 1 && (
-                                <div className="flex items-center gap-1">
-                                  <button onClick={() => handleSizeChange(motif, -1)} disabled={sizeIdx === 0} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs disabled:opacity-30">‹</button>
-                                  <span className="w-8 text-center text-xs" style={{ color: 'var(--muted-foreground)' }}>size</span>
-                                  <button onClick={() => handleSizeChange(motif, 1)} disabled={sizeIdx === motif.sizes.length - 1 || (customizerType === 'side-motif' && parseSz(motif.sizes[sizeIdx + 1] ?? motif.sizes[sizeIdx]) > 1.5)} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs disabled:opacity-30">›</button>
-                                </div>
-                              )}
+            {/* Selected motifs tray */}
+            {motifEntries.length > 0 && (
+              <div className="flex flex-col gap-1.5">
+                <p className="text-xs text-muted-foreground">Added:</p>
+                <div className="flex gap-2 flex-wrap">
+                  {motifEntries.map((entry) => (
+                    <div key={entry.id} className="relative flex flex-col items-center gap-0.5">
+                      <div className="relative w-12 h-12 border border-primary/30 bg-primary/5 flex items-center justify-center p-0.5">
+                        <img src={entry.url} alt={entry.label} className="w-full h-full object-contain" />
+                        <button
+                          onClick={() => { onRemoveMotif(entry.id); setExceededWarning(false) }}
+                          aria-label={`Remove ${entry.label}`}
+                          className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-foreground text-background flex items-center justify-center text-xs leading-none hover:bg-primary transition-colors duration-150"
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <span className="text-xs text-muted-foreground text-center leading-tight max-w-[3rem] truncate">{entry.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Category tabs */}
+            <div className="relative flex items-end border-b border-border">
+              {tabScroll.left && (
+                <button
+                  onClick={() => scrollTabs(-160)}
+                  className="shrink-0 w-8 self-stretch flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-150 z-10"
+                  style={{ background: 'linear-gradient(to right, white 70%, transparent)', fontSize: '1.25rem' }}
+                >
+                  ‹
+                </button>
+              )}
+              <div
+                ref={tabScrollRef}
+                onScroll={handleTabScroll}
+                className="flex overflow-x-auto flex-1"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {visibleMotifGroups.map(({ label }) => {
+                  const hasSelected = visibleMotifGroups.find(g => g.label === label)?.motifs.some(m => (motifCounts[m.baseName] ?? 0) > 0)
+                  return (
+                    <button
+                      key={label}
+                      onClick={() => setActiveMotifTab(label)}
+                      className={`relative shrink-0 px-4 py-2 text-xs font-medium whitespace-nowrap transition-all duration-200 border-b-2 -mb-px ${
+                        resolvedTab === label
+                          ? 'border-primary text-foreground'
+                          : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
+                      }`}
+                    >
+                      {label}
+                      {hasSelected && resolvedTab !== label && (
+                        <span className="ml-1.5 inline-block w-1.5 h-1.5 rounded-full bg-primary align-middle" />
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+              {tabScroll.right && (
+                <button
+                  onClick={() => scrollTabs(160)}
+                  className="shrink-0 w-8 self-stretch flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-150 z-10"
+                  style={{ background: 'linear-gradient(to left, white 70%, transparent)', fontSize: '1.25rem' }}
+                >
+                  ›
+                </button>
+              )}
+            </div>
+
+            {/* Active tab motifs */}
+            {visibleMotifGroups.filter(g => g.label === resolvedTab).map(({ label, motifs }) => {
+              return (<div key={label} className="relative">
+                <div className="flex flex-wrap gap-3" style={{ maxHeight: '220px', overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'thin' }}>
+                {motifs.map((motif) => {
+                  const count       = motifCounts[motif.baseName] ?? 0
+                  const minValidIdx = motif.sizes.findIndex(s => parseSz(s) >= motifLimits.min)
+                  const maxValidIdx = motif.sizes.reduce((b, s, i) => parseSz(s) <= motifLimits.max ? i : b, -1)
+                  const clampMin    = minValidIdx >= 0 ? minValidIdx : 0
+                  const clampMax    = maxValidIdx >= 0 ? maxValidIdx : motif.sizes.length - 1
+                  const sizeIdx     = Math.max(clampMin, Math.min(motifSizeIdx[motif.baseName] ?? clampMin, clampMax))
+                  const curUrl      = motifUrl(motif)
+                  const curWidth    = parseSz(motif.sizes[sizeIdx])
+                  return (
+                    <div key={motif.baseName} className="flex flex-col items-center gap-1.5 shrink-0 relative group">
+                      <button
+                        onClick={() => { if (!atMax) { onAddMotif(curUrl, motif.label, motif.baseName, curWidth); setExceededWarning(false) } else setExceededWarning(true) }}
+                        aria-label={`Add ${motif.label}`}
+                        className={`w-16 h-16 border transition-all duration-200 flex items-center justify-center p-1 ${
+                          count > 0 ? 'border-primary bg-primary/10' :
+                          atMax ? 'border-border bg-background opacity-40 cursor-not-allowed' :
+                          'border-border bg-background hover:border-primary/50 hover:scale-105'
+                        }`}
+                      >
+                        <img src={curUrl} alt={motif.label} className="w-full h-full object-contain" />
+                      </button>
+                      {/* Hover tooltip */}
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-1 bg-foreground text-background text-xs whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-20">
+                        {motif.label}
+                      </div>
+                      {count > 0 && (
+                        <div className="flex flex-col items-center gap-1">
+                          <div className="flex items-center gap-1">
+                            <button onClick={() => handleRemoveLastOfBaseName(motif.baseName)} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">−</button>
+                            <span className="w-4 text-center text-xs font-medium tabular-nums">{count}</span>
+                            <button onClick={() => { if (!atMax) { onAddMotif(curUrl, motif.label, motif.baseName, curWidth); setExceededWarning(false) } else setExceededWarning(true) }} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">+</button>
+                          </div>
+                          {motif.sizes.length > 1 && (
+                            <div className="flex items-center gap-1">
+                              <button onClick={() => handleSizeChange(motif, -1)} disabled={sizeIdx <= clampMin} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs disabled:opacity-30">‹</button>
+                              <span className="w-8 text-center text-xs" style={{ color: 'var(--muted-foreground)' }}>size</span>
+                              <button onClick={() => handleSizeChange(motif, 1)} disabled={sizeIdx >= clampMax} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs disabled:opacity-30">›</button>
                             </div>
                           )}
                         </div>
-                      )
-                    })}
-                  </div>
+                      )}
+                    </div>
+                  )
+                })}
                 </div>
-              ))}
-            </div>
+              </div>)
+            })}
 
             {totalMotifs > 0 && customizerType === 'freeform' && (
               <p className="text-xs text-muted-foreground">Drag motifs on the canvas to position them · press Delete to remove</p>
@@ -649,9 +850,29 @@ export function ProductInfo({
           </div>
           )}
 
+          {/* 05 · Notes */}
+          <div className="flex flex-col gap-3">
+            <label htmlFor="customizer-notes" className="flex items-center gap-2 text-base font-medium text-foreground">
+              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{isMotifOnly ? '02' : '05'}</span>
+              Notes
+            </label>
+            <p className="text-sm text-muted-foreground -mt-1">Please let us know if you have any notes on thread color or placement!</p>
+            <textarea
+              id="customizer-notes"
+              rows={3}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder=""
+              className="w-full px-4 py-2.5 border border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors duration-200 text-sm resize-none"
+            />
+          </div>
+
           {/* ── Quantity ─────────────────────────────────────────────────────── */}
           <div className="flex flex-col gap-2">
-            <p className="text-sm font-medium text-foreground">Quantity</p>
+            <p className="flex items-center gap-2 text-base font-medium text-foreground">
+              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{isMotifOnly ? '03' : '06'}</span>
+              Quantity
+            </p>
             <div className="flex items-center w-fit border border-border">
               <button
                 onClick={() => setQuantity(q => Math.max(1, q - 1))}
@@ -671,11 +892,11 @@ export function ProductInfo({
           </div>
 
           {/* ── Add to Basket ────────────────────────────────────────────────── */}
-          <div className="flex gap-4 pt-2 border-t border-border">
+          <div className="flex flex-col gap-3 pt-2 border-t border-border">
             {available ? (
               <>
                 {!hasInput && (
-                  <p className="w-full text-sm text-center" style={{ color: 'var(--muted-foreground)' }}>
+                  <p className="text-base text-center" style={{ color: 'var(--muted-foreground)' }}>
                     {!textMet && !motifMet
                       ? `Please enter your text and add ${selectedMotifCount} motif${parseInt(selectedMotifCount, 10) !== 1 ? 's' : ''} to continue.`
                       : !textMet
@@ -684,7 +905,7 @@ export function ProductInfo({
                   </p>
                 )}
                 <Button
-                  className="flex-1 py-6 text-base bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-40"
+                  className="w-full py-6 text-base bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-40"
                   disabled={isSubmitting || !hasInput}
                   onClick={handleAddToBasket}
                 >

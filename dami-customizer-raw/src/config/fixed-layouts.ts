@@ -61,6 +61,13 @@ export function getFixedLayout(productTitle: string, type: FixedLayoutType): Any
   return key ? FIXED_LAYOUTS[key]?.[type] : undefined
 }
 
+/** Per-product motif size limits in inches. */
+export function getMotifSizeLimits(productTitle: string, customizerType: string): { min: number; max: number } {
+  const lower = productTitle.toLowerCase()
+  if ((lower.includes('signature') || lower.includes('grand')) && lower.includes('tote') && customizerType === 'sidenote') return { min: 0.75, max: 3 }
+  return { min: 0.75, max: 1.5 }
+}
+
 /** Motif physical size in inches for the product (defaults to 1.0). */
 export function getMotifInches(productTitle: string): number {
   const key = resolveKey(productTitle)
@@ -82,7 +89,7 @@ export const FIXED_LAYOUTS: Record<string, ProductFixedLayouts> = {
     motifInches: 1.25,
     classic:   { text: { x: 0.50, y: 0.18 } },
     statement: { text: { x: 0.51, y: 0.59 } },
-    sidenote:  { text: { x: 0.49, y: 0.18 }, motif: { x: 0.83, y: 0.85 } },
+    sidenote:  { text: { x: 0.51, y: 0.17 }, motif: { x: 0.83, y: 0.85 } },
     crown:     { text: { x: 0.51, y: 0.26 }, motifRow: { centerX: 0.51, y: 0.15 } },
     pedestal:  { text: { x: 0.50, y: 0.11 }, motifRow: { centerX: 0.50, y: 0.25 } },
   },

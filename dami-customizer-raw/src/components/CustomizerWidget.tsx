@@ -39,6 +39,27 @@ const CDN_CANVAS_MAP: Record<string, Record<string, CdnEntry>> = {
   },
 }
 
+function getDefaultColorIndex(
+  colors: { name: string }[],
+  customizerType: string,
+  productTitle: string,
+): number {
+  const lower = productTitle.toLowerCase()
+  if (!lower.includes('tote') || !colors.length) return 0
+  const isPetite = lower.includes('petite')
+  const keyword: Record<string, string> = {
+    'classic':   'natural',
+    'crown':     'red',
+    'pedestal':  'navy',
+    'sidenote':  isPetite ? 'tan' : 'brown',
+    'statement': 'green',
+  }
+  const match = keyword[customizerType]
+  if (!match) return 0
+  const idx = colors.findIndex(c => c.name.toLowerCase().includes(match))
+  return idx >= 0 ? idx : 0
+}
+
 function getProductKey(title: string): string | null {
   const t = title.toLowerCase()
   if (t.includes('grand'))     return 'grand'
@@ -177,7 +198,9 @@ export default function CustomizerWidget() {
 
   const [showPersonalize,    setShowPersonalize]    = useState(false)
   const [hasPersonalized,    setHasPersonalized]    = useState(false)
-  const [selectedColor,      setSelectedColor]      = useState(0)
+  const [selectedColor,      setSelectedColor]      = useState(() =>
+    getDefaultColorIndex(colors, customizerType, ITEM_TYPES[selectedItem] ?? '')
+  )
   const [selectedMotifCount, setSelectedMotifCount] = useState<string>(motifCountOptions[0] ?? '')
 
   // Canvas prefers CDN mockup image, then variant image, then product cover

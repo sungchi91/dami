@@ -71,6 +71,7 @@ export interface CustomizerData {
   text_max_width_inches:      number
   motif_physical_size_inches: number
   motifs:                     MotifPayload[]
+  notes:                      string
 }
 
 export interface CartPayload {
@@ -105,9 +106,10 @@ export function buildCartPayload(params: {
   textPosition:   TextPosition
   motifEntries:   MotifEntry[]
   customizerType?: string
+  notes?:         string
 }): CartPayload {
   const { selectedItem, embroideryText, fontStyle, textColor, textSize,
-          textPosition, motifEntries, customizerType } = params
+          textPosition, motifEntries, customizerType, notes } = params
 
   const itemName = ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]
   const config   = PRODUCT_CONFIG[resolveItemType(itemName)]
@@ -175,6 +177,7 @@ export function buildCartPayload(params: {
       text_max_width_inches:      config.maxTextWidth,
       motif_physical_size_inches: motifPhysicalInches,
       motifs,
+      notes: notes ?? '',
     },
   }
 }
@@ -197,6 +200,7 @@ export async function submitToCart(variantId: number, payload: CartPayload, quan
       ...(!motifOnly        ? { 'Font': d.font, 'Thread Color': d.thread_color } : {}),
       '_Size':            d.size,
       ...(d.motifs.length > 0 ? { 'Motifs': d.motifs.map(m => m.icon).join('  ') } : {}),
+      ...(d.notes           ? { 'Notes': d.notes }                                : {}),
       '_customizer_data': JSON.stringify(d),
     }
   }
