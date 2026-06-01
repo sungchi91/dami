@@ -307,6 +307,7 @@ export function ProductInfo({
   const [motifTooltip, setMotifTooltip]     = useState<{ text: string; x: number; y: number } | null>(null)
 
   const showMotifTooltip = useCallback((e: React.MouseEvent, text: string) => {
+    if (window.matchMedia('(hover: none)').matches) return
     const r = (e.currentTarget as HTMLElement).getBoundingClientRect()
     setMotifTooltip({ text, x: r.left + r.width / 2, y: r.bottom + 6 })
   }, [])
@@ -776,20 +777,18 @@ export function ProductInfo({
             )}
 
             {/* Category tabs */}
-            <div className="relative flex items-end border-b border-border">
-              {tabScroll.left && (
-                <button
-                  onClick={() => scrollTabs(-160)}
-                  className="shrink-0 w-10 self-stretch flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-150 z-10"
-                  style={{ background: 'linear-gradient(to right, white 70%, transparent)', fontSize: '1.5rem' }}
-                >
-                  ‹
-                </button>
-              )}
+            <div className="flex items-end border-b border-border">
+              <button
+                onClick={() => scrollTabs(-160)}
+                className="shrink-0 w-14 self-stretch flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-150 z-10"
+                style={{ background: 'linear-gradient(to right, white 70%, transparent)', fontSize: '2rem', visibility: tabScroll.left ? 'visible' : 'hidden' }}
+              >
+                ‹
+              </button>
               <div
                 ref={tabScrollRef}
                 onScroll={handleTabScroll}
-                className="flex overflow-x-auto flex-1"
+                className="flex flex-1 overflow-x-auto overflow-y-hidden"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 {visibleMotifGroups.map(({ label }) => {
@@ -812,15 +811,13 @@ export function ProductInfo({
                   )
                 })}
               </div>
-              {tabScroll.right && (
-                <button
-                  onClick={() => scrollTabs(160)}
-                  className="shrink-0 w-10 self-stretch flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-150 z-10"
-                  style={{ background: 'linear-gradient(to left, white 70%, transparent)', fontSize: '1.5rem' }}
-                >
-                  ›
-                </button>
-              )}
+              <button
+                onClick={() => scrollTabs(160)}
+                className="shrink-0 w-14 self-stretch flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-150 z-10"
+                style={{ background: 'linear-gradient(to left, white 70%, transparent)', fontSize: '2rem', visibility: tabScroll.right ? 'visible' : 'hidden' }}
+              >
+                ›
+              </button>
             </div>
 
             {/* Active tab motifs */}
@@ -881,7 +878,7 @@ export function ProductInfo({
                     className="absolute bottom-0 left-0 right-0 flex items-end justify-center pointer-events-none"
                     style={{ height: '40px', background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.9))' }}
                   >
-                    <span className="text-muted-foreground mb-0.5" style={{ fontSize: '1.25rem', lineHeight: 1 }}>↓</span>
+                    <span className="text-muted-foreground mb-0.5" style={{ fontSize: '1.75rem', lineHeight: 1 }}>↓</span>
                   </div>
                 )}
               </div>)
