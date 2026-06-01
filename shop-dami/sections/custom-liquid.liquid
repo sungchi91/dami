@@ -79,7 +79,7 @@
         <h2 class="ig-heading">In the Wild</h2>
       </div>
 
-      <div class="ig-grid">
+      <div class="ig-grid" id="ig-grid">
         {%- for idx in gallery_count -%}
           {%- assign tilt = '' -%}
           {%- if forloop.index0 == 2 -%}{%- assign tilt = 'ig-item--tilt-left' -%}{%- endif -%}
@@ -87,17 +87,51 @@
           {%- assign img_src = gallery_images[forloop.index0] | default: gallery_fallback -%}
 
           <div class="ig-item {{ tilt }}">
-            <img
-              width="200px"
-              height="200px"
-              src="{{ img_src }}"
-              alt="Emberlane in the wild"
-              loading="lazy"
-            />
+            <a href="https://instagram.com/shopemberlane" target="_blank" rel="noopener noreferrer">
+              <img
+                width="600"
+                height="600"
+                src="{{ img_src }}"
+                alt="Emberlane in the wild"
+                loading="lazy"
+              />
+            </a>
             <div class="ig-overlay"></div>
           </div>
         {%- endfor -%}
       </div>
+
+      <script>
+        (function () {
+          var FEED_URL = 'https://feeds.behold.so/KvY6kx1QD9TBJf0KYeec';
+          var TILTS   = ['', '', 'ig-item--tilt-left', '', 'ig-item--tilt-right', ''];
+
+          fetch(FEED_URL)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              var items = Array.isArray(data) ? data : (data.posts || data.data || []);
+              if (!items.length) return;
+              var posts = items.slice(0, 6).map(function (item) {
+                var img = item.mediaType === 'VIDEO'
+                  ? item.thumbnailUrl
+                  : (item.sizes && item.sizes.medium && item.sizes.medium.mediaUrl) || item.mediaUrl || '';
+                return { url: img, link: item.permalink };
+              }).filter(function (p) { return p.url; });
+              if (!posts.length) return;
+              var grid = document.getElementById('ig-grid');
+              if (!grid) return;
+              grid.innerHTML = posts.map(function (post, i) {
+                return '<div class="ig-item ' + (TILTS[i] || '') + '">' +
+                  '<a href="' + post.link + '" target="_blank" rel="noopener noreferrer">' +
+                  '<img src="' + post.url + '" alt="Emberlane in the wild" loading="lazy" width="600" height="600">' +
+                  '</a>' +
+                  '<div class="ig-overlay"></div>' +
+                  '</div>';
+              }).join('');
+            })
+            .catch(function () { /* keep hardcoded fallback on any error */ });
+        })();
+      </script>
                                                                                                                                                                  
       <div class="ig-cta">
         <a href="https://instagram.com/shopemberlane" target="_blank" rel="noopener noreferrer">                                                                     

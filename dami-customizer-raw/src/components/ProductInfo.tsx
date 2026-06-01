@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react'
+import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { Truck, Sparkles, Gift, ChevronLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ITEM_TYPES } from '@/config/products'
@@ -139,7 +140,7 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Horseshoe',        baseName: 'motif_horseshoe',        sizes: ['0p39','0p59','0p79','0p98','1p18','1p38','1p57','1p77','1p97','2p17','2p36','2p76'], noSuffix: true },
     { label: 'Lucky 777',        baseName: 'motif_lucky777',         sizes: ['2','3','4','5'], noSuffix: true },
     { label: 'Lucky Dice',       baseName: 'motif_luckyDice',        sizes: ['2','3','4','5'], noSuffix: true },
-    { label: 'Lucky Heart',      baseName: 'motif_luckyHeart',       sizes: ['1','2','3','4','5'], noSuffix: true },
+    { label: 'Lucky Heart',      baseName: 'motif_luckyHeart',       sizes: ['0p75','1','2','3','4','5'], noSuffix: true },
     { label: 'Playing Cards',    baseName: 'motif_playingCards',     sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
   ]},
   { group: 'Golf', motifs: [
@@ -301,6 +302,15 @@ export function ProductInfo({
   const [motifScroll,    setMotifScroll]     = useState({ left: false, right: false })
   const tabScrollRef   = useRef<HTMLDivElement>(null)
   const [tabScroll,     setTabScroll]        = useState({ left: false, right: false })
+  const motifGridRef   = useRef<HTMLDivElement>(null)
+  const [canScrollDown, setCanScrollDown]   = useState(false)
+  const [motifTooltip, setMotifTooltip]     = useState<{ text: string; x: number; y: number } | null>(null)
+
+  const showMotifTooltip = useCallback((e: React.MouseEvent, text: string) => {
+    const r = (e.currentTarget as HTMLElement).getBoundingClientRect()
+    setMotifTooltip({ text, x: r.left + r.width / 2, y: r.bottom + 6 })
+  }, [])
+  const hideMotifTooltip = useCallback(() => setMotifTooltip(null), [])
 
   const handleAddToBasket = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -446,10 +456,32 @@ export function ProductInfo({
   }, [resolvedTab])
 
   useEffect(() => {
-    const el = tabScrollRef.current
+    const check = () => {
+      const el = tabScrollRef.current
+      if (!el) return
+      setTabScroll({ left: el.scrollLeft > 1, right: el.scrollWidth > el.clientWidth + 1 })
+    }
+    check()
+    const id = setTimeout(check, 50)
+    return () => clearTimeout(id)
+  }, [visibleMotifGroups, showPersonalize])
+
+  useEffect(() => {
+    const check = () => {
+      const el = motifGridRef.current
+      if (!el) return
+      setCanScrollDown(el.scrollHeight > el.clientHeight + 50)
+    }
+    check()
+    const id = setTimeout(check, 50)
+    return () => clearTimeout(id)
+  }, [resolvedTab, showPersonalize])
+
+  const handleMotifGridScroll = () => {
+    const el = motifGridRef.current
     if (!el) return
-    setTabScroll({ left: false, right: el.scrollWidth > el.clientWidth + 1 })
-  }, [visibleMotifGroups])
+    setCanScrollDown(el.scrollTop < el.scrollHeight - el.clientHeight - 50)
+  }
 
   const handleMotifScroll = () => {
     const el = motifScrollRef.current
@@ -476,7 +508,7 @@ export function ProductInfo({
     tabScrollRef.current?.scrollBy({ left: dir, behavior: 'smooth' })
 
   return (
-    <div className="flex flex-col gap-6">
+    <><div className="flex flex-col gap-6">
 
       {/* ── Product overview (always visible) ─────────────────────────────── */}
       {!showPersonalize && (
@@ -690,7 +722,7 @@ export function ProductInfo({
                     >
                       −
                     </button>
-                    <span className="w-8 text-center text-sm tabular-nums" style={{ color: 'var(--muted-foreground)' }}>size</span>
+                    <span className="w-8 text-center text-sm tabular-nums" style={{ color: 'var(--muted-foreground)' }}>{Math.round((textSize - TEXT_SIZE_MIN) / TEXT_SIZE_STEP) + 1}</span>
                     <button
                       onClick={() => setTextSize(Math.min(TEXT_SIZE_MAX, parseFloat((textSize + TEXT_SIZE_STEP).toFixed(2))))}
                       disabled={textSize >= TEXT_SIZE_MAX}
@@ -748,8 +780,8 @@ export function ProductInfo({
               {tabScroll.left && (
                 <button
                   onClick={() => scrollTabs(-160)}
-                  className="shrink-0 w-8 self-stretch flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-150 z-10"
-                  style={{ background: 'linear-gradient(to right, white 70%, transparent)', fontSize: '1.25rem' }}
+                  className="shrink-0 w-10 self-stretch flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-150 z-10"
+                  style={{ background: 'linear-gradient(to right, white 70%, transparent)', fontSize: '1.5rem' }}
                 >
                   ‹
                 </button>
@@ -783,8 +815,8 @@ export function ProductInfo({
               {tabScroll.right && (
                 <button
                   onClick={() => scrollTabs(160)}
-                  className="shrink-0 w-8 self-stretch flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-150 z-10"
-                  style={{ background: 'linear-gradient(to left, white 70%, transparent)', fontSize: '1.25rem' }}
+                  className="shrink-0 w-10 self-stretch flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-150 z-10"
+                  style={{ background: 'linear-gradient(to left, white 70%, transparent)', fontSize: '1.5rem' }}
                 >
                   ›
                 </button>
@@ -794,7 +826,12 @@ export function ProductInfo({
             {/* Active tab motifs */}
             {visibleMotifGroups.filter(g => g.label === resolvedTab).map(({ label, motifs }) => {
               return (<div key={label} className="relative">
-                <div className="flex flex-wrap gap-3" style={{ maxHeight: '220px', overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'thin' }}>
+                <div
+                  ref={motifGridRef}
+                  onScroll={handleMotifGridScroll}
+                  className="flex flex-wrap gap-3 content-start"
+                  style={{ maxHeight: '240px', overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'thin' }}
+                >
                 {motifs.map((motif) => {
                   const count       = motifCounts[motif.baseName] ?? 0
                   const minValidIdx = motif.sizes.findIndex(s => parseSz(s) >= motifLimits.min)
@@ -805,9 +842,11 @@ export function ProductInfo({
                   const curUrl      = motifUrl(motif)
                   const curWidth    = parseSz(motif.sizes[sizeIdx])
                   return (
-                    <div key={motif.baseName} className="flex flex-col items-center gap-1.5 shrink-0 relative group">
+                    <div key={motif.baseName} className="flex flex-col items-center gap-1.5 shrink-0">
                       <button
                         onClick={() => { if (!atMax) { onAddMotif(curUrl, motif.label, motif.baseName, curWidth); setExceededWarning(false) } else setExceededWarning(true) }}
+                        onMouseEnter={(e) => showMotifTooltip(e, motif.label)}
+                        onMouseLeave={hideMotifTooltip}
                         aria-label={`Add ${motif.label}`}
                         className={`w-16 h-16 border transition-all duration-200 flex items-center justify-center p-1 ${
                           count > 0 ? 'border-primary bg-primary/10' :
@@ -817,10 +856,6 @@ export function ProductInfo({
                       >
                         <img src={curUrl} alt={motif.label} className="w-full h-full object-contain" />
                       </button>
-                      {/* Hover tooltip */}
-                      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-1 bg-foreground text-background text-xs whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-20">
-                        {motif.label}
-                      </div>
                       {count > 0 && (
                         <div className="flex flex-col items-center gap-1">
                           <div className="flex items-center gap-1">
@@ -841,6 +876,14 @@ export function ProductInfo({
                   )
                 })}
                 </div>
+                {canScrollDown && (
+                  <div
+                    className="absolute bottom-0 left-0 right-0 flex items-end justify-center pointer-events-none"
+                    style={{ height: '40px', background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.9))' }}
+                  >
+                    <span className="text-muted-foreground mb-0.5" style={{ fontSize: '1.25rem', lineHeight: 1 }}>↓</span>
+                  </div>
+                )}
               </div>)
             })}
 
@@ -925,5 +968,27 @@ export function ProductInfo({
       )}
 
     </div>
+
+      {motifTooltip && createPortal(
+      <div
+        style={{
+          position: 'fixed',
+          left: motifTooltip.x,
+          top: motifTooltip.y,
+          transform: 'translateX(-50%)',
+          pointerEvents: 'none',
+          zIndex: 9999,
+          background: 'var(--foreground)',
+          color: 'var(--background)',
+          fontSize: '0.75rem',
+          padding: '2px 8px',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {motifTooltip.text}
+      </div>,
+      document.body
+      )}
+    </>
   )
 }
