@@ -305,6 +305,7 @@ export function ProductInfo({
   const motifGridRef   = useRef<HTMLDivElement>(null)
   const [canScrollDown, setCanScrollDown]   = useState(false)
   const [motifTooltip, setMotifTooltip]     = useState<{ text: string; x: number; y: number } | null>(null)
+  const [pendingMotifCount, setPendingMotifCount] = useState<string | null>(null)
 
   const showMotifTooltip = useCallback((e: React.MouseEvent, text: string) => {
     if (window.matchMedia('(hover: none)').matches) return
@@ -560,29 +561,6 @@ export function ProductInfo({
             </div>
           )}
 
-          {motifCountOptions.length > 0 && (
-            <div className="flex flex-col gap-2">
-              <p className="text-sm font-medium text-foreground">
-                Number of Motifs: <span className="text-muted-foreground font-normal">{selectedMotifCount}</span>
-              </p>
-              <div className="flex gap-2 flex-wrap">
-                {motifCountOptions.map((opt) => (
-                  <button
-                    key={opt}
-                    onClick={() => onMotifCountChange(opt)}
-                    className={`w-10 h-10 rounded-full text-sm font-medium transition-all duration-200 ${
-                      selectedMotifCount === opt
-                        ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 scale-110'
-                        : 'bg-secondary text-foreground hover:bg-secondary/70 hover:scale-105'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Personalize CTA */}
           <Button
             onClick={onPersonalize}
@@ -641,6 +619,61 @@ export function ProductInfo({
             <ChevronLeft className="w-4 h-4" />
             Back to product
           </button>
+
+          {/* Number of Motifs */}
+          {motifCountOptions.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-medium text-foreground">
+                Number of Motifs: <span className="text-muted-foreground font-normal">{selectedMotifCount}</span>
+              </p>
+              <div className="flex gap-2 flex-wrap">
+                {motifCountOptions.map((opt) => (
+                  <button
+                    key={opt}
+                    onClick={() => {
+                      const newMax = parseInt(opt, 10)
+                      if (motifEntries.length > newMax) {
+                        setPendingMotifCount(opt)
+                      } else {
+                        onMotifCountChange(opt)
+                      }
+                    }}
+                    className={`w-10 h-10 rounded-full text-sm font-medium transition-all duration-200 ${
+                      selectedMotifCount === opt
+                        ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 scale-110'
+                        : 'bg-secondary text-foreground hover:bg-secondary/70 hover:scale-105'
+                    }`}
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+              {pendingMotifCount && (
+                <div className="flex flex-col gap-2 p-3 bg-amber-50 border border-amber-200 text-sm">
+                  <p className="text-amber-800">Changing to {pendingMotifCount} motif{parseInt(pendingMotifCount, 10) !== 1 ? 's' : ''} will remove your extra added motifs. Continue?</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        const newMax = parseInt(pendingMotifCount, 10)
+                        motifEntries.slice(newMax).forEach(e => onRemoveMotif(e.id))
+                        onMotifCountChange(pendingMotifCount)
+                        setPendingMotifCount(null)
+                      }}
+                      className="px-3 py-1 bg-amber-700 text-white text-xs font-medium hover:bg-amber-800 transition-colors"
+                    >
+                      Confirm
+                    </button>
+                    <button
+                      onClick={() => setPendingMotifCount(null)}
+                      className="px-3 py-1 border border-amber-300 text-amber-800 text-xs font-medium hover:bg-amber-100 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* 01 · Thread */}
           {!isMotifOnly && <div className="flex flex-col gap-3">
