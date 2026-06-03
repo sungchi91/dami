@@ -1,0 +1,260 @@
+{%- comment -%}
+  Design style legend + filter for tote/pouch/napkin collections.
+  Reads product titles to find available designs, renders only those.
+  Clicking a card filters the product grid client-side.
+{%- endcomment -%}
+
+{%- assign design_keys = "classic,crown,pedestal,side note,statement,side-motif,sidenote" | split: "," -%}
+
+{%- comment -%} Detect product type from collection {%- endcomment -%}
+{%- assign dg_product_type = "tote" -%}
+{%- for product in collection.products limit: 3 -%}
+  {%- assign dg_pt = product.title | downcase -%}
+  {%- if dg_pt contains "pouch" -%}
+    {%- assign dg_product_type = "pouch" -%}
+    {%- break -%}
+  {%- elsif dg_pt contains "napkin" -%}
+    {%- assign dg_product_type = "napkin" -%}
+    {%- break -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- comment -%} Collect which designs actually exist in this collection {%- endcomment -%}
+{%- assign found_designs = "" -%}
+{%- for product in collection.products -%}
+  {%- assign title_lower = product.title | downcase -%}
+  {%- for key in design_keys -%}
+    {%- if title_lower contains key -%}
+      {%- unless found_designs contains key -%}
+        {%- if found_designs != "" -%}{%- assign found_designs = found_designs | append: "," -%}{%- endif -%}
+        {%- assign found_designs = found_designs | append: key -%}
+      {%- endunless -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+
+{%- assign found_arr = found_designs | split: "," -%}
+{%- if found_arr.size < 2 -%}{%- assign skip_guide = true -%}{%- endif -%}
+
+{%- assign dg_cdn = "https://cdn.shopify.com/s/files/1/0990/0326/9486/files/" -%}
+
+{%- unless skip_guide -%}
+
+<style>
+  .design-guide {
+    padding: 1.25rem 0 0.5rem;
+    border-top: 1px solid #E8E2D9;
+  }
+  .design-guide__label {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #8B5E3C;
+    margin-bottom: 0.75rem;
+    padding: 0 1.5rem;
+  }
+  .design-guide__scroll {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0 1.5rem 0.75rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .design-guide__scroll::-webkit-scrollbar { display: none; }
+  @media (min-width: 750px) {
+    .design-guide { padding: 1.5rem 0 0.75rem; }
+    .design-guide__scroll { flex-wrap: wrap; overflow-x: visible; padding: 0 1.5rem 0.5rem; gap: 0.625rem; justify-content: center; }
+    .design-guide__label { padding: 0 1.5rem; }
+  }
+  .design-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    padding: 0.5rem 0.5rem 0.5rem;
+    border: 1px solid #D4C9B5;
+    background: #FDFAF7;
+    min-width: 120px;
+    flex-shrink: 0;
+    transition: border-color 0.2s, background 0.2s;
+    user-select: none;
+  }
+  .design-card:hover { border-color: #1B3054; }
+  .design-card.active {
+    border-color: #1B3054;
+    background: #1B3054;
+  }
+  .design-card.active .design-card__name { color: #fff; }
+  .design-card.active svg rect.bag-body { fill: #2A4470; }
+  .design-card__thumb-wrap {
+    width: 120px;
+    height: 135px;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .design-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(27, 48, 84, 0.78);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    padding: 10px;
+  }
+  .design-card:hover .design-card__overlay { opacity: 1; }
+  .design-card__overlay-text {
+    color: #fff;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    text-align: center;
+    line-height: 1.5;
+    text-transform: none;
+  }
+  .design-card__thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 45%;
+    transform: scale(2.2);
+    transform-origin: center 45%;
+    display: block;
+  }
+  .design-guide--tote .design-card__thumb {
+    object-position: center 60%;
+    transform-origin: center 60%;
+  }
+  .design-card__name {
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #1B3054;
+    text-align: center;
+    white-space: nowrap;
+  }
+  /* Hide non-matching products */
+  #product-grid .grid__item.dg-hidden {
+    display: none;
+  }
+</style>
+
+<div class="design-guide design-guide--{{ dg_product_type }} page-width">
+  <p class="design-guide__label">Design Guide</p>
+  <div class="design-guide__scroll" id="design-guide-scroll">
+
+    {%- for key in found_arr -%}
+      {%- comment -%} Resolve image filename based on product type + design key {%- endcomment -%}
+      {%- assign dg_img = "" -%}
+      {%- assign dg_label = "" -%}
+      {%- assign dg_desc = "" -%}
+      {%- assign dg_filter = key -%}
+
+      {%- if dg_product_type == "pouch" -%}
+        {%- if key == "classic" -%}
+          {%- assign dg_img = "20_304dfd26-5409-46e0-b1d8-4bf2552e76b3.png" -%}
+          {%- assign dg_label = "Classic" -%}
+          {%- assign dg_desc = "Single line centered" -%}
+        {%- elsif key == "crown" -%}
+          {%- assign dg_img = "21_af06238c-eb0f-475b-97a9-26b88df4289d.png" -%}
+          {%- assign dg_label = "Crown" -%}
+          {%- assign dg_desc = "Motifs along top, text below" -%}
+        {%- elsif key == "pedestal" -%}
+          {%- assign dg_img = "22_cee32ab2-5f7e-4ebc-add9-71503d3c133d.png" -%}
+          {%- assign dg_label = "Pedestal" -%}
+          {%- assign dg_desc = "Text on top, motifs below" -%}
+        {%- endif -%}
+      {%- elsif dg_product_type == "napkin" -%}
+        {%- if key == "side note" or key == "sidenote" -%}
+          {%- assign dg_img = "napkin_3.png" -%}
+          {%- assign dg_label = "Side Note" -%}
+          {%- assign dg_desc = "Script left, motif at corner" -%}
+          {%- assign dg_filter = "side note" -%}
+        {%- elsif key == "statement" -%}
+          {%- assign dg_img = "napkin_4.png" -%}
+          {%- assign dg_label = "Statement" -%}
+          {%- assign dg_desc = "Bold text across front" -%}
+        {%- endif -%}
+      {%- else -%}
+        {%- comment -%} tote (default) {%- endcomment -%}
+        {%- if key == "classic" -%}
+          {%- assign dg_img = "1.png" -%}
+          {%- assign dg_label = "Classic" -%}
+          {%- assign dg_desc = "Single line centered" -%}
+        {%- elsif key == "crown" -%}
+          {%- assign dg_img = "2.png" -%}
+          {%- assign dg_label = "Crown" -%}
+          {%- assign dg_desc = "Motifs along top, text below" -%}
+        {%- elsif key == "pedestal" -%}
+          {%- assign dg_img = "3.png" -%}
+          {%- assign dg_label = "Pedestal" -%}
+          {%- assign dg_desc = "Text on top, motifs below" -%}
+        {%- elsif key == "statement" -%}
+          {%- assign dg_img = "5_5131882b-3d71-4e52-a9c2-cac81303120a.png" -%}
+          {%- assign dg_label = "Statement" -%}
+          {%- assign dg_desc = "Bold text across front" -%}
+        {%- elsif key == "side note" or key == "sidenote" -%}
+          {%- assign dg_img = "Ember_Lane.png" -%}
+          {%- assign dg_label = "Side Note" -%}
+          {%- assign dg_desc = "Script left, motif at corner" -%}
+          {%- assign dg_filter = "side note" -%}
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- if dg_img != "" -%}
+        <div class="design-card" data-filter="{{ dg_filter }}">
+          <div class="design-card__thumb-wrap">
+            <img
+              class="design-card__thumb"
+              src="{{ dg_cdn }}{{ dg_img }}"
+              alt="{{ dg_label }}"
+              width="120"
+              height="135"
+              loading="lazy"
+            >
+            <div class="design-card__overlay">
+              <span class="design-card__overlay-text">{{ dg_desc }}</span>
+            </div>
+          </div>
+          <span class="design-card__name">{{ dg_label }}</span>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+  </div>
+</div>
+
+<script>
+  (function () {
+    var cards  = document.querySelectorAll('.design-card');
+    var grid   = document.getElementById('product-grid');
+    if (!grid) return;
+    var items  = grid.querySelectorAll('li.grid__item');
+
+    cards.forEach(function (card) {
+      card.addEventListener('click', function () {
+        var filter = card.dataset.filter;
+
+        // Update active state
+        cards.forEach(function (c) { c.classList.remove('active'); });
+        card.classList.add('active');
+
+        // Filter grid items by matching product title text
+        items.forEach(function (item) {
+          var titleEl = item.querySelector('a.full-unstyled-link, .card__heading a, h3 a');
+          var title   = titleEl ? titleEl.textContent.toLowerCase() : '';
+          if (title.indexOf(filter) === -1) {
+            item.classList.add('dg-hidden');
+          } else {
+            item.classList.remove('dg-hidden');
+          }
+        });
+      });
+    });
+  })();
+</script>
+
+{%- endunless -%}

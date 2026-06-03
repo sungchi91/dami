@@ -45,18 +45,13 @@ function getDefaultColorIndex(
   productTitle: string,
 ): number {
   const lower = productTitle.toLowerCase()
-  if (!lower.includes('tote') || !colors.length) return 0
-  const isPetite = lower.includes('petite')
-  const keyword: Record<string, string> = {
-    'classic':   'natural',
-    'crown':     'red',
-    'pedestal':  'navy',
-    'sidenote':  isPetite ? 'tan' : 'brown',
-    'statement': 'green',
-  }
-  const match = keyword[customizerType]
-  if (!match) return 0
-  const idx = colors.findIndex(c => c.name.toLowerCase().includes(match))
+  if (!colors.length) return 0
+  let keyword = ''
+  if (lower.includes('petite'))    keyword = 'natural'
+  else if (lower.includes('grand')) keyword = 'navy'
+  else if (lower.includes('signature')) keyword = 'brown'
+  if (!keyword) return 0
+  const idx = colors.findIndex(c => c.name.toLowerCase().includes(keyword))
   return idx >= 0 ? idx : 0
 }
 

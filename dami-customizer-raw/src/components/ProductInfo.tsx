@@ -769,7 +769,7 @@ export function ProductInfo({
                           ×
                         </button>
                       </div>
-                      <span className="text-xs text-muted-foreground text-center leading-tight max-w-[3rem] truncate">{entry.label}</span>
+                      <span className="text-xs text-muted-foreground text-center leading-tight max-w-[5rem]">{entry.label}</span>
                     </div>
                   ))}
                 </div>
