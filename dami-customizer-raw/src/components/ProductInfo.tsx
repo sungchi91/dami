@@ -38,7 +38,7 @@ const TEXT_SIZE_STEP = 0.25
 const FONT_SIZE_FLOOR: Record<string, number> = {}
 
 const CDN = 'https://cdn.shopify.com/s/files/1/0990/0326/9486/files/'
-const CB  = '?v=20260517'
+const CB  = '?v=20260602'
 
 function parseSz(s: string): number { return parseFloat(s.replace('p', '.')) }
 // Each motif has a single PNG file named with its MIN size suffix; we re-scale on canvas for larger sizes.
@@ -680,7 +680,7 @@ export function ProductInfo({
             <input
               id="custom-text"
               type="text"
-              maxLength={40}
+              maxLength={18}
               value={embroideryText}
               onChange={(e) => setEmbroideryText(e.target.value)}
               placeholder="Type your text here…"
@@ -702,7 +702,7 @@ export function ProductInfo({
                 </button>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground">{embroideryText.length}/40 characters</p>
+            <p className="text-xs text-muted-foreground">{embroideryText.length}/18 characters</p>
           </div>}
 
           {/* 03 · Size */}
