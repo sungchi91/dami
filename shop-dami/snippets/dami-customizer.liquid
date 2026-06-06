@@ -11,6 +11,44 @@
     font-size: 2.5rem !important;
   }
 
+  /* White panel behind the customizer canvas for a clean background */
+  #ember-lane-canvas-portal {
+    background: white;
+  }
+
+  /* Mobile gap above product info */
+  @media screen and (max-width: 749px) {
+    .product__info-wrapper {
+      margin-top: 1.5rem !important;
+    }
+    /* Cap canvas height while personalizing so steps below have breathing room.
+       Explicit width = 4/5 of capped height enforces exact 4:5 aspect ratio,
+       so the safe-zone math (canvas-relative %s) matches desktop. */
+    #ember-lane-canvas-portal > .ember-lane-customizer-scope > div {
+      height: 45vh;
+      width: calc(45vh * 4 / 5) !important;
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      aspect-ratio: 4 / 5;
+    }
+    /* White panel behind the centered canvas so steps don't show through on the sides */
+    #ember-lane-canvas-portal {
+      padding-bottom: 0.5rem;
+    }
+    /* Leave room for the sticky canvas when scrolling step 1 into view */
+    #el-step-text {
+      scroll-margin-top: calc(45vh + 16px);
+    }
+    /* Disable scroll anchoring so layout shifts from typing don't move the viewport,
+       and set scroll-padding-top so any scrollIntoView accounts for the sticky canvas. */
+    html, body {
+      overflow-anchor: none;
+      scroll-padding-top: calc(45vh + 16px);
+    }
+  }
+
+
   /* 50/50 column split — desktop only */
   @media screen and (min-width: 750px) {
     .product__media-wrapper,
@@ -104,11 +142,14 @@
   data-available="{{ product.selected_or_first_available_variant.available }}"
   data-product-price="{{ product.selected_or_first_available_variant.price | money }}"
   data-canvas-image="{{ product.featured_image | image_url: width: 800 }}"
-  data-canvas-bg-color="{{ product.metafields.custom.canvas_bg_color.value | default: product.metafields.custom.canvas_bg_color | default: '#F5F3EF' }}"
+  data-canvas-bg-color="{{ product.metafields.custom.canvas_bg_color.value | default: product.metafields.custom.canvas_bg_color | default: '#FFFFFF' }}"
   data-max-motifs="{{ product.metafields.custom.max_motifs.value | default: product.metafields.custom.max_motifs | default: 3 }}"
   data-category-label="{{ product.metafields.custom.category_label.value | default: product.metafields.custom.category_label | default: 'Bespoke Customization' }}"
   data-tagline="{{ product.metafields.custom.tagline.value | default: product.metafields.custom.tagline | escape }}"
-  data-description="{{ product.description | strip_html | truncate: 300 | escape }}"
+  {%- capture el_nl -%}
+{%- endcapture -%}
+  {%- capture el_nl2 -%}{{ el_nl }}{{ el_nl }}{%- endcapture -%}
+  data-description="{{ product.description | replace: '</p>', el_nl2 | replace: '<br>', el_nl | replace: '<br/>', el_nl | replace: '<br />', el_nl | strip_html | truncate: 300 | escape }}"
   data-founder-quote="{{ product.metafields.custom.founder_quote.value | default: product.metafields.custom.founder_quote | escape }}"
   data-founder-name="{{ product.metafields.custom.founder_name.value | default: product.metafields.custom.founder_name | escape }}"
   data-feature-1="{{ product.metafields.custom.feature_1.value | default: product.metafields.custom.feature_1 }}"

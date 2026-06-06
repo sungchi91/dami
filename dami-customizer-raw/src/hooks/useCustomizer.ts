@@ -34,15 +34,18 @@ export interface CustomizerState {
   removeMotif:           (id: string) => void
   updateMotifPosition:   (id: string, pos: TextPosition) => void
   updateMotifsByBaseName:(baseName: string, newUrl: string, newWidthInches: number) => void
+  placeOnBack:           boolean
+  setPlaceOnBack:        (v: boolean) => void
 }
 
 export function useCustomizer(): CustomizerState {
   const [embroideryText, setEmbroideryText] = useState('')
-  const [textColor,      setTextColor]      = useState('#476E87') // Ember Lane Blue
+  const [textColor,      setTextColor]      = useState('#476E87') // Ocean Blue
   const [fontStyle,      setFontStyle]      = useState('ballantines')
   const [textSize,       setTextSize]       = useState<TextSize>(0.5)
   const [textPosition,   setTextPosition]   = useState<TextPosition>({ x: 0.5, y: 0.5 })
   const [motifEntries,   setMotifEntries]   = useState<MotifEntry[]>([])
+  const [placeOnBack,    setPlaceOnBack]    = useState<boolean>(false)
 
   const onPositionChange = useCallback((pos: TextPosition) => setTextPosition(pos), [])
 
@@ -80,5 +83,6 @@ export function useCustomizer(): CustomizerState {
     motifEntries,      addMotif,
     removeMotif,       updateMotifPosition,
     updateMotifsByBaseName,
+    placeOnBack,       setPlaceOnBack,
   }
 }

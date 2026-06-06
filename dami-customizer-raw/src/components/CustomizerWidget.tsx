@@ -189,6 +189,7 @@ export default function CustomizerWidget() {
     textPosition,    onPositionChange,
     motifEntries,    addMotif,
     removeMotif,     updateMotifPosition,  updateMotifsByBaseName,
+    placeOnBack,     setPlaceOnBack,
   } = useCustomizer()
 
   const [showPersonalize,    setShowPersonalize]    = useState(false)
@@ -248,10 +249,16 @@ export default function CustomizerWidget() {
 
   // Direct DOM toggle happens synchronously so Fabric.js gets real canvas dimensions.
   const handlePersonalize = useCallback(() => {
-    const photosPanel  = document.getElementById('ember-lane-photos-panel')
-    const canvasPortal = document.getElementById('ember-lane-canvas-portal')
+    const photosPanel   = document.getElementById('ember-lane-photos-panel')
+    const canvasPortal  = document.getElementById('ember-lane-canvas-portal')
+    const mediaWrapper  = canvasPortal?.closest<HTMLElement>('.product__media-wrapper')
     if (photosPanel)  photosPanel.style.display  = 'none'
     if (canvasPortal) canvasPortal.style.display = 'block'
+    if (mediaWrapper && window.innerWidth < 750) {
+      mediaWrapper.style.position = 'sticky'
+      mediaWrapper.style.top      = '-50px'
+      mediaWrapper.style.zIndex   = '2'
+    }
     setHasPersonalized(true)
     setShowPersonalize(true)
   }, [])
@@ -259,8 +266,14 @@ export default function CustomizerWidget() {
   const handleBack = useCallback(() => {
     const photosPanel  = document.getElementById('ember-lane-photos-panel')
     const canvasPortal = document.getElementById('ember-lane-canvas-portal')
+    const mediaWrapper = canvasPortal?.closest<HTMLElement>('.product__media-wrapper')
     if (photosPanel)  photosPanel.style.display  = ''
     if (canvasPortal) canvasPortal.style.display = 'none'
+    if (mediaWrapper) {
+      mediaWrapper.style.position = ''
+      mediaWrapper.style.top      = ''
+      mediaWrapper.style.zIndex   = ''
+    }
     setShowPersonalize(false)
   }, [])
 
@@ -307,6 +320,8 @@ export default function CustomizerWidget() {
         dimension={dimension}
         care={care}
         customizerType={customizerType}
+        placeOnBack={placeOnBack}
+        setPlaceOnBack={setPlaceOnBack}
       />
 
       {hasPersonalized && canvasPortalEl && createPortal(

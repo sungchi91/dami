@@ -79,8 +79,18 @@
       {%- if el_title_lower contains 'classic' -%}{%- assign el_design_desc = 'Single line centered' -%}
       {%- elsif el_title_lower contains 'crown' -%}{%- assign el_design_desc = 'Motifs along top, text below' -%}
       {%- elsif el_title_lower contains 'pedestal' -%}{%- assign el_design_desc = 'Text on top, motifs below' -%}
-      {%- elsif el_title_lower contains 'side note' or el_title_lower contains 'sidenote' -%}{%- assign el_design_desc = 'Script left, motif at corner' -%}
-      {%- elsif el_title_lower contains 'statement' -%}{%- assign el_design_desc = 'Bold text across front' -%}
+      {%- elsif el_title_lower contains 'side note' or el_title_lower contains 'sidenote' -%}
+        {%- if el_title_lower contains 'napkin' -%}
+          {%- if el_title_lower contains '(motif)' -%}{%- assign el_design_desc = 'Motif at corner' -%}
+          {%- else -%}{%- assign el_design_desc = 'Script at corner' -%}
+          {%- endif -%}
+        {%- elsif el_title_lower contains '(motif)' -%}{%- assign el_design_desc = 'Motif at corner' -%}
+        {%- else -%}{%- assign el_design_desc = 'Script above pocket, motif at corner' -%}
+        {%- endif -%}
+      {%- elsif el_title_lower contains 'statement' -%}
+        {%- if el_title_lower contains '(motif)' -%}{%- assign el_design_desc = 'Centered motif' -%}
+        {%- else -%}{%- assign el_design_desc = 'Centered monogram' -%}
+        {%- endif -%}
       {%- endif -%}
       <div
         class="card__inner {% if settings.card_style == 'standard' %}color-{{ settings.card_color_scheme }} gradient{% endif %}{% if card_product.featured_media or settings.card_style == 'standard' %} ratio{% endif %}"

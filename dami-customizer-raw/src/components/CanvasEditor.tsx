@@ -418,10 +418,10 @@ export function CanvasEditor({
     const sz       = computeSafeZonePx(w, h, config.safeZone)
     safeZoneRef.current = sz
 
-    const fc = new Canvas(el, { width: w, height: h, selection: false })
+    const fc = new Canvas(el, { width: w, height: h, selection: false, allowTouchScrolling: true })
     fcRef.current = fc
 
-    applyBackground(fc, { bgColor: canvasBgColor || '#F0EBE0', bgImage: canvasImage || null }, w, h)
+    applyBackground(fc, { bgColor: canvasBgColor || '#FFFFFF', bgImage: canvasImage || null }, w, h)
 
     if (!canvasImage) fc.add(new Rect({
       left: w * 0.06, top: h * 0.06,
@@ -480,7 +480,7 @@ export function CanvasEditor({
     const itemName = ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]
     const config   = PRODUCT_CONFIG[itemName]
 
-    applyBackground(fc, { bgColor: canvasBgColor || '#F0EBE0', bgImage: canvasImage || null }, w, h)
+    applyBackground(fc, { bgColor: canvasBgColor || '#FFFFFF', bgImage: canvasImage || null }, w, h)
 
     szObjectsRef.current.forEach((obj) => fc.remove(obj))
     const sz = computeSafeZonePx(w, h, config.safeZone)
@@ -503,7 +503,7 @@ export function CanvasEditor({
     const fc = fcRef.current
     if (!fc) return
     const { w, h } = canvasSizeRef.current
-    void applyBackground(fc, { bgColor: canvasBgColor || '#F0EBE0', bgImage: canvasImage || null }, w, h)
+    void applyBackground(fc, { bgColor: canvasBgColor || '#FFFFFF', bgImage: canvasImage || null }, w, h)
   }, [canvasImage, canvasBgColor])
 
   // ── Motif reconciliation: syncs motifEntries → Fabric objects ─────────────

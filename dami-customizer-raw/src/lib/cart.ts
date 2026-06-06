@@ -36,16 +36,30 @@ const FONT_LABELS: Record<string, string> = {
 }
 
 const THREAD_COLOR_NAMES: Record<string, string> = {
-  '#F5EDD8': 'Linen White',
-  '#183823': 'Forest Pine',
-  '#B80606': 'Thread Red',
-  '#1B2F4A': 'Deep Navy',
-  '#5C2B1E': 'Vintage Wood',
-  '#476E87': 'Ember Lane Blue',
-  '#9A1019': 'Bordeaux',
-  '#EBEBDA': 'Canvas Stone',
-  '#1A1A1A': 'True Black',
-  '#C5DCEC': 'Pale Sky',
+  '#000000': 'Black',
+  '#02283A': 'Navy',
+  '#FFFFFF': 'Cream',
+  '#827C55': 'Umber',
+  '#AA8C66': 'Pecan',
+  '#C3C3A7': 'Beige',
+  '#5C2B1E': 'Mahogany',
+  '#CCB499': 'Fawn',
+  '#FFC72E': 'Sunflower',
+  '#CDCF3A': 'Mustard',
+  '#F9EE1F': 'Canary Yellow',
+  '#FFFFF0': 'Linen',
+  '#2D4828': 'Olive Green',
+  '#183823': 'Enchanting Forest',
+  '#167645': 'Green',
+  '#476E87': 'Ocean Blue',
+  '#86B3CF': 'Baby Blue',
+  '#9FB5D6': 'Pale Sky',
+  '#0B1B6D': 'Blue Ink',
+  '#811825': 'Winterberry',
+  '#9A1019': 'Riored',
+  '#FFCCD5': 'Pale Pink',
+  '#B80605': 'Country Red',
+  '#CC0000': 'Poinsettia',
 }
 
 
@@ -72,6 +86,7 @@ export interface CustomizerData {
   motif_physical_size_inches: number
   motifs:                     MotifPayload[]
   notes:                      string
+  placement?:                 'front' | 'back'
 }
 
 export interface CartPayload {
@@ -107,9 +122,10 @@ export function buildCartPayload(params: {
   motifEntries:   MotifEntry[]
   customizerType?: string
   notes?:         string
+  placeOnBack?:    boolean
 }): CartPayload {
   const { selectedItem, embroideryText, fontStyle, textColor, textSize,
-          textPosition, motifEntries, customizerType, notes } = params
+          textPosition, motifEntries, customizerType, notes, placeOnBack } = params
 
   const itemName = ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]
   const config   = PRODUCT_CONFIG[resolveItemType(itemName)]
@@ -178,6 +194,7 @@ export function buildCartPayload(params: {
       motif_physical_size_inches: motifPhysicalInches,
       motifs,
       notes: notes ?? '',
+      ...(placeOnBack !== undefined ? { placement: placeOnBack ? 'back' as const : 'front' as const } : {}),
     },
   }
 }
@@ -200,6 +217,7 @@ export async function submitToCart(variantId: number, payload: CartPayload, quan
       ...(!motifOnly        ? { 'Font': d.font, 'Thread Color': d.thread_color } : {}),
       '_Size':            d.size,
       ...(d.motifs.length > 0 ? { 'Motifs': d.motifs.map(m => m.icon).join('  ') } : {}),
+      ...(d.placement       ? { 'Placement': d.placement === 'back' ? 'Back of tote' : 'Front of tote' } : {}),
       ...(d.notes           ? { 'Notes': d.notes }                                : {}),
       '_customizer_data': JSON.stringify(d),
     }

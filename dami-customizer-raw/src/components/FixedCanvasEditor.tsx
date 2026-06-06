@@ -247,10 +247,10 @@ export function FixedCanvasEditor({
     const sz       = computeSafeZonePx(w, h, config.safeZone)
     safeZoneRef.current = sz
 
-    const fc = new Canvas(el, { width: w, height: h, selection: false })
+    const fc = new Canvas(el, { width: w, height: h, selection: false, allowTouchScrolling: true })
     fcRef.current = fc
 
-    applyBackground(fc, { bgColor: canvasBgColor || '#F0EBE0', bgImage: canvasImage || null }, w, h)
+    applyBackground(fc, { bgColor: canvasBgColor || '#FFFFFF', bgImage: canvasImage || null }, w, h)
 
     if (!canvasImage) fc.add(new Rect({
       left: w * 0.06, top: h * 0.06, originX: 'left', originY: 'top',
@@ -276,7 +276,7 @@ export function FixedCanvasEditor({
     const { w, h } = canvasSizeRef.current
     const itemName = ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]
     const config   = PRODUCT_CONFIG[itemName]
-    applyBackground(fc, { bgColor: canvasBgColor || '#F0EBE0', bgImage: canvasImage || null }, w, h)
+    applyBackground(fc, { bgColor: canvasBgColor || '#FFFFFF', bgImage: canvasImage || null }, w, h)
     const sz = computeSafeZonePx(w, h, config.safeZone)
     safeZoneRef.current = sz
     fc.renderAll()
@@ -285,7 +285,7 @@ export function FixedCanvasEditor({
   useEffect(() => {
     const fc = fcRef.current
     if (!fc) return
-    void applyBackground(fc, { bgColor: canvasBgColor || '#F0EBE0', bgImage: canvasImage || null }, ...Object.values(canvasSizeRef.current) as [number, number])
+    void applyBackground(fc, { bgColor: canvasBgColor || '#FFFFFF', bgImage: canvasImage || null }, ...Object.values(canvasSizeRef.current) as [number, number])
   }, [canvasImage, canvasBgColor])
 
   // ── Text sync ──────────────────────────────────────────────────────────────
@@ -427,16 +427,14 @@ export function FixedCanvasEditor({
   }, [motifEntries, selectedItem, customizerType]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <>
       <div
         ref={wrapperRef}
         className="relative aspect-[4/5] w-full max-w-full overflow-hidden shadow-xl"
       >
         <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%' }} />
+        <p style={{ position: 'absolute', bottom: '0', left: '0', right: '0', fontSize: '0.875rem', color: 'rgba(0,0,0,0.7)', textAlign: 'center', pointerEvents: 'none', lineHeight: '1.4', padding: '0.6rem 1rem', background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
+          Preview is approximate. Final embroidery is hand-tuned for perfect sizing and placement.
+        </p>
       </div>
-      <p style={{ fontSize: '1.15rem', color: 'var(--foreground)', marginTop: '0.5rem', marginBottom: '1.5rem', lineHeight: '1.6', fontWeight: 500 }}>
-        Motif positioning is a guide only; exact placement may shift slightly to suit the item's shape and embroidery hoop constraints.
-      </p>
-    </>
   )
 }

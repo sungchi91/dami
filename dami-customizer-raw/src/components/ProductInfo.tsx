@@ -10,16 +10,30 @@ import { getMotifSizeLimits } from '@/config/fixed-layouts'
 // ── Thread swatches ────────────────────────────────────────────────────────────
 
 export const threadSwatches = [
-  { name: 'Forest Pine',     color: '#183823' },
-  { name: 'Deep Navy',       color: '#1B2F4A' },
-  { name: 'Vintage Wood',    color: '#5C2B1E' },
-  { name: 'Bordeaux',        color: '#9A1019' },
-  { name: 'Ember Lane Blue', color: '#476E87' },
-  { name: 'Pale Sky',        color: '#C5DCEC' },
-  { name: 'Linen White',     color: '#F5EDD8' },
-  { name: 'Canvas Stone',    color: '#EBEBDA' },
-  { name: 'Thread Red',      color: '#B80606' },
-  { name: 'True Black',      color: '#1A1A1A' },
+  { name: 'Black',             color: '#000000' },
+  { name: 'Navy',              color: '#02283A' },
+  { name: 'Cream',             color: '#FFFFFF' },
+  { name: 'Umber',             color: '#827C55' },
+  { name: 'Pecan',             color: '#AA8C66' },
+  { name: 'Beige',             color: '#C3C3A7' },
+  { name: 'Mahogany',          color: '#5C2B1E' },
+  { name: 'Fawn',              color: '#CCB499' },
+  { name: 'Sunflower',         color: '#FFC72E' },
+  { name: 'Mustard',           color: '#CDCF3A' },
+  { name: 'Canary Yellow',     color: '#F9EE1F' },
+  { name: 'Linen',             color: '#FFFFF0' },
+  { name: 'Olive Green',       color: '#2D4828' },
+  { name: 'Enchanting Forest', color: '#183823' },
+  { name: 'Green',             color: '#167645' },
+  { name: 'Ocean Blue',        color: '#476E87' },
+  { name: 'Baby Blue',         color: '#86B3CF' },
+  { name: 'Pale Sky',          color: '#9FB5D6' },
+  { name: 'Blue Ink',          color: '#0B1B6D' },
+  { name: 'Winterberry',       color: '#811825' },
+  { name: 'Riored',            color: '#9A1019' },
+  { name: 'Pale Pink',         color: '#FFCCD5' },
+  { name: 'Country Red',       color: '#B80605' },
+  { name: 'Poinsettia',        color: '#CC0000' },
 ]
 
 const fontStyles = [
@@ -32,7 +46,7 @@ const fontStyles = [
 ]
 
 const TEXT_SIZE_MIN  = 0.5
-const TEXT_SIZE_MAX  = 1.75
+const TEXT_SIZE_MAX  = 1.25
 const TEXT_SIZE_STEP = 0.25
 
 const FONT_SIZE_FLOOR: Record<string, number> = {}
@@ -106,6 +120,7 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Vintage Perfume',  baseName: 'motif_vintagePerfume',   sizes: ['1','1p5','2','2p5','3'] },
   ]},
   { group: 'Fashion', motifs: [
+    { label: 'Key',               baseName: 'motif_key',              sizes: ['1p10','1p26','1p46','1p73','1p97','2p24','2p60','2p99','3p39','3p82','4p21'], noSuffix: true },
     { label: 'Ballet',           baseName: 'motif_ballet',           sizes: ['1p06','1p22','1p42','1p61','1p81','2p01','2p28','2p56','2p80','3p15','3p70'], noSuffix: true },
     { label: 'Bikini',            baseName: 'motif_bikini',           sizes: ['2','3','4','5'], noSuffix: true },
     { label: 'Bow',              baseName: 'motif_bow',              sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
@@ -135,6 +150,7 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Suitcase',         baseName: 'motif_suitcase',         sizes: ['1p77','2p17','2p56'], noSuffix: true },
   ]},
   { group: 'Fun & Games', motifs: [
+    { label: 'Match Box',        baseName: 'motif_matchBox',         sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: '8 Ball',           baseName: 'motif_8ball',            sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Dice',             baseName: 'motif_dice',             sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Horseshoe',        baseName: 'motif_horseshoe',        sizes: ['0p39','0p59','0p79','0p98','1p18','1p38','1p57','1p77','1p97','2p17','2p36','2p76'], noSuffix: true },
@@ -159,6 +175,7 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Victorian Row',    baseName: 'motif_victorianRow',     sizes: ['1p25','1p75','2p25'], noSuffix: true },
   ]},
   { group: 'Bachelorette', motifs: [
+    { label: 'Wedding Rings',    baseName: 'motif_weddingRings',     sizes: ['0p96','1p42','1p91'], noSuffix: true },
     { label: 'Locket',           baseName: 'motif_locketFrame',          sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
     { label: 'Balloon',          baseName: 'motif_bacheloretteBalloon',  sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
     { label: 'Bands',            baseName: 'motif_bacheloretteBands',    sizes: ['1p50','2','2p50','3','4'], noSuffix: true },
@@ -192,14 +209,11 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
   { group: 'Lifestyle', motifs: [
 { label: 'Evil Eye',         baseName: 'motif_evilEye',          sizes: ['0p83','1p22','1p62','2p02','2p82','3p61','4p41'], noSuffix: true },
     { label: 'Heart',            baseName: 'motif_heart',            sizes: ['0p8','1','1p4'] },
-    { label: 'Key',               baseName: 'motif_key',              sizes: ['1p10','1p26','1p46','1p73','1p97','2p24','2p60','2p99','3p39','3p82','4p21'], noSuffix: true },
-    { label: 'Match Box',        baseName: 'motif_matchBox',         sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Palm Tree',        baseName: 'motif_palmTree',         sizes: ['1','2'] },
     { label: 'Pine Tree',        baseName: 'motif_pineTree',         sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Smile',            baseName: 'motif_smile',            sizes: ['0p80','1','1p20'], noSuffix: true },
     { label: 'Teddy Bear',       baseName: 'motif_teddyBear',        sizes: ['1','2','3'], noSuffix: true },
     { label: 'Tennis Racket',    baseName: 'motif_tennisRacket',     sizes: ['2'], noSuffix: true },
-    { label: 'Wedding Rings',    baseName: 'motif_weddingRings',     sizes: ['0p96','1p42','1p91'], noSuffix: true },
     { label: 'XOXO Heart (Red)',  baseName: 'motif_xoxoHeartRed',     sizes: ['1','1p25','1p50','1p75','2','2p25','2p50','3'], noSuffix: true },
     { label: 'XOXO Heart (Pink)', baseName: 'motif_xoxoHeartPink',    sizes: ['1','1p25','1p50','1p75','2','2p25','2p50','3'], noSuffix: true },
     { label: 'XOXO Heart (Green)',baseName: 'motif_xoxoHeartGreen',   sizes: ['1','1p25','1p50','1p75','2','2p25','2p50','3'], noSuffix: true },
@@ -248,6 +262,8 @@ interface ProductInfoProps {
   care:              string
   customizerType?:   string
   available?:        boolean
+  placeOnBack:       boolean
+  setPlaceOnBack:    (v: boolean) => void
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -291,6 +307,8 @@ export function ProductInfo({
   care,
   customizerType,
   available = true,
+  placeOnBack,
+  setPlaceOnBack,
 }: ProductInfoProps) {
   const [isSubmitting,    setIsSubmitting]    = useState(false)
   const [exceededWarning, setExceededWarning] = useState(false)
@@ -303,6 +321,7 @@ export function ProductInfo({
   const tabScrollRef   = useRef<HTMLDivElement>(null)
   const [tabScroll,     setTabScroll]        = useState({ left: false, right: false })
   const motifGridRef   = useRef<HTMLDivElement>(null)
+  const motifSectionRef = useRef<HTMLDivElement>(null)
   const [canScrollDown, setCanScrollDown]   = useState(false)
   const [motifTooltip, setMotifTooltip]     = useState<{ text: string; x: number; y: number } | null>(null)
   const [pendingMotifCount, setPendingMotifCount] = useState<string | null>(null)
@@ -318,7 +337,7 @@ export function ProductInfo({
     e.preventDefault()
     setIsSubmitting(true)
     try {
-      const payload = buildCartPayload({ selectedItem, embroideryText, fontStyle, textColor, textSize, textPosition, motifEntries, customizerType, notes })
+      const payload = buildCartPayload({ selectedItem, embroideryText, fontStyle, textColor, textSize, textPosition, motifEntries, customizerType, notes, placeOnBack })
       await submitToCart(variantId, payload, quantity, customizerType)
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error'
@@ -335,7 +354,7 @@ export function ProductInfo({
     || customizerType === 'crown' || customizerType === 'pedestal' || customizerType === 'sidenote'
     || customizerType === 'side-motif' || customizerType === 'classic-motif'
 
-  const textMet  = !showTextStep || embroideryText.trim().length > 0
+  const textMet  = showMotifStep || embroideryText.trim().length > 0
   const motifMet = !showMotifStep
     || (selectedMotifCount
       ? motifEntries.length >= parseInt(selectedMotifCount, 10)
@@ -418,6 +437,24 @@ export function ProductInfo({
       if (existing) existing.motifs = [...existing.motifs, ...motifs]
       else merged.push({ label, motifs: [...motifs] })
     })
+    if (isTote) {
+      const TOTE_MOTIF_OVERRIDES: Record<string, string> = {
+        'motif_weddingRings': 'Bach Bag',
+        'motif_key':          'Her Favorite Things',
+        'motif_matchBox':     'Lucky Girl',
+      }
+      for (const [baseName, targetLabel] of Object.entries(TOTE_MOTIF_OVERRIDES)) {
+        for (const group of merged) {
+          const idx = group.motifs.findIndex(m => m.baseName === baseName)
+          if (idx === -1) continue
+          const [motif] = group.motifs.splice(idx, 1)
+          const target = merged.find(g => g.label === targetLabel)
+          if (target) target.motifs.push(motif)
+          else merged.push({ label: targetLabel, motifs: [motif] })
+          break
+        }
+      }
+    }
     if (sortOrder.length) {
       merged.sort((a, b) => {
         const ai = sortOrder.indexOf(a.label); const bi = sortOrder.indexOf(b.label)
@@ -515,12 +552,6 @@ export function ProductInfo({
       {/* ── Product overview (always visible) ─────────────────────────────── */}
       {!showPersonalize && (
         <div className="flex flex-col gap-5">
-          {description && (
-            <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{description.trim()}</p>
-          )}
-          {dimension && (
-            <p className="text-sm text-muted-foreground">{dimension}</p>
-          )}
           {care && (
             <p className="text-sm text-muted-foreground">{care}</p>
           )}
@@ -546,15 +577,33 @@ export function ProductInfo({
                     <button
                       key={c.name}
                       onClick={() => { if (!unavailable) onColorChange(c.mediaId ?? '', c.imageUrl ?? '', i) }}
-                      title={c.name}
-                      aria-label={c.name}
+                      title={unavailable ? `${c.name} — Sold out` : c.name}
+                      aria-label={unavailable ? `${c.name}, sold out` : c.name}
                       disabled={unavailable}
                       className={`relative w-10 h-10 rounded-full transition-all duration-200 ${
-                        unavailable ? 'opacity-40 cursor-not-allowed' :
+                        unavailable ? 'opacity-60 cursor-not-allowed' :
                         selectedColor === i ? 'ring-2 ring-primary ring-offset-2 scale-110' : 'hover:scale-105'
                       }`}
                       style={{ backgroundColor: c.color, boxShadow: '0 2px 6px rgba(0,0,0,0.12)' }}
-                    />
+                    >
+                      {unavailable && (
+                        <span
+                          aria-hidden="true"
+                          style={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '-4px',
+                            right: '-4px',
+                            height: '2px',
+                            background: 'rgba(0,0,0,0.55)',
+                            transform: 'translateY(-50%) rotate(-45deg)',
+                            transformOrigin: 'center',
+                            pointerEvents: 'none',
+                            borderRadius: '1px',
+                          }}
+                        />
+                      )}
+                    </button>
                   )
                 })}
               </div>
@@ -563,12 +612,23 @@ export function ProductInfo({
 
           {/* Personalize CTA */}
           <Button
-            onClick={onPersonalize}
+            onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); onPersonalize() }}
             className="w-full py-6 text-base bg-primary hover:bg-primary/90 text-primary-foreground mt-1"
           >
             <Sparkles className="w-4 h-4 mr-2" />
             Personalize
           </Button>
+
+          {description && (
+            <div className="flex flex-col gap-3 text-sm text-muted-foreground leading-relaxed">
+              {description.trim().split(/\n+/).filter(p => p.trim()).map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
+            </div>
+          )}
+          {dimension && (
+            <p className="text-sm text-muted-foreground">{dimension}</p>
+          )}
 
           {/* ── Feature strip ─────────────────────────────────────────────── */}
           {(feature1 || feature2 || feature3) && (
@@ -598,9 +658,6 @@ export function ProductInfo({
                 Font rendering varies by device and browser. The stitched result follows the font name and reference images shown in the Custom Font section.
                 <br /><br />
                 Please double-check spelling and capitalization before ordering — personalized items cannot be returned or exchanged.
-                {(ITEM_TYPES[selectedItem] ?? '').toLowerCase().includes('tote') && (
-                  <><br /><br />Embroidery placed on the front pocket will close the pocket opening.</>
-                )}
               </span>
             </div>
           </div>
@@ -614,39 +671,195 @@ export function ProductInfo({
           {/* Back button */}
           <button
             onClick={onBack}
-            className="flex items-center gap-2 self-start px-4 py-2 border border-border text-sm font-medium text-foreground hover:border-primary/60 hover:text-primary transition-all duration-200"
+            className="flex items-center gap-2 self-start px-4 py-2 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200"
           >
             <ChevronLeft className="w-4 h-4" />
             Back to product
           </button>
 
-          {/* Number of Motifs */}
+          {/* Step numbers — computed once */}
+          {(() => {
+            const hasText = embroideryText.trim().length > 0
+            const isStatementTote = customizerType === 'statement' && (ITEM_TYPES[selectedItem] ?? '').toLowerCase().includes('tote')
+            let n = 0
+            const sn = (show: boolean) => show ? String(++n).padStart(2, '0') : ''
+            const S = {
+              text:       sn(showTextStep),
+              textSize:   sn(showTextStep && hasText),
+              thread:     sn(!isMotifOnly && hasText),
+              motifCount: sn(motifCountOptions.length > 0),
+              motifs:     sn(showMotifStep),
+              placement:  sn(isStatementTote),
+              notes:      sn(true),
+              quantity:   sn(true),
+            }
+            return (
+              <>
+
+          {/* 01 · Text + 02 · Text Size + 03 · Thread — grouped so gap collapses when hidden */}
+          {showTextStep && <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3" id="el-step-text">
+            <label htmlFor="custom-text" className="flex items-center gap-2 text-base font-medium text-foreground">
+              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{S.text}</span>
+              Add Your Text
+              <span className="ml-auto text-xs font-normal text-muted-foreground">{embroideryText.length}/18</span>
+            </label>
+            <input
+              id="custom-text"
+              type="text"
+              maxLength={18}
+              value={embroideryText}
+              onChange={(e) => setEmbroideryText(e.target.value)}
+              onBlur={(e) => {
+                // Mobile keyboard dismiss can leave the page scrolled mid-form.
+                // Wait for the viewport to fully restore (keyboard gone), then scroll
+                // step 1 right below the sticky canvas. We call scroll twice to win
+                // against any iOS Safari scroll restoration that fires after dismiss.
+                if (window.innerWidth >= 750) return
+                if (e.relatedTarget) return
+                if (embroideryText.trim().length === 0) return
+
+                const doScroll = () => {
+                  const step1 = document.getElementById('el-step-text')
+                  if (!step1) return
+                  // Use scrollIntoView with auto (instant) behavior + scroll-padding-top from CSS
+                  step1.scrollIntoView({ behavior: 'auto', block: 'start' })
+                }
+
+                // Poll visualViewport until the keyboard is fully gone, then scroll
+                const vv = window.visualViewport
+                let attempts = 0
+                const waitForViewport = () => {
+                  attempts++
+                  const settled = !vv || vv.height >= window.innerHeight - 50
+                  if (settled || attempts > 20) {
+                    doScroll()
+                    setTimeout(doScroll, 150)
+                    setTimeout(doScroll, 400)
+                  } else {
+                    setTimeout(waitForViewport, 50)
+                  }
+                }
+                setTimeout(waitForViewport, 50)
+              }}
+              placeholder={showMotifStep ? 'Leave blank for motifs only' : 'Type your text here…'}
+              className="w-full px-4 py-2.5 border border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors duration-200 text-base"
+            />
+            {hasText && <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+              {fontStyles.map((f) => (
+                <button
+                  key={f.id}
+                  onClick={() => { setFontStyle(f.id); const floor = FONT_SIZE_FLOOR[f.id] ?? TEXT_SIZE_MIN; if (textSize < floor) setTextSize(floor) }}
+                  className={`px-3 py-1 border transition-all duration-200 ${
+                    fontStyle === f.id
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-background text-foreground border-border hover:border-primary/50'
+                  }`}
+                  style={{ fontFamily: f.fontFamily, fontSize: '1.35rem', lineHeight: '1.2', padding: '4px 6px' }}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>}
+          </div>
+
+          {/* 02 · Text Size */}
+          {hasText && (
+            <div className="flex flex-col gap-2">
+              <p className="flex items-center gap-2 text-base font-medium text-foreground">
+                <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{S.textSize}</span>
+                Text Size
+              </p>
+              {(() => {
+                const isNapkin = (ITEM_TYPES[selectedItem] ?? '').toLowerCase().includes('napkin')
+                const sizeMin = isNapkin ? 0.25 : TEXT_SIZE_MIN
+                const effectiveMin = Math.max(sizeMin, FONT_SIZE_FLOOR[fontStyle] ?? 0)
+                return (
+                  <input
+                    type="range"
+                    min={effectiveMin}
+                    max={TEXT_SIZE_MAX}
+                    step={TEXT_SIZE_STEP}
+                    value={textSize}
+                    onChange={(e) => setTextSize(parseFloat(e.target.value) as TextSize)}
+                    className="w-full accent-primary cursor-pointer text-size-slider"
+                    style={{}}
+                  />
+                )
+              })()}
+            </div>
+          )}
+
+          {/* 03 · Thread */}
+          {!isMotifOnly && hasText && <div className="flex flex-col gap-3">
+            <p className="flex items-center gap-2 text-base font-medium text-foreground">
+              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{S.thread}</span>
+              Choose a Thread
+              <span className="ml-1 text-muted-foreground font-normal">—&nbsp;{threadName}</span>
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 32px)', gap: '8px' }}>
+              {threadSwatches.map((swatch) => (
+                <button
+                  key={swatch.name}
+                  onClick={() => setTextColor(swatch.color)}
+                  title={swatch.name}
+                  aria-label={`Select thread: ${swatch.name}`}
+                  className={`w-8 h-8 rounded-full transition-all duration-200 ${
+                    textColor === swatch.color
+                      ? 'ring-2 ring-[#7594B4] ring-offset-2 ring-offset-background scale-110'
+                      : 'hover:scale-110'
+                  }`}
+                  style={{
+                    backgroundColor: swatch.color,
+                    boxShadow: textColor === swatch.color ? '0 4px 12px rgba(0,0,0,0.18)' : '0 2px 6px rgba(0,0,0,0.12)',
+                    border: ['#FFFFFF', '#FFFFF0', '#C3C3A7', '#CCB499', '#F9EE1F', '#CDCF3A', '#FFC72E', '#FFCCD5', '#9FB5D6', '#86B3CF'].includes(swatch.color) ? '1px solid #ccc' : 'none',
+                  }}
+                />
+              ))}
+            </div>
+          </div>}
+          </div>}
+
+          {/* 04 · Number of Motifs */}
           {motifCountOptions.length > 0 && (
             <div className="flex flex-col gap-2">
-              <p className="text-sm font-medium text-foreground">
-                Number of Motifs: <span className="text-muted-foreground font-normal">{selectedMotifCount}</span>
+              <p className="flex items-center gap-2 text-base font-medium text-foreground">
+                <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{S.motifCount}</span>
+                Number of Motifs
               </p>
-              <div className="flex gap-2 flex-wrap">
-                {motifCountOptions.map((opt) => (
-                  <button
-                    key={opt}
-                    onClick={() => {
-                      const newMax = parseInt(opt, 10)
-                      if (motifEntries.length > newMax) {
-                        setPendingMotifCount(opt)
-                      } else {
-                        onMotifCountChange(opt)
-                      }
-                    }}
-                    className={`w-10 h-10 rounded-full text-sm font-medium transition-all duration-200 ${
-                      selectedMotifCount === opt
-                        ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 scale-110'
-                        : 'bg-secondary text-foreground hover:bg-secondary/70 hover:scale-105'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
+              <div className="flex gap-3 flex-wrap pl-2">
+                {motifCountOptions.map((opt, i) => {
+                  const basePrice  = colors[selectedColor]?.variantsByCount?.[motifCountOptions[0]]?.price ?? ''
+                  const thisPrice  = colors[selectedColor]?.variantsByCount?.[opt]?.price ?? ''
+                  const parsePrice = (s: string) => parseFloat(s.replace(/[^0-9.]/g, '')) || 0
+                  const delta      = parsePrice(thisPrice) - parsePrice(basePrice)
+                  const deltaLabel = i === 0 ? 'Base' : delta > 0 ? `+$${delta.toFixed(2)}` : ''
+                  return (
+                    <div key={opt} className="flex flex-col items-center gap-0.5">
+                      <button
+                        onClick={() => {
+                          const newMax = parseInt(opt, 10)
+                          if (motifEntries.length > newMax) {
+                            setPendingMotifCount(opt)
+                          } else {
+                            onMotifCountChange(opt)
+                            setExceededWarning(false)
+                          }
+                        }}
+                        className={`w-10 h-10 rounded-full text-sm font-medium transition-all duration-200 ${
+                          selectedMotifCount === opt
+                            ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 scale-110'
+                            : 'bg-secondary text-foreground hover:bg-secondary/70 hover:scale-105'
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                      {deltaLabel && (
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">{deltaLabel}</span>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
               {pendingMotifCount && (
                 <div className="flex flex-col gap-2 p-3 bg-amber-50 border border-amber-200 text-sm">
@@ -658,6 +871,7 @@ export function ProductInfo({
                         motifEntries.slice(newMax).forEach(e => onRemoveMotif(e.id))
                         onMotifCountChange(pendingMotifCount)
                         setPendingMotifCount(null)
+                        setExceededWarning(false)
                       }}
                       className="px-3 py-1 bg-amber-700 text-white text-xs font-medium hover:bg-amber-800 transition-colors"
                     >
@@ -675,115 +889,16 @@ export function ProductInfo({
             </div>
           )}
 
-          {/* 01 · Thread */}
-          {!isMotifOnly && <div className="flex flex-col gap-3">
-            <p className="flex items-center gap-2 text-base font-medium text-foreground">
-              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">01</span>
-              Choose a Thread
-              <span className="ml-1 text-muted-foreground font-normal">—&nbsp;{threadName}</span>
-            </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 32px)', gap: '8px' }}>
-              {threadSwatches.map((swatch) => (
-                <button
-                  key={swatch.name}
-                  onClick={() => setTextColor(swatch.color)}
-                  title={swatch.name}
-                  aria-label={`Select thread: ${swatch.name}`}
-                  className={`w-8 h-8 rounded-full transition-all duration-200 ${
-                    textColor === swatch.color
-                      ? 'ring-2 ring-[#7594B4] ring-offset-2 ring-offset-background scale-110'
-                      : 'hover:scale-110'
-                  }`}
-                  style={{
-                    backgroundColor: swatch.color,
-                    boxShadow: textColor === swatch.color ? '0 4px 12px rgba(0,0,0,0.18)' : '0 2px 6px rgba(0,0,0,0.12)',
-                    border: ['#F5EDD8', '#EBEBDA', '#C5DCEC', '#FFFFFF'].includes(swatch.color) ? '1px solid #ccc' : 'none',
-                  }}
-                />
-              ))}
-            </div>
-          </div>}
-
-          {/* 02 · Text */}
-          {showTextStep && <div className="flex flex-col gap-3">
-            <label htmlFor="custom-text" className="flex items-center gap-2 text-base font-medium text-foreground">
-              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">02</span>
-              Add Your Text
-            </label>
-            <input
-              id="custom-text"
-              type="text"
-              maxLength={18}
-              value={embroideryText}
-              onChange={(e) => setEmbroideryText(e.target.value)}
-              placeholder="Type your text here…"
-              className="w-full px-4 py-2.5 border border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors duration-200 text-base"
-            />
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-              {fontStyles.map((f) => (
-                <button
-                  key={f.id}
-                  onClick={() => { setFontStyle(f.id); const floor = FONT_SIZE_FLOOR[f.id] ?? TEXT_SIZE_MIN; if (textSize < floor) setTextSize(floor) }}
-                  className={`px-3 py-1 border transition-all duration-200 ${
-                    fontStyle === f.id
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'bg-background text-foreground border-border hover:border-primary/50'
-                  }`}
-                  style={{ fontFamily: f.fontFamily, fontSize: '1.35rem', lineHeight: '1.2', padding: '4px 6px' }}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground">{embroideryText.length}/18 characters</p>
-          </div>}
-
-          {/* 03 · Size */}
-          {showTextStep && (
-            <div className="flex items-center gap-3">
-              <p className="flex items-center gap-2 text-base font-medium text-foreground">
-                <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">03</span>
-                Text Size
-              </p>
-              {(() => {
-                const effectiveMin = Math.max(TEXT_SIZE_MIN, FONT_SIZE_FLOOR[fontStyle] ?? 0)
-                return (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setTextSize(Math.max(effectiveMin, parseFloat((textSize - TEXT_SIZE_STEP).toFixed(2))))}
-                      disabled={textSize <= effectiveMin}
-                      className="w-8 h-8 border text-sm font-medium transition-all duration-200 hover:border-primary/50 disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      −
-                    </button>
-                    <span className="w-8 text-center text-sm tabular-nums" style={{ color: 'var(--muted-foreground)' }}>{Math.round((textSize - TEXT_SIZE_MIN) / TEXT_SIZE_STEP) + 1}</span>
-                    <button
-                      onClick={() => setTextSize(Math.min(TEXT_SIZE_MAX, parseFloat((textSize + TEXT_SIZE_STEP).toFixed(2))))}
-                      disabled={textSize >= TEXT_SIZE_MAX}
-                      className="w-8 h-8 border text-sm font-medium transition-all duration-200 hover:border-primary/50 disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      +
-                    </button>
-                  </div>
-                )
-              })()}
-            </div>
-          )}
-
-          {/* Motifs */}
+          {/* 05 · Motifs */}
           {showMotifStep && (
-          <div className="flex flex-col gap-3">
+          <div ref={motifSectionRef} className="flex flex-col gap-3">
             <p className="flex items-center gap-2 text-base font-medium text-foreground">
-              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{isMotifOnly ? '01' : '04'}</span>
+              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{S.motifs}</span>
               Add Motifs
-              <span className="text-xs text-muted-foreground font-normal">({totalMotifs}/{effectiveMaxMotifs})</span>
+              <span className="text-xs font-normal text-muted-foreground">
+                ({totalMotifs}/{effectiveMaxMotifs} added)
+              </span>
             </p>
-
-            {exceededWarning && (
-              <p className="text-xs text-amber-600/80 bg-amber-50 border border-amber-200 px-3 py-2">
-                Maximum motifs reached for this item
-              </p>
-            )}
 
             {/* Selected motifs tray */}
             {motifEntries.length > 0 && (
@@ -809,12 +924,20 @@ export function ProductInfo({
               </div>
             )}
 
+            {exceededWarning && (
+              <p className="text-xs text-amber-600/80 bg-amber-50 border border-amber-200 px-3 py-2">
+                {S.motifCount
+                  ? `Motif limit reached. Add more in step ${S.motifCount} or remove one to swap.`
+                  : 'Motif limit reached. Remove one to swap.'}
+              </p>
+            )}
+
             {/* Category tabs */}
             <div className="flex items-end border-b border-border">
               <button
                 onClick={() => scrollTabs(-160)}
                 className="shrink-0 w-14 self-stretch flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-150 z-10"
-                style={{ background: 'linear-gradient(to right, white 70%, transparent)', fontSize: '2rem', visibility: tabScroll.left ? 'visible' : 'hidden' }}
+                style={{ background: 'linear-gradient(to right, white 70%, transparent)', fontSize: '2rem', display: tabScroll.left ? 'flex' : 'none' }}
               >
                 ‹
               </button>
@@ -875,7 +998,7 @@ export function ProductInfo({
                     <div key={motif.baseName} className="flex flex-col items-center gap-1.5 shrink-0">
                       <button
                         onClick={() => { if (!atMax) { onAddMotif(curUrl, motif.label, motif.baseName, curWidth); setExceededWarning(false) } else setExceededWarning(true) }}
-                        onMouseEnter={(e) => showMotifTooltip(e, motif.label)}
+                        onMouseEnter={(e) => showMotifTooltip(e, atMax && count === 0 ? `Remove a motif to add ${motif.label}` : motif.label)}
                         onMouseLeave={hideMotifTooltip}
                         aria-label={`Add ${motif.label}`}
                         className={`w-16 h-16 border transition-all duration-200 flex items-center justify-center p-1 ${
@@ -893,11 +1016,20 @@ export function ProductInfo({
                             <span className="w-4 text-center text-xs font-medium tabular-nums">{count}</span>
                             <button onClick={() => { if (!atMax) { onAddMotif(curUrl, motif.label, motif.baseName, curWidth); setExceededWarning(false) } else setExceededWarning(true) }} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs">+</button>
                           </div>
-                          {motif.sizes.length > 1 && (
-                            <div className="flex items-center gap-1">
-                              <button onClick={() => handleSizeChange(motif, -1)} disabled={sizeIdx <= clampMin} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs disabled:opacity-30">‹</button>
-                              <span className="w-8 text-center text-xs" style={{ color: 'var(--muted-foreground)' }}>size</span>
-                              <button onClick={() => handleSizeChange(motif, 1)} disabled={sizeIdx >= clampMax} className="w-5 h-5 flex items-center justify-center border border-border text-muted-foreground hover:border-primary/50 text-xs disabled:opacity-30">›</button>
+                          {motif.sizes.length > 1 && clampMax > clampMin && (
+                            <div className="flex flex-col items-center gap-0 w-16">
+                              <input
+                                type="range"
+                                min={clampMin}
+                                max={clampMax}
+                                value={sizeIdx}
+                                onChange={(e) => {
+                                  const next = parseInt(e.target.value, 10)
+                                  setMotifSizeIdx(prev => ({ ...prev, [motif.baseName]: next }))
+                                  onUpdateMotifsByBaseName(motif.baseName, motifUrl(motif), parseSz(motif.sizes[next]))
+                                }}
+                                className="w-full accent-primary cursor-pointer"
+                              />
                             </div>
                           )}
                         </div>
@@ -923,10 +1055,36 @@ export function ProductInfo({
           </div>
           )}
 
-          {/* 05 · Notes */}
+          {/* Embroidery placement — statement totes only */}
+          {isStatementTote && (
+            <div className="flex flex-col gap-3">
+              <p className="flex items-center gap-2 text-base font-medium text-foreground">
+                <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{S.placement}</span>
+                Embroidery Placement
+              </p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {placeOnBack
+                  ? 'Great choice! Your design will be stitched on the back of the tote, keeping your front pocket fully functional.'
+                  : 'By default, your design is stitched on the front. Note that embroidery on the front closes the pocket opening.'}
+              </p>
+              <label className="flex items-start gap-3 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={placeOnBack}
+                  onChange={(e) => setPlaceOnBack(e.target.checked)}
+                  className="mt-1 w-4 h-4 accent-primary cursor-pointer shrink-0"
+                />
+                <span className="text-sm text-foreground leading-snug">
+                  Embroider on the back of the tote <span className="text-muted-foreground">(preserves the front pocket)</span>
+                </span>
+              </label>
+            </div>
+          )}
+
+          {/* Notes */}
           <div className="flex flex-col gap-3">
             <label htmlFor="customizer-notes" className="flex items-center gap-2 text-base font-medium text-foreground">
-              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{isMotifOnly ? '02' : '05'}</span>
+              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{S.notes}</span>
               Notes
             </label>
             <p className="text-sm text-muted-foreground -mt-1">Please let us know if you have any notes on thread color or placement!</p>
@@ -943,7 +1101,7 @@ export function ProductInfo({
           {/* ── Quantity ─────────────────────────────────────────────────────── */}
           <div className="flex flex-col gap-2">
             <p className="flex items-center gap-2 text-base font-medium text-foreground">
-              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{isMotifOnly ? '03' : '06'}</span>
+              <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{S.quantity}</span>
               Quantity
             </p>
             <div className="flex items-center w-fit border border-border">
@@ -977,13 +1135,20 @@ export function ProductInfo({
                         : `Please add ${selectedMotifCount} motif${parseInt(selectedMotifCount, 10) !== 1 ? 's' : ''} to continue.`}
                   </p>
                 )}
-                <Button
-                  className="w-full py-6 text-base bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-40"
-                  disabled={isSubmitting || !hasInput}
-                  onClick={handleAddToBasket}
-                >
-                  {isSubmitting ? 'Adding…' : 'Add to Basket'}
-                </Button>
+                <div onClick={() => {
+                  if (!motifMet && !isSubmitting && motifSectionRef.current) {
+                    const top = motifSectionRef.current.getBoundingClientRect().top + window.scrollY - 100
+                    window.scrollTo({ top, behavior: 'smooth' })
+                  }
+                }}>
+                  <Button
+                    className="w-full py-6 text-base bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-40"
+                    disabled={isSubmitting || !hasInput}
+                    onClick={handleAddToBasket}
+                  >
+                    {isSubmitting ? 'Adding…' : `Add to Basket — ${colors[selectedColor]?.variantsByCount?.[selectedMotifCount]?.price ?? productPrice}`}
+                  </Button>
+                </div>
               </>
             ) : (
               <Button
@@ -994,6 +1159,9 @@ export function ProductInfo({
               </Button>
             )}
           </div>
+              </>
+            )
+          })()}
         </div>
       )}
 
