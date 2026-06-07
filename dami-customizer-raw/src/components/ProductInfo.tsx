@@ -124,6 +124,7 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Ballet',           baseName: 'motif_ballet',           sizes: ['1p06','1p22','1p42','1p61','1p81','2p01','2p28','2p56','2p80','3p15','3p70'], noSuffix: true },
     { label: 'Bikini',            baseName: 'motif_bikini',           sizes: ['2','3','4','5'], noSuffix: true },
     { label: 'Bow',              baseName: 'motif_bow',              sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
+    { label: 'Double Bow',      baseName: 'motif_bow_0p94',         sizes: ['0p94','1p10','1p46','1p73','1p97'], noSuffix: true },
     { label: 'Cowboy Boot',      baseName: 'motif_cowboyBoot',       sizes: ['1','2','3','4','5','6'], noSuffix: true },
     { label: 'Flat Hair Clip',   baseName: 'motif_flatHairClip',     sizes: ['1p4','1p6','2'] },
     { label: 'Hair Clip',        baseName: 'motif_hairClip',         sizes: ['1p2','1p4','1p8'] },
@@ -437,22 +438,26 @@ export function ProductInfo({
       if (existing) existing.motifs = [...existing.motifs, ...motifs]
       else merged.push({ label, motifs: [...motifs] })
     })
+    const MOTIF_OVERRIDES: Record<string, string> = {}
     if (isTote) {
-      const TOTE_MOTIF_OVERRIDES: Record<string, string> = {
-        'motif_weddingRings': 'Bach Bag',
-        'motif_key':          'Her Favorite Things',
-        'motif_matchBox':     'Lucky Girl',
-      }
-      for (const [baseName, targetLabel] of Object.entries(TOTE_MOTIF_OVERRIDES)) {
-        for (const group of merged) {
-          const idx = group.motifs.findIndex(m => m.baseName === baseName)
-          if (idx === -1) continue
-          const [motif] = group.motifs.splice(idx, 1)
-          const target = merged.find(g => g.label === targetLabel)
-          if (target) target.motifs.push(motif)
-          else merged.push({ label: targetLabel, motifs: [motif] })
-          break
-        }
+      MOTIF_OVERRIDES['motif_weddingRings'] = 'Bach Bag'
+      MOTIF_OVERRIDES['motif_key']          = 'Her Favorite Things'
+      MOTIF_OVERRIDES['motif_matchBox']      = 'Lucky Girl'
+    }
+    if (isTote || isPouch) {
+      MOTIF_OVERRIDES['motif_bow']      = 'Everyday Chic'
+      MOTIF_OVERRIDES['motif_neatBow']  = 'Everyday Chic'
+      MOTIF_OVERRIDES['motif_bow_0p94'] = 'Everyday Chic'
+    }
+    for (const [baseName, targetLabel] of Object.entries(MOTIF_OVERRIDES)) {
+      for (const group of merged) {
+        const idx = group.motifs.findIndex(m => m.baseName === baseName)
+        if (idx === -1) continue
+        const [motif] = group.motifs.splice(idx, 1)
+        const target = merged.find(g => g.label === targetLabel)
+        if (target) target.motifs.push(motif)
+        else merged.push({ label: targetLabel, motifs: [motif] })
+        break
       }
     }
     if (sortOrder.length) {

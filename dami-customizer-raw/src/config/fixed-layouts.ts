@@ -112,8 +112,8 @@ export const FIXED_LAYOUTS: Record<string, ProductFixedLayouts> = {
     classic:   { text: { x: 0.50, y: 0.50 } },
     statement: { text: { x: 0.50, y: 0.50 } },
     sidenote:  { text: { x: 0.52, y: 0.50 }, motif: { x: 0.87, y: 0.82 } },
-    crown:     { text: { x: 0.52, y: 0.60 }, motifRow: { centerX: 0.52, y: 0.33 } },
-    pedestal:  { text: { x: 0.51, y: 0.34 }, motifRow: { centerX: 0.52, y: 0.62 } },
+    crown:     { text: { x: 0.52, y: 0.67 }, motifRow: { centerX: 0.52, y: 0.33 } },
+    pedestal:  { text: { x: 0.52, y: 0.33 }, motifRow: { centerX: 0.52, y: 0.67 } },
   },
   'Grand Waffle Pouch': {
     classic:   { text: { x: 0.50, y: 0.50 } },

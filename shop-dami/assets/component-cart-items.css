@@ -211,12 +211,16 @@ cart-remove-button .icon-remove {
 }
 
 .product-option + .product-option {
-  margin-top: 0.4rem;
+  margin-top: 0.6rem;
 }
 
 .product-option * {
   display: inline;
   margin: 0;
+}
+
+.product-option dt {
+  font-weight: 600;
 }
 
 .cart-items thead th {

@@ -8,7 +8,7 @@ import { ITEM_TYPES, resolveItemType } from '@/config/products'
 
 const CDN_BASE = 'https://cdn.shopify.com/s/files/1/0990/0326/9486/files/'
 
-type CdnEntry = { slug: string; ext: 'jpg' | 'png' }
+type CdnEntry = { slug: string; ext: 'jpg' | 'png'; noFront?: boolean }
 const CDN_CANVAS_MAP: Record<string, Record<string, CdnEntry>> = {
   grand: {
     navy:    { slug: 'large-navy',    ext: 'jpg' },
@@ -37,6 +37,14 @@ const CDN_CANVAS_MAP: Record<string, Record<string, CdnEntry>> = {
     petrol:  { slug: 'mini-teal',    ext: 'png' },
     pink:    { slug: 'mini-pink',    ext: 'png' },
   },
+  grand_waffle: {
+    navy:  { slug: 'navy_pouch_lg_org',        ext: 'png', noFront: true },
+    white: { slug: 'large_waffle_pouch_blank', ext: 'png', noFront: true },
+  },
+  waffle: {
+    navy:  { slug: 'navy_pouch_sm_org',        ext: 'png', noFront: true },
+    white: { slug: 'small_waffle_pouch_blank', ext: 'png', noFront: true },
+  },
 }
 
 function getDefaultColorIndex(
@@ -57,6 +65,8 @@ function getDefaultColorIndex(
 
 function getProductKey(title: string): string | null {
   const t = title.toLowerCase()
+  if (t.includes('grand') && t.includes('waffle')) return 'grand_waffle'
+  if (t.includes('waffle'))    return 'waffle'
   if (t.includes('grand'))     return 'grand'
   if (t.includes('signature')) return 'signature'
   if (t.includes('petit'))     return 'petite'
@@ -83,7 +93,7 @@ function getCDNCanvasImage(productTitle: string, colorName: string): string | nu
   const key = Object.keys(colorMap).find(k => lower.includes(k))
   if (!key) return null
   const entry = colorMap[key]
-  return `${CDN_BASE}${entry.slug}-front.${entry.ext}`
+  return `${CDN_BASE}${entry.slug}${entry.noFront ? '' : '-front'}.${entry.ext}`
 }
 
 const COLOR_NAME_HEX: Record<string, string> = {
@@ -228,6 +238,16 @@ export default function CustomizerWidget() {
     const gallery = document.querySelector('media-gallery') as (HTMLElement & { setActiveMedia?: (id: string, prepend: boolean) => void }) | null
     if (!gallery) return
 
+    const firstItem = gallery.querySelector<HTMLElement>('.product__media-item')
+    const firstImg  = firstItem?.querySelector<HTMLImageElement>('img') ?? null
+
+    // Always restore any previously-swapped src before taking a new action,
+    // so that setActiveMedia on the first slide sees the original image.
+    if (firstImg?.dataset.originalSrc) {
+      firstImg.src    = firstImg.dataset.originalSrc
+      firstImg.srcset = firstImg.dataset.originalSrcset ?? ''
+    }
+
     // Try native gallery swap first (works when variant images are in the slider)
     const mediaEl = mediaId ? gallery.querySelector(`[data-media-id="${mediaId}"]`) : null
     if (mediaEl) {
@@ -235,16 +255,17 @@ export default function CustomizerWidget() {
       return
     }
 
-    // Variant images hidden from gallery — go to first slide and swap its img src
-    const firstItem = gallery.querySelector('.product__media-item') as HTMLElement | null
+    // Variant image not in gallery — navigate to first slide and swap src directly
     const firstMediaId = firstItem?.dataset.mediaId
     if (firstMediaId) gallery.setActiveMedia?.(firstMediaId, false)
 
-    const firstImg = (firstItem ?? gallery.querySelector('.product__media-item.is-active'))?.querySelector('img') as HTMLImageElement | null
-    if (firstImg && imageUrl) {
-      firstImg.src = imageUrl
-      firstImg.srcset = ''
+    if (!firstImg || !imageUrl) return
+    if (!firstImg.dataset.originalSrc) {
+      firstImg.dataset.originalSrc    = firstImg.src
+      firstImg.dataset.originalSrcset = firstImg.srcset
     }
+    firstImg.src    = imageUrl
+    firstImg.srcset = ''
   }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
   // Direct DOM toggle happens synchronously so Fabric.js gets real canvas dimensions.

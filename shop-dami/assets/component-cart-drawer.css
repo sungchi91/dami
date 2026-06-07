@@ -326,6 +326,14 @@ cart-drawer-items {
   word-break: break-word;
 }
 
+.cart-drawer .product-option dt {
+  font-weight: 600;
+}
+
+.cart-drawer .product-option + .product-option {
+  margin-top: 0.6rem;
+}
+
 .cart-drawer details[open] > summary .icon-caret {
   transform: rotate(180deg);
 }
