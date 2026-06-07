@@ -193,6 +193,7 @@ export default function CustomizerWidget() {
   const {
     coverMediaId,
     embroideryText,  setEmbroideryText,
+    dateText,        setDateText,
     textColor,       setTextColor,
     fontStyle,       setFontStyle,
     textSize,        setTextSize,
@@ -201,6 +202,8 @@ export default function CustomizerWidget() {
     removeMotif,     updateMotifPosition,  updateMotifsByBaseName,
     placeOnBack,     setPlaceOnBack,
   } = useCustomizer()
+
+  const isInitialsDate = customizerType === 'initials-date'
 
   const [showPersonalize,    setShowPersonalize]    = useState(false)
   const [hasPersonalized,    setHasPersonalized]    = useState(false)
@@ -273,16 +276,18 @@ export default function CustomizerWidget() {
     const photosPanel   = document.getElementById('ember-lane-photos-panel')
     const canvasPortal  = document.getElementById('ember-lane-canvas-portal')
     const mediaWrapper  = canvasPortal?.closest<HTMLElement>('.product__media-wrapper')
-    if (photosPanel)  photosPanel.style.display  = 'none'
-    if (canvasPortal) canvasPortal.style.display = 'block'
-    if (mediaWrapper && window.innerWidth < 750) {
-      mediaWrapper.style.position = 'sticky'
-      mediaWrapper.style.top      = '-50px'
-      mediaWrapper.style.zIndex   = '2'
+    if (!isInitialsDate) {
+      if (photosPanel)  photosPanel.style.display  = 'none'
+      if (canvasPortal) canvasPortal.style.display = 'block'
+      if (mediaWrapper && window.innerWidth < 750) {
+        mediaWrapper.style.position = 'sticky'
+        mediaWrapper.style.top      = '-50px'
+        mediaWrapper.style.zIndex   = '2'
+      }
     }
     setHasPersonalized(true)
     setShowPersonalize(true)
-  }, [])
+  }, [isInitialsDate])
 
   const handleBack = useCallback(() => {
     const photosPanel  = document.getElementById('ember-lane-photos-panel')
@@ -308,6 +313,8 @@ export default function CustomizerWidget() {
         onBack={handleBack}
         embroideryText={embroideryText}
         setEmbroideryText={setEmbroideryText}
+        dateText={dateText}
+        setDateText={setDateText}
         textColor={textColor}
         setTextColor={setTextColor}
         fontStyle={fontStyle}
@@ -345,7 +352,7 @@ export default function CustomizerWidget() {
         setPlaceOnBack={setPlaceOnBack}
       />
 
-      {hasPersonalized && canvasPortalEl && createPortal(
+      {hasPersonalized && !isInitialsDate && canvasPortalEl && createPortal(
         <div className="ember-lane-customizer-scope">
           {customizerType === 'freeform' ? (
             <CanvasEditor

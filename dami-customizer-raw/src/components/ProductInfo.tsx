@@ -230,6 +230,8 @@ interface ProductInfoProps {
   onBack:            () => void
   embroideryText:    string
   setEmbroideryText: (v: string) => void
+  dateText:          string
+  setDateText:       (v: string) => void
   textColor:         string
   setTextColor:      (v: string) => void
   fontStyle:         string
@@ -275,6 +277,8 @@ export function ProductInfo({
   onBack,
   embroideryText,
   setEmbroideryText,
+  dateText,
+  setDateText,
   textColor,
   setTextColor,
   fontStyle,
@@ -334,12 +338,35 @@ export function ProductInfo({
   }, [])
   const hideMotifTooltip = useCallback(() => setMotifTooltip(null), [])
 
+  const isInitialsDate = customizerType === 'initials-date'
+
   const handleAddToBasket = async (e: React.MouseEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     try {
-      const payload = buildCartPayload({ selectedItem, embroideryText, fontStyle, textColor, textSize, textPosition, motifEntries, customizerType, notes, placeOnBack })
-      await submitToCart(variantId, payload, quantity, customizerType)
+      if (isInitialsDate) {
+        const item: Record<string, unknown> = { id: variantId, quantity }
+        if (embroideryText || dateText) {
+          item.properties = {
+            ...(embroideryText ? { 'Initials': embroideryText } : {}),
+            ...(dateText       ? { 'Date':     dateText }       : {}),
+            ...(notes          ? { 'Notes':    notes }          : {}),
+          }
+        }
+        const res = await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: [item] }),
+        })
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({})) as { message?: string }
+          throw new Error((body as { message?: string }).message ?? `Cart error ${res.status}`)
+        }
+        window.location.href = '/cart'
+      } else {
+        const payload = buildCartPayload({ selectedItem, embroideryText, fontStyle, textColor, textSize, textPosition, motifEntries, customizerType, notes, placeOnBack })
+        await submitToCart(variantId, payload, quantity, customizerType)
+      }
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error'
       console.error('Add to basket failed:', err)
@@ -682,8 +709,58 @@ export function ProductInfo({
             Back to product
           </button>
 
+          {/* ── Initials + Date form (no canvas, no font/size/thread) ─────────── */}
+          {isInitialsDate && (
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-3">
+                <label htmlFor="el-initials" className="text-base font-medium text-foreground">Initials</label>
+                <input
+                  id="el-initials"
+                  type="text"
+                  maxLength={18}
+                  value={embroideryText}
+                  onChange={(e) => setEmbroideryText(e.target.value)}
+                  placeholder="E&W"
+                  className="w-full px-4 py-2.5 border border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors duration-200 text-base"
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                <label htmlFor="el-date" className="text-base font-medium text-foreground">Date</label>
+                <input
+                  id="el-date"
+                  type="text"
+                  maxLength={18}
+                  value={dateText}
+                  onChange={(e) => setDateText(e.target.value)}
+                  placeholder="11.07.2025"
+                  className="w-full px-4 py-2.5 border border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors duration-200 text-base"
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                <label htmlFor="el-initials-notes" className="text-base font-medium text-foreground">Notes</label>
+                <p className="text-sm text-muted-foreground -mt-1">Any additional notes on placement or thread color.</p>
+                <textarea
+                  id="el-initials-notes"
+                  rows={3}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="w-full px-4 py-2.5 border border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors duration-200 text-sm resize-none"
+                />
+              </div>
+              <div className="flex flex-col gap-2 pt-2 border-t border-border">
+                <Button
+                  className="w-full py-6 text-base bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-40"
+                  disabled={isSubmitting || (!embroideryText.trim() && !dateText.trim())}
+                  onClick={handleAddToBasket}
+                >
+                  {isSubmitting ? 'Adding…' : `Add to Basket — ${productPrice}`}
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* Step numbers — computed once */}
-          {(() => {
+          {!isInitialsDate && (() => {
             const hasText = embroideryText.trim().length > 0
             const isStatementTote = customizerType === 'statement' && (ITEM_TYPES[selectedItem] ?? '').toLowerCase().includes('tote')
             let n = 0
@@ -1169,6 +1246,7 @@ export function ProductInfo({
           })()}
         </div>
       )}
+
 
     </div>
 

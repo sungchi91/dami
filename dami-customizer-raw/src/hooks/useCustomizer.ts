@@ -21,6 +21,8 @@ export interface MotifEntry {
 export interface CustomizerState {
   embroideryText:        string
   setEmbroideryText:     (v: string) => void
+  dateText:              string
+  setDateText:           (v: string) => void
   textColor:             string
   setTextColor:          (v: string) => void
   fontStyle:             string
@@ -40,6 +42,7 @@ export interface CustomizerState {
 
 export function useCustomizer(): CustomizerState {
   const [embroideryText, setEmbroideryText] = useState('')
+  const [dateText,       setDateText]       = useState('')
   const [textColor,      setTextColor]      = useState('#476E87') // Ocean Blue
   const [fontStyle,      setFontStyle]      = useState('ballantines')
   const [textSize,       setTextSize]       = useState<TextSize>(0.5)
@@ -76,6 +79,7 @@ export function useCustomizer(): CustomizerState {
 
   return {
     embroideryText,    setEmbroideryText,
+    dateText,          setDateText,
     textColor,         setTextColor,
     fontStyle,         setFontStyle,
     textSize,          setTextSize,
