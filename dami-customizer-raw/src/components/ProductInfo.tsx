@@ -330,6 +330,19 @@ export function ProductInfo({
   const [canScrollDown, setCanScrollDown]   = useState(false)
   const [motifTooltip, setMotifTooltip]     = useState<{ text: string; x: number; y: number } | null>(null)
   const [pendingMotifCount, setPendingMotifCount] = useState<string | null>(null)
+  const [showTextTip,      setShowTextTip]      = useState(false)
+  const textTipBtnRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (!showTextTip) return
+    const handler = (e: MouseEvent) => {
+      if (textTipBtnRef.current && !textTipBtnRef.current.contains(e.target as Node)) {
+        setShowTextTip(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [showTextTip])
 
   const showMotifTooltip = useCallback((e: React.MouseEvent, text: string) => {
     if (window.matchMedia('(hover: none)').matches) return
@@ -449,7 +462,7 @@ export function ProductInfo({
       return group
     }
     const TOTE_ORDER   = ['Everyday Chic','Garden Party','Bach Bag','Her Favorite Things','Best Friend','Jet Set','On the Green','Lucky Girl','City Girl']
-    const POUCH_ORDER  = ['Vanity','Getting Dressed','Pretty Things','Sentimental','Bach Bag','Pre-Game','Her Favorite Things','Best Friend','Everyday Chic','Jet Set','Lucky Girl','City Girl']
+    const POUCH_ORDER  = ['Everyday Chic','Pretty Things','Vanity','Getting Dressed','Sentimental','Bach Bag','Pre-Game','Her Favorite Things','Best Friend','Jet Set','Lucky Girl','City Girl']
     const NAPKIN_ORDER = ['Cocktail Hour','On the Table','In Bloom','Cheers to Her','The Details','Game Night','Club House','City Souvenir']
     const sortOrder = isTote ? TOTE_ORDER : isPouch ? POUCH_ORDER : isNapkin ? NAPKIN_ORDER : []
 
@@ -671,26 +684,28 @@ export function ProductInfo({
             </div>
           )}
 
-          <div className="flex flex-col gap-3 text-sm text-muted-foreground border-t border-border pt-4">
-            <div className="flex gap-3">
-              <span className="font-medium text-foreground shrink-0 w-32">Production Time</span>
-              <span>Ships within 5–7 business days.</span>
+          <div className="flex flex-col gap-8 text-sm text-muted-foreground leading-relaxed border-t border-border pt-6">
+            <div className="flex flex-col gap-4">
+              <h3 className="text-base font-medium text-foreground">Production &amp; Shipping</h3>
+              <p>
+                <span className="font-medium text-foreground">Standard Lead Time:</span>{' '}
+                Ships within 5–7 business days.
+              </p>
+              <p>
+                <span className="font-medium text-foreground">Sold Out or Group Orders?</span>{' '}
+                We can make it happen! If your favorite style is out of stock or you are placing a large group order, please contact us for a Special Order. Extended production takes 2–3 weeks.
+              </p>
             </div>
-            <div className="flex gap-3">
-              <span className="font-medium text-foreground shrink-0 w-32">Return</span>
-              <span>All items are made to order and final sale. No returns or exchanges.</span>
-            </div>
-            <div className="flex gap-3">
-              <span className="font-medium text-foreground shrink-0 w-32">Disclaimer</span>
-              <span className="leading-relaxed">
-                Mockups are approximate. Minor variations may occur in the final embroidered result. Alignment, sizing, and thread color will be adjusted during production for best results.
-                <br /><br />
-                Thread colors displayed on screen may differ from actual thread due to monitor calibration and dye lot variation. Thread color selections are final once the order is placed. Light thread colors on light backgrounds may result in low contrast, particularly on fine-line or detailed designs. For best visibility, choose a darker thread color.
-                <br /><br />
-                Font rendering varies by device and browser. The stitched result follows the font name and reference images shown in the Custom Font section.
-                <br /><br />
-                Please double-check spelling and capitalization before ordering — personalized items cannot be returned or exchanged.
-              </span>
+            <div className="flex flex-col gap-4">
+              <h3 className="text-base font-medium text-foreground">Customization Disclaimers</h3>
+              <p>
+                <span className="font-medium text-foreground">Final Sale:</span>{' '}
+                Because each piece is customized just for you, all sales are final. Please double-check your spelling and choices before checking out.
+              </p>
+              <p>
+                <span className="font-medium text-foreground">Placement &amp; Colors:</span>{' '}
+                Live previews are an approximate guide. Final sizing, spacing, and thread alignments are artistically adjusted by our studio to best fit your item. Screen calibrations may cause thread colors to vary slightly in person.
+              </p>
             </div>
           </div>
         </div>
@@ -784,6 +799,28 @@ export function ProductInfo({
             <label htmlFor="custom-text" className="flex items-center gap-2 text-base font-medium text-foreground">
               <span className="font-[family-name:var(--font-cursive)] text-lg text-primary leading-none">{S.text}</span>
               Add Your Text
+              <span className="relative">
+                <button
+                  ref={textTipBtnRef}
+                  type="button"
+                  aria-label="About preview alignment"
+                  onMouseEnter={() => setShowTextTip(true)}
+                  onMouseLeave={() => setShowTextTip(false)}
+                  onClick={(e) => { e.preventDefault(); setShowTextTip(v => !v) }}
+                  className="w-4 h-4 rounded-full border border-muted-foreground text-muted-foreground flex items-center justify-center hover:border-foreground hover:text-foreground transition-colors cursor-help"
+                  style={{ fontSize: '10px', fontStyle: 'italic', fontFamily: 'serif', lineHeight: 1 }}
+                >
+                  i
+                </button>
+                {showTextTip && (
+                  <div
+                    className="absolute left-0 top-6 z-50 bg-background border border-border shadow-md p-3 text-xs font-normal leading-relaxed text-muted-foreground"
+                    style={{ width: '220px', pointerEvents: 'none' }}
+                  >
+                    Preview alignment is approximate — we'll fine-tune placement in the studio. To shift text left or right, add spaces before or after your text.
+                  </div>
+                )}
+              </span>
               <span className="ml-auto text-xs font-normal text-muted-foreground">{embroideryText.length}/18</span>
             </label>
             <input

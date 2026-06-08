@@ -92,10 +92,14 @@ export const PRODUCT_CONFIG: Record<ItemType, ProductConfig> = {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-/** Find the canonical ItemType whose key is contained in the product title, or vice versa. */
+/** Find the canonical ItemType whose key is contained in the product title.
+ *  Exact match wins so a Shopify title of exactly "Waffle Pouch" isn't
+ *  outranked by the longer "Grand Waffle Pouch" via reverse-includes matching. */
 export function resolveItemType(productTitle: string): ItemType {
   const lower = productTitle.toLowerCase()
-  const matches = ITEM_TYPES.filter(t => lower.includes(t.toLowerCase()) || t.toLowerCase().includes(lower))
+  const exact = ITEM_TYPES.find(t => t.toLowerCase() === lower)
+  if (exact) return exact
+  const matches = ITEM_TYPES.filter(t => lower.includes(t.toLowerCase()))
   matches.sort((a, b) => b.length - a.length)
   return matches[0] ?? ITEM_TYPES[0]
 }

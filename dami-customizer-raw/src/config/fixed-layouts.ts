@@ -48,9 +48,11 @@ export function isSideMotifLayout(layout: AnyFixedLayout): layout is SideMotifLa
 
 function resolveKey(productTitle: string): string | undefined {
   const lower = productTitle.toLowerCase()
-  const matches = Object.keys(FIXED_LAYOUTS).filter(k =>
-    lower.includes(k.toLowerCase()) || k.toLowerCase().includes(lower)
-  )
+  // Exact match wins so "Waffle Pouch" doesn't get clobbered by the longer
+  // "Grand Waffle Pouch" entry via reverse-includes matching.
+  const exact = Object.keys(FIXED_LAYOUTS).find(k => k.toLowerCase() === lower)
+  if (exact) return exact
+  const matches = Object.keys(FIXED_LAYOUTS).filter(k => lower.includes(k.toLowerCase()))
   matches.sort((a, b) => b.length - a.length)
   return matches[0]
 }
@@ -65,7 +67,7 @@ export function getFixedLayout(productTitle: string, type: FixedLayoutType): Any
 export function getMotifSizeLimits(productTitle: string, customizerType: string): { min: number; max: number } {
   const lower = productTitle.toLowerCase()
   if ((lower.includes('signature') || lower.includes('grand')) && lower.includes('tote') && customizerType === 'sidenote') return { min: 0.75, max: 3 }
-  return { min: 0.75, max: 1.5 }
+  return { min: 0.75, max: 1.6 }
 }
 
 /** Motif physical size in inches for the product (defaults to 1.0). */
@@ -108,14 +110,15 @@ export const FIXED_LAYOUTS: Record<string, ProductFixedLayouts> = {
     pedestal:  { text: { x: 0.50, y: 0.80 }, motifRow: { centerX: 0.50, y: 0.20 } },
   },
   'Waffle Pouch': {
-    motifInches: 0.75,
+    motifInches: 1.0,
     classic:   { text: { x: 0.50, y: 0.50 } },
     statement: { text: { x: 0.50, y: 0.50 } },
     sidenote:  { text: { x: 0.52, y: 0.50 }, motif: { x: 0.87, y: 0.82 } },
-    crown:     { text: { x: 0.52, y: 0.67 }, motifRow: { centerX: 0.52, y: 0.33 } },
+    crown:     { text: { x: 0.52, y: 0.54 }, motifRow: { centerX: 0.52, y: 0.31 } },
     pedestal:  { text: { x: 0.52, y: 0.33 }, motifRow: { centerX: 0.52, y: 0.67 } },
   },
   'Grand Waffle Pouch': {
+    motifInches: 1.0,
     classic:   { text: { x: 0.50, y: 0.50 } },
     statement: { text: { x: 0.50, y: 0.50 } },
     sidenote:  { text: { x: 0.51, y: 0.48 }, motif: { x: 0.90, y: 0.84 } },

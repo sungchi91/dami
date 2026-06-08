@@ -23,10 +23,13 @@
     }
     /* Cap canvas height while personalizing so steps below have breathing room.
        Explicit width = 4/5 of capped height enforces exact 4:5 aspect ratio,
-       so the safe-zone math (canvas-relative %s) matches desktop. */
+       so the safe-zone math (canvas-relative %s) matches desktop.
+       max-height pins the wrapper against in-app browser chrome that animates
+       in/out on scroll (Instagram, TikTok, etc.) and changes vh/svh underneath. */
     #ember-lane-canvas-portal > .ember-lane-customizer-scope > div {
-      height: 45vh;
-      width: calc(45vh * 4 / 5) !important;
+      height: 45svh;
+      max-height: 45svh;
+      width: calc(45svh * 4 / 5) !important;
       max-width: 100%;
       margin-left: auto;
       margin-right: auto;
@@ -38,13 +41,13 @@
     }
     /* Leave room for the sticky canvas when scrolling step 1 into view */
     #el-step-text {
-      scroll-margin-top: calc(45vh + 16px);
+      scroll-margin-top: calc(45svh + 16px);
     }
     /* Disable scroll anchoring so layout shifts from typing don't move the viewport,
        and set scroll-padding-top so any scrollIntoView accounts for the sticky canvas. */
     html, body {
       overflow-anchor: none;
-      scroll-padding-top: calc(45vh + 16px);
+      scroll-padding-top: calc(45svh + 16px);
     }
   }
 

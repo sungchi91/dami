@@ -107,9 +107,10 @@ function buildAllSnippet(layouts: LayoutMap, motifMap: MotifMap): string {
 // ── Seeded positions (keep in sync with fixed-layouts.ts) ─────────────────────
 
 const SEEDED_MOTIF_INCHES: Record<string, number> = {
-  'Grand Tote':           1.50,
-  'Signature Tote':       1.25,
-  'Waffle Pouch':         0.75,
+  'Grand Tote':            1.50,
+  'Signature Tote':        1.25,
+  'Waffle Pouch':          1.00,
+  'Grand Waffle Pouch':    1.00,
   'Linen Cocktail Napkin': 1.00,
 }
 
@@ -146,8 +147,8 @@ const SEEDED_LAYOUTS: Record<string, Partial<Record<LayoutType, LayoutState>>> =
     classic:   { text: { x: 0.50, y: 0.50 } },
     statement: { text: { x: 0.50, y: 0.50 } },
     sidenote:  { text: { x: 0.52, y: 0.50 }, motif:    { x: 0.87, y: 0.82 } },
-    crown:     { text: { x: 0.52, y: 0.60 }, motifRow: { x: 0.52, y: 0.33 } },
-    pedestal:  { text: { x: 0.51, y: 0.34 }, motifRow: { x: 0.52, y: 0.62 } },
+    crown:     { text: { x: 0.52, y: 0.54 }, motifRow: { x: 0.52, y: 0.31 } },
+    pedestal:  { text: { x: 0.52, y: 0.33 }, motifRow: { x: 0.52, y: 0.67 } },
   },
   'Grand Waffle Pouch': {
     classic:   { text: { x: 0.50, y: 0.50 } },

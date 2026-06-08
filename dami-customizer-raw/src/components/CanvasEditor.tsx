@@ -413,6 +413,15 @@ export function CanvasEditor({
     const h = wrapper.clientHeight || 500
     canvasSizeRef.current = { w, h }
 
+    // Lock wrapper to fixed pixels on mobile so in-app browsers (Instagram, etc.)
+    // that animate their chrome on scroll — which changes vh / svh — can't
+    // expand or contract this container mid-scroll. See orientation effect below.
+    if (window.innerWidth < 750) {
+      wrapper.style.setProperty('width',      `${w}px`, 'important')
+      wrapper.style.setProperty('height',     `${h}px`, 'important')
+      wrapper.style.setProperty('max-height', `${h}px`, 'important')
+    }
+
     const itemName = ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]
     const config   = PRODUCT_CONFIG[itemName]
     const sz       = computeSafeZonePx(w, h, config.safeZone)
@@ -469,6 +478,42 @@ export function CanvasEditor({
       szObjectsRef.current   = []
       motifsMapRef.current.clear()
     }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Orientation change — width-only resize listener ─────────────────────────
+  // Ignores height-only resize events (in-app browser chrome show/hide). Only
+  // when window.innerWidth changes (device rotation) do we unlock the wrapper,
+  // re-measure, re-lock, and re-init Fabric at the new pixel size.
+  useEffect(() => {
+    let lastWidth = window.innerWidth
+    const onResize = () => {
+      if (window.innerWidth === lastWidth) return
+      lastWidth = window.innerWidth
+      const wrapper = wrapperRef.current
+      const fc      = fcRef.current
+      if (!wrapper || !fc) return
+      wrapper.style.removeProperty('width')
+      wrapper.style.removeProperty('height')
+      wrapper.style.removeProperty('max-height')
+      requestAnimationFrame(() => {
+        const w = wrapper.clientWidth  || 400
+        const h = wrapper.clientHeight || 500
+        if (window.innerWidth < 750) {
+          wrapper.style.setProperty('width',      `${w}px`, 'important')
+          wrapper.style.setProperty('height',     `${h}px`, 'important')
+          wrapper.style.setProperty('max-height', `${h}px`, 'important')
+        }
+        fc.setDimensions({ width: w, height: h })
+        canvasSizeRef.current = { w, h }
+        const itemName = ITEM_TYPES[selectedItem] ?? ITEM_TYPES[0]
+        const config   = PRODUCT_CONFIG[itemName]
+        safeZoneRef.current = computeSafeZonePx(w, h, config.safeZone)
+        void applyBackground(fc, { bgColor: canvasBgColor || '#FFFFFF', bgImage: canvasImage || null }, w, h)
+        fc.renderAll()
+      })
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Safe zone + background redraws when product changes ───────────────────
