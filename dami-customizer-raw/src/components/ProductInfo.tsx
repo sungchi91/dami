@@ -52,7 +52,7 @@ const TEXT_SIZE_STEP = 0.25
 const FONT_SIZE_FLOOR: Record<string, number> = {}
 
 const CDN = 'https://cdn.shopify.com/s/files/1/0990/0326/9486/files/'
-const CB  = '?v=20260602'
+const CB  = '?v=20260612'
 
 function parseSz(s: string): number { return parseFloat(s.replace('p', '.')) }
 // Each motif has a single PNG file named with its MIN size suffix; we re-scale on canvas for larger sizes.
@@ -77,7 +77,7 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Tequila',          baseName: 'motif_tequila',          sizes: ['1'] },
     { label: 'Whiskey Glass',    baseName: 'motif_whiskeyGlass',     sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Wine Bottle',      baseName: 'motif_wineBottle',       sizes: ['1p57','1p97','2p36'], noSuffix: true },
-    { label: 'Wine Glass',       baseName: 'motif_wineGlass',        sizes: ['1p57','1p97','2p36'], noSuffix: true },
+    { label: 'Wine Glass',       baseName: 'motif_wineGlass_795f95a1-b3fe-4cdb-9b7d-e13db09b8f1a', sizes: ['0p79','1p18','1p57','1p97'], noSuffix: true },
   ]},
   { group: 'Food', motifs: [
     { label: 'Cherries',         baseName: 'motif_cherries',         sizes: ['1p18','1p57','1p97'], noSuffix: true },
@@ -161,9 +161,14 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Playing Cards',    baseName: 'motif_playingCards',     sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
   ]},
   { group: 'Golf', motifs: [
+    { label: 'Crossing Tees',    baseName: 'motif_crossingTees',     sizes: ['1','1p5','2','2p5'], noSuffix: true },
     { label: 'Golf Cart',        baseName: 'motif_golfCart',         sizes: ['1','1p5','2','2p5'] },
     { label: 'Golf Club Bag',    baseName: 'motif_golfClubBag',      sizes: ['1','1p5','2','2p5'] },
     { label: 'Golf Flag',        baseName: 'motif_golfFlag',         sizes: ['1','1p5','2','2p5'] },
+    { label: 'Golf Map',         baseName: 'motif_golfMap',          sizes: ['1','1p5','2','2p5'], noSuffix: true },
+    { label: 'Green Jacket',     baseName: 'motif_greenJacket',      sizes: ['1','1p5','2','2p5'], noSuffix: true },
+    { label: 'Pennant',          baseName: 'motif_pennant',          sizes: ['1','1p5','2'], noSuffix: true },
+    { label: 'Tee Time',         baseName: 'motif_teeTime',          sizes: ['1','1p5','2','2p5'], noSuffix: true },
   ]},
   { group: 'NYC', motifs: [
     { label: 'NYC Apple',        baseName: 'motif_nycApple',         sizes: ['1p25','1p75','2p25'] },
@@ -488,6 +493,10 @@ export function ProductInfo({
       MOTIF_OVERRIDES['motif_bow']      = 'Everyday Chic'
       MOTIF_OVERRIDES['motif_neatBow']  = 'Everyday Chic'
       MOTIF_OVERRIDES['motif_bow_0p94'] = 'Everyday Chic'
+      MOTIF_OVERRIDES['motif_pennant']    = 'Everyday Chic'
+      MOTIF_OVERRIDES['motif_cherries']  = 'Everyday Chic'
+      MOTIF_OVERRIDES['motif_chiliPepper'] = 'Everyday Chic'
+      MOTIF_OVERRIDES['motif_cherries'] = 'Everyday Chic'
     }
     for (const [baseName, targetLabel] of Object.entries(MOTIF_OVERRIDES)) {
       for (const group of merged) {

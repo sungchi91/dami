@@ -125,14 +125,14 @@ const SEEDED_LAYOUTS: Record<string, Partial<Record<LayoutType, LayoutState>>> =
   'Signature Tote': {
     classic:   { text: { x: 0.50, y: 0.18 } },
     statement: { text: { x: 0.51, y: 0.59 } },
-    sidenote:  { text: { x: 0.49, y: 0.18 }, motif:    { x: 0.83, y: 0.85 } },
+    sidenote:  { text: { x: 0.49, y: 0.18 }, motif:    { x: 0.83, y: 0.75 } },
     crown:     { text: { x: 0.51, y: 0.26 }, motifRow: { x: 0.51, y: 0.15 } },
     pedestal:  { text: { x: 0.50, y: 0.11 }, motifRow: { x: 0.50, y: 0.25 } },
   },
   'Petite Tote': {
     classic:   { text: { x: 0.52, y: 0.19 } },
     statement: { text: { x: 0.53, y: 0.54 } },
-    sidenote:  { text: { x: 0.53, y: 0.17 }, motif:    { x: 0.90, y: 0.86 } },
+    sidenote:  { text: { x: 0.53, y: 0.17 }, motif:    { x: 0.90, y: 0.76 } },
     crown:     { text: { x: 0.53, y: 0.21 }, motifRow: { x: 0.53, y: 0.12 } },
     pedestal:  { text: { x: 0.52, y: 0.11 }, motifRow: { x: 0.52, y: 0.24 } },
   },
