@@ -5,6 +5,33 @@ import { PRESETS } from './presets'
 const MINI_W = 560
 const MINI_H = 700  // 4:5
 
+const THREAD_COLORS: Record<string, string> = {
+  'Black':             '#000000',
+  'Navy':              '#02283A',
+  'Cream':             '#FFFFFF',
+  'Umber':             '#827C55',
+  'Pecan':             '#AA8C66',
+  'Beige':             '#C3C3A7',
+  'Mahogany':          '#5C2B1E',
+  'Fawn':              '#CCB499',
+  'Sunflower':         '#FFC72E',
+  'Mustard':           '#CDCF3A',
+  'Canary Yellow':     '#F9EE1F',
+  'Linen':             '#FFFFF0',
+  'Olive Green':       '#2D4828',
+  'Enchanting Forest': '#183823',
+  'Green':             '#167645',
+  'Ocean Blue':        '#476E87',
+  'Baby Blue':         '#86B3CF',
+  'Pale Sky':          '#9FB5D6',
+  'Blue Ink':          '#0B1B6D',
+  'Winterberry':       '#811825',
+  'Riored':            '#9A1019',
+  'Pale Pink':         '#FFCCD5',
+  'Country Red':       '#B80605',
+  'Poinsettia':        '#CC0000',
+}
+
 const FONT_CSS: Record<string, string> = {
   'Bold Script':    'Ballantines, "Brush Script MT", cursive',
   'Playful Script': 'Katelyn, Caveat, cursive',
@@ -33,7 +60,7 @@ interface CustomizerData {
   text_align?:                'center' | 'right'
   text_max_width_inches?:     number
   motif_physical_size_inches: number
-  motifs: { icon: string; url?: string; x_percent: number; y_percent: number }[]
+  motifs: { icon: string; url?: string; x_percent: number; y_percent: number; width_inches?: number }[]
 }
 
 function computeSafeZonePx(w: number, h: number, p: { widthRatio: number; heightRatio: number; offsetX: number; offsetY: number }) {
@@ -126,17 +153,18 @@ export default function PayloadVerifier() {
       textAlign,
       fontSize: baseFont,
       fontFamily: fontFamily,
-      fill: data.thread_color,
+      fill: THREAD_COLORS[data.thread_color] ?? data.thread_color,
       selectable: false, evented: false,
     })
     const textScale = targetPx / (textObj.height || baseFont)
     textObj.set({ scaleX: textScale, scaleY: textScale })
     fc.add(textObj)
 
-    if (data.motifs?.length > 0 && data.motif_physical_size_inches > 0) {
-      const motifPPI      = computePPI(sz.width, preset.physicalWidthInches)
-      const motifTargetPx = data.motif_physical_size_inches * motifPPI
+    if (data.motifs?.length > 0) {
+      const motifPPI = computePPI(sz.width, preset.physicalWidthInches)
       for (const motif of data.motifs) {
+        const sizeInches  = motif.width_inches ?? data.motif_physical_size_inches
+        const motifTargetPx = sizeInches * motifPPI
         const mx = motif.x_percent * MINI_W
         const my = motif.y_percent * MINI_H
         if (motif.url) {

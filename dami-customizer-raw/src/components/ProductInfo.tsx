@@ -52,7 +52,7 @@ const TEXT_SIZE_STEP = 0.25
 const FONT_SIZE_FLOOR: Record<string, number> = {}
 
 const CDN = 'https://cdn.shopify.com/s/files/1/0990/0326/9486/files/'
-const CB  = '?v=20260612'
+const CB  = '?v=20260613'
 
 function parseSz(s: string): number { return parseFloat(s.replace('p', '.')) }
 // Each motif has a single PNG file named with its MIN size suffix; we re-scale on canvas for larger sizes.
@@ -76,6 +76,7 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Spicy Marg',       baseName: 'motif_spicyMarg',        sizes: ['1'] },
     { label: 'Tequila',          baseName: 'motif_tequila',          sizes: ['1'] },
     { label: 'Whiskey Glass',    baseName: 'motif_whiskeyGlass',     sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
+    { label: 'Bottle & Glass',   baseName: 'motif_bottleAndGlass',   sizes: ['1p57','1p97','2p36'], noSuffix: true },
     { label: 'Wine Bottle',      baseName: 'motif_wineBottle',       sizes: ['1p57','1p97','2p36'], noSuffix: true },
     { label: 'Wine Glass',       baseName: 'motif_wineGlass_795f95a1-b3fe-4cdb-9b7d-e13db09b8f1a', sizes: ['0p79','1p18','1p57','1p97'], noSuffix: true },
   ]},
@@ -218,7 +219,7 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Palm Tree',        baseName: 'motif_palmTree',         sizes: ['1','2'] },
     { label: 'Pine Tree',        baseName: 'motif_pineTree',         sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Smile',            baseName: 'motif_smile',            sizes: ['0p80','1','1p20'], noSuffix: true },
-    { label: 'Teddy Bear',       baseName: 'motif_teddyBear',        sizes: ['1','2','3'], noSuffix: true },
+    { label: 'Teddy Bear',       baseName: 'motif_teddyBear',        sizes: ['1','1p5','2'], noSuffix: true },
     { label: 'Tennis Racket',    baseName: 'motif_tennisRacket',     sizes: ['2'], noSuffix: true },
     { label: 'XOXO Heart (Red)',  baseName: 'motif_xoxoHeartRed',     sizes: ['1','1p25','1p50','1p75','2','2p25','2p50','3'], noSuffix: true },
     { label: 'XOXO Heart (Pink)', baseName: 'motif_xoxoHeartPink',    sizes: ['1','1p25','1p50','1p75','2','2p25','2p50','3'], noSuffix: true },

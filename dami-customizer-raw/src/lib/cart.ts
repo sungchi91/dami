@@ -66,10 +66,11 @@ const THREAD_COLOR_NAMES: Record<string, string> = {
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface MotifPayload {
-  icon:      string
-  url:       string
-  x_percent: number
-  y_percent: number
+  icon:         string
+  url:          string
+  x_percent:    number
+  y_percent:    number
+  width_inches: number
 }
 
 export interface CustomizerData {
@@ -145,7 +146,7 @@ export function buildCartPayload(params: {
       // Motif-only — no text position
       text_x = 0.5; text_y = 0.5
       motifs = motifEntries.length > 0
-        ? [{ icon: motifEntries[0].label, url: motifEntries[0].url, ...(() => { const { x, y } = toCanvasRelative(layout.motif, selectedItem); return { x_percent: x, y_percent: y } })() }]
+        ? [{ icon: motifEntries[0].label, url: motifEntries[0].url, width_inches: motifEntries[0].widthInches, ...(() => { const { x, y } = toCanvasRelative(layout.motif, selectedItem); return { x_percent: x, y_percent: y } })() }]
         : []
     } else {
       const textPos = toCanvasRelative(layout.text, selectedItem)
@@ -156,11 +157,11 @@ export function buildCartPayload(params: {
         const xs = calcMotifRowPositions(layout.motifRow.centerX, motifEntries.length, motifPhysicalInches, physW)
         motifs = motifEntries.map((entry, i) => {
           const { x, y } = toCanvasRelative({ x: xs[i], y: layout.motifRow.y }, selectedItem)
-          return { icon: entry.label, url: entry.url, x_percent: x, y_percent: y }
+          return { icon: entry.label, url: entry.url, width_inches: entry.widthInches, x_percent: x, y_percent: y }
         })
       } else if (isSidenoteLayout(layout) && motifEntries.length > 0) {
         const { x, y } = toCanvasRelative(layout.motif, selectedItem)
-        motifs = [{ icon: motifEntries[0].label, url: motifEntries[0].url, x_percent: x, y_percent: y }]
+        motifs = [{ icon: motifEntries[0].label, url: motifEntries[0].url, width_inches: motifEntries[0].widthInches, x_percent: x, y_percent: y }]
       } else {
         motifs = []
       }
@@ -173,7 +174,7 @@ export function buildCartPayload(params: {
     motifPhysicalInches = motifEntries.length > 0 ? getMotifInches(itemName) : 0
     motifs = motifEntries.map(entry => {
       const { x, y } = toCanvasRelative(entry.position, selectedItem)
-      return { icon: entry.label, url: entry.url, x_percent: x, y_percent: y }
+      return { icon: entry.label, url: entry.url, width_inches: entry.widthInches, x_percent: x, y_percent: y }
     })
   }
 
