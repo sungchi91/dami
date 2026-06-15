@@ -29,7 +29,8 @@ const FONT_MAP: Record<string, string> = {
   'garamond':    'Garamond, Georgia, serif',
 }
 
-const DEFAULT_MOTIF_INCHES = 1.0
+const DEFAULT_MOTIF_INCHES   = 1.0
+const MOTIF_RENDER_SCALE     = 1.2
 const MOTIF_ID_KEY           = '__motifId'
 const BRAND_BLUE             = '#7594B4'
 const FRAME_STONE            = '#C9B99A'
@@ -195,7 +196,7 @@ async function createMotifObj(
   szWidth: number, physicalWidthInches: number, motifInches: number,
 ): Promise<FabricImage> {
   const ppi      = computePPI(szWidth, physicalWidthInches)
-  const targetPx = motifInches * ppi
+  const targetPx = motifInches * MOTIF_RENDER_SCALE * ppi
   const m = await FabricImage.fromURL(url, { crossOrigin: 'anonymous' })
   const naturalSize = Math.max(m.width ?? 1, m.height ?? 1)
   const scale = targetPx / naturalSize
@@ -418,6 +419,8 @@ export function FixedCanvasEditor({
     const fc = fcRef.current
     if (!fc) return
 
+    let cancelled = false
+
     // Remove all existing motif objects
     motifsMapRef.current.forEach(obj => fc.remove(obj))
     motifsMapRef.current.clear()
@@ -457,7 +460,7 @@ export function FixedCanvasEditor({
       tasks.push(
         createMotifObj(entry.url, entry.id, absX, absY, sz.width, config.physicalWidth, renderInches)
           .then(m => {
-            if (!fcRef.current) return
+            if (!fcRef.current || cancelled) return
             motifsMapRef.current.set(entry.id, m)
             fc.add(m)
             fc.bringObjectToFront(m)
@@ -466,10 +469,12 @@ export function FixedCanvasEditor({
     })
 
     void Promise.all(tasks).then(() => {
-      if (!fcRef.current) return
+      if (!fcRef.current || cancelled) return
       if (textRef.current) fc.bringObjectToFront(textRef.current)
       fc.renderAll()
     })
+
+    return () => { cancelled = true }
   }, [motifEntries, selectedItem, customizerType]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
