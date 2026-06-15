@@ -30,7 +30,7 @@ const FONT_MAP: Record<string, string> = {
 }
 
 const DEFAULT_MOTIF_INCHES   = 1.0
-const MOTIF_RENDER_SCALE     = 1.2
+const MOTIF_RENDER_SCALE     = 1.1
 const MOTIF_ID_KEY           = '__motifId'
 const BRAND_BLUE             = '#7594B4'
 const FRAME_STONE            = '#C9B99A'

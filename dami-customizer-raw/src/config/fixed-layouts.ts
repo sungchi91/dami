@@ -66,7 +66,7 @@ export function getFixedLayout(productTitle: string, type: FixedLayoutType): Any
 /** Per-product motif size limits in inches. */
 export function getMotifSizeLimits(productTitle: string, customizerType: string): { min: number; max: number } {
   const lower = productTitle.toLowerCase()
-  if ((lower.includes('signature') || lower.includes('grand')) && lower.includes('tote') && customizerType === 'sidenote') return { min: 0.75, max: 2.5 }
+  if ((lower.includes('signature') || lower.includes('grand')) && lower.includes('tote') && customizerType === 'sidenote') return { min: 0.75, max: 1.75 }
   return { min: 0.75, max: 1.6 }
 }
 

@@ -194,7 +194,6 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Golf Flag',        baseName: 'motif_golfFlag',         sizes: ['1','1p5','2','2p5'] },
     { label: 'Golf Map',         baseName: 'motif_golfMap',          sizes: ['1','1p5','2','2p5'], noSuffix: true },
     { label: 'Green Jacket',     baseName: 'motif_greenJacket',      sizes: ['1','1p5','2','2p5'], noSuffix: true },
-    { label: 'Pennant',          baseName: 'motif_pennant',          sizes: ['1','1p5','2'], noSuffix: true },
     { label: 'Tee Time',         baseName: 'motif_teeTime',          sizes: ['1','1p5','2','2p5'], noSuffix: true },
   ]},
   { group: 'NYC', motifs: [
@@ -240,17 +239,18 @@ const MOTIF_GROUPS: { group: string; motifs: MotifDef[] }[] = [
     { label: 'Pomeranian',       baseName: 'motif_pomeranian',       sizes: ['2p2','2p8','3p8'] },
   ]},
   { group: 'Lifestyle', motifs: [
-{ label: 'Evil Eye',         baseName: 'motif_evilEye',          sizes: ['0p83','1p22','1p62','2p02','2p82','3p61','4p41'], noSuffix: true },
+{ label: 'Evil Eye',         baseName: 'motif_evilEye',          sizes: ['0p83','1p22','1p62'], noSuffix: true },
     { label: 'Heart',            baseName: 'motif_heart',            sizes: ['0p8','1','1p4'] },
     { label: 'Palm Tree',        baseName: 'motif_palmTree',         sizes: ['1','2'] },
+    { label: 'Pennant',          baseName: 'motif_pennant',          sizes: ['1','1p5'], noSuffix: true },
     { label: 'Pine Tree',        baseName: 'motif_pineTree',         sizes: ['1','1p5','2','2p5','3'], noSuffix: true },
     { label: 'Smile',            baseName: 'motif_smile',            sizes: ['0p80','1','1p20'], noSuffix: true },
-    { label: 'Teddy Bear',       baseName: 'motif_teddyBear',        sizes: ['1','1p5','2'], noSuffix: true },
+    { label: 'Teddy Bear',       baseName: 'motif_teddyBear',        sizes: ['1','1p5'], noSuffix: true },
     { label: 'Tennis Racket',    baseName: 'motif_tennisRacket',     sizes: ['2'], noSuffix: true },
-    { label: 'XOXO Heart (Red)',  baseName: 'motif_xoxoHeartRed',     sizes: ['1','1p25','1p50','1p75','2','2p25','2p50','3'], noSuffix: true },
-    { label: 'XOXO Heart (Pink)', baseName: 'motif_xoxoHeartPink',    sizes: ['1','1p25','1p50','1p75','2','2p25','2p50','3'], noSuffix: true },
-    { label: 'XOXO Heart (Green)',baseName: 'motif_xoxoHeartGreen',   sizes: ['1','1p25','1p50','1p75','2','2p25','2p50','3'], noSuffix: true },
-    { label: 'XOXO Heart (Blue)', baseName: 'motif_xoxoHeartBlue',    sizes: ['1','1p25','1p50','1p75','2','2p25','2p50','3'], noSuffix: true },
+    { label: 'XOXO Heart (Red)',  baseName: 'motif_xoxoHeartRed',     sizes: ['1','1p25','1p50','1p75'], noSuffix: true },
+    { label: 'XOXO Heart (Pink)', baseName: 'motif_xoxoHeartPink',    sizes: ['1','1p25','1p50','1p75'], noSuffix: true },
+    { label: 'XOXO Heart (Green)',baseName: 'motif_xoxoHeartGreen',   sizes: ['1','1p25','1p50','1p75'], noSuffix: true },
+    { label: 'XOXO Heart (Blue)', baseName: 'motif_xoxoHeartBlue',    sizes: ['1','1p25','1p50','1p75'], noSuffix: true },
   ]},
 ]
 
