@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "live_events": {
+      "type": "live-events",
+      "settings": {}
+    }
+  },
+  "order": ["live_events"]
+}

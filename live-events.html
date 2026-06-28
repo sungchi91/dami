@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Embroidery Experience | Ember Lane</title>
+<meta name="description" content="Bring Ember Lane's live embroidery studio to your wedding, shower, or corporate event. Guests pick their item, choose their thread, and watch it stitched on the spot.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Petit+Formal+Script&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --navy: #2C3645;
+    --navy-deep: #222A36;
+    --cream: #F6F1E7;
+    --cream-soft: #EFE8D8;
+    --taupe: #D9D0BC;
+    --red: #B3473C;
+    --ink: #3A332B;
+    --ink-soft: #6B6358;
+    --white: #FFFDF9;
+
+    --font-script: 'Petit Formal Script', 'Brush Script MT', cursive;
+    --font-serif: 'Cormorant Garamond', 'Georgia', serif;
+    --font-sans: 'Work Sans', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  *{ box-sizing: border-box; margin: 0; padding: 0; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    font-family: var(--font-sans);
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img{ max-width: 100%; display: block; }
+
+  a{ color: inherit; }
+
+  .wrap{
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ---------- Stitch divider — the signature element ---------- */
+  .stitch{
+    width: 100%;
+    height: 14px;
+    background-image: repeating-linear-gradient(
+      100deg,
+      transparent 0px,
+      transparent 7px,
+      currentColor 7px,
+      currentColor 9px,
+      transparent 9px,
+      transparent 22px
+    );
+    opacity: 0.55;
+  }
+  .stitch.on-cream{ color: var(--red); }
+  .stitch.on-navy{ color: var(--taupe); opacity: 0.4; }
+
+  /* ---------- Header ---------- */
+  header{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(246,241,231,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(58,51,43,0.08);
+  }
+  .nav{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 28px;
+    max-width: 1140px;
+    margin: 0 auto;
+  }
+  .nav .logotype{
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+  }
+  .nav .logotype em{
+    font-style: normal;
+    color: var(--red);
+  }
+  .nav-links{
+    display: flex;
+    gap: 30px;
+    list-style: none;
+    font-size: 14px;
+    letter-spacing: 0.03em;
+  }
+  .nav-links a{
+    text-decoration: none;
+    color: var(--ink-soft);
+    transition: color 0.2s;
+  }
+  .nav-links a:hover{ color: var(--red); }
+  .nav-cta{
+    display: inline-block;
+    background: var(--navy);
+    color: var(--cream) !important;
+    padding: 10px 22px;
+    border-radius: 2px;
+    font-size: 13.5px;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .nav-cta:hover{ background: var(--navy-deep); }
+  .nav-mobile-toggle{ display: none; }
+
+  @media (max-width: 760px){
+    .nav-links{ display: none; }
+    .nav-cta{ padding: 9px 16px; font-size: 12.5px; }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding: 96px 0 70px;
+    text-align: center;
+    position: relative;
+  }
+  .eyebrow{
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 18px;
+    display: block;
+  }
+  .hero h1{
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: clamp(34px, 5.2vw, 56px);
+    color: var(--navy);
+    line-height: 1.15;
+    margin-bottom: 22px;
+    max-width: 780px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero p.lede{
+    font-family: var(--font-serif);
+    font-size: clamp(19px, 2.4vw, 24px);
+    color: var(--ink-soft);
+    max-width: 580px;
+    margin: 0 auto 36px;
+    font-style: italic;
+  }
+  .btn-row{
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn{
+    display: inline-block;
+    padding: 15px 34px;
+    border-radius: 2px;
+    text-decoration: none;
+    font-size: 14.5px;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: 1.5px solid transparent;
+  }
+  .btn-primary{
+    background: var(--red);
+    color: var(--white);
+  }
+  .btn-primary:hover{ background: #993a31; }
+  .btn-secondary{
+    background: transparent;
+    border-color: var(--navy);
+    color: var(--navy);
+  }
+  .btn-secondary:hover{ background: var(--navy); color: var(--cream); }
+
+  .hero-thread{
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  .thread-dot{
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    border: 1px solid rgba(58,51,43,0.15);
+  }
+
+  /* ---------- Section scaffolding ---------- */
+  section{ padding: 84px 0; }
+  .section-head{
+    text-align: center;
+    max-width: 620px;
+    margin: 0 auto 56px;
+  }
+  .section-head .eyebrow{ margin-bottom: 14px; }
+  .section-head h2{
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: clamp(30px, 4vw, 42px);
+    color: var(--navy);
+    line-height: 1.2;
+  }
+  .section-head p{
+    color: var(--ink-soft);
+    font-size: 16.5px;
+    margin-top: 14px;
+  }
+
+  /* ---------- What is it ---------- */
+  .what-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+  .what-visual{
+    background: var(--white);
+    border: 1px solid var(--taupe);
+    padding: 38px 30px;
+    position: relative;
+  }
+  .what-visual .stitch-frame{
+    border: 1.5px dashed var(--red);
+    opacity: 0.45;
+    position: absolute;
+    inset: 14px;
+    pointer-events: none;
+  }
+  .step-list{ display: flex; flex-direction: column; gap: 22px; }
+  .step{ display: flex; gap: 18px; align-items: flex-start; }
+  .step-num{
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--red);
+    min-width: 30px;
+  }
+  .step h4{
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .step p{ color: var(--ink-soft); font-size: 14.5px; }
+
+  .what-copy h3{
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 16px;
+  }
+  .what-copy > p{
+    color: var(--ink-soft);
+    margin-bottom: 28px;
+    font-size: 16px;
+  }
+
+  @media (max-width: 800px){
+    .what-grid{ grid-template-columns: 1fr; gap: 40px; }
+  }
+
+  /* ---------- Events grid ---------- */
+  .events-section{ background: var(--cream-soft); }
+  .events-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .event-card{
+    background: var(--white);
+    border: 1px solid var(--taupe);
+    padding: 34px 28px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .event-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(44,54,69,0.08);
+  }
+  .event-icon{
+    width: 30px;
+    height: 30px;
+    color: var(--red);
+    margin-bottom: 16px;
+    display: block;
+  }
+  .event-card h4{
+    font-family: var(--font-serif);
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .event-card p{
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 900px){
+    .events-grid{ grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px){
+    .events-grid{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Why book us ---------- */
+  .why-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+  }
+  .why-item{ text-align: center; padding: 0 10px; }
+  .why-number{
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--red);
+    display: block;
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+  }
+  .why-item h4{
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .why-item p{ font-size: 14px; color: var(--ink-soft); }
+
+  @media (max-width: 900px){
+    .why-grid{ grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px){
+    .why-grid{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- FAQ ---------- */
+  .faq-section{ background: var(--cream-soft); }
+  .faq-list{ max-width: 760px; margin: 0 auto; }
+  .faq-item{
+    border-bottom: 1px solid var(--taupe);
+  }
+  .faq-q{
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 22px 6px;
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .faq-q .plus{
+    font-family: var(--font-sans);
+    font-size: 22px;
+    color: var(--red);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+  .faq-item.open .faq-q .plus{ transform: rotate(45deg); }
+  .faq-a{
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .faq-a-inner{
+    padding: 0 6px 22px;
+    color: var(--ink-soft);
+    font-size: 15px;
+    max-width: 640px;
+  }
+
+  /* ---------- Inquiry form ---------- */
+  .inquiry-section{
+    background: var(--navy);
+    color: var(--cream);
+    padding: 96px 0;
+  }
+  .inquiry-grid{
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 0;
+    background: var(--cream);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .inquiry-intro{
+    background: var(--navy);
+    color: var(--cream);
+    padding: 56px 46px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .inquiry-intro h2{
+    font-family: var(--font-script);
+    font-size: clamp(38px, 5vw, 54px);
+    font-weight: 400;
+    margin-bottom: 22px;
+    line-height: 1.1;
+  }
+  .inquiry-intro p{
+    color: #C9CDD6;
+    font-size: 15.5px;
+    margin-bottom: 14px;
+  }
+  .inquiry-intro .contact-line{
+    margin-top: 28px;
+    font-size: 14px;
+    color: var(--taupe);
+  }
+  .inquiry-form-panel{
+    background: var(--cream);
+    padding: 56px 46px;
+  }
+
+  .form-row{ display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .field{ margin-bottom: 22px; }
+  .field label{
+    display: block;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--navy);
+    margin-bottom: 7px;
+  }
+  .field label .req{
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-left: 4px;
+  }
+  .field input,
+  .field textarea{
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid var(--taupe);
+    border-radius: 2px;
+    background: var(--white);
+    font-family: var(--font-sans);
+    font-size: 14.5px;
+    color: var(--ink);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field input:focus,
+  .field textarea:focus{
+    outline: none;
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(179,71,60,0.12);
+  }
+  .field textarea{ resize: vertical; min-height: 120px; }
+
+  .submit-btn{
+    background: var(--navy);
+    color: var(--cream);
+    border: none;
+    padding: 15px 38px;
+    border-radius: 2px;
+    font-family: var(--font-sans);
+    font-size: 14.5px;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .submit-btn:hover{ background: var(--navy-deep); }
+
+  .form-success{
+    display: none;
+    text-align: center;
+    padding: 40px 10px;
+  }
+  .form-success.show{ display: block; }
+  .form-success .check{
+    font-size: 38px;
+    color: var(--red);
+    margin-bottom: 16px;
+  }
+  .form-success h3{
+    font-family: var(--font-serif);
+    font-size: 26px;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .form-success p{ color: var(--ink-soft); font-size: 15px; }
+
+  @media (max-width: 860px){
+    .inquiry-grid{ grid-template-columns: 1fr; }
+    .form-row{ grid-template-columns: 1fr; }
+    .inquiry-intro, .inquiry-form-panel{ padding: 44px 28px; }
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    background: var(--navy-deep);
+    color: #9CA3B0;
+    padding: 36px 0;
+    text-align: center;
+    font-size: 13.5px;
+  }
+  footer .logotype{
+    font-family: var(--font-serif);
+    color: var(--cream);
+    font-size: 17px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  /* Accessibility */
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline: 2px solid var(--red);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="#top" class="logotype">EMBER <em>LANE</em></a>
+    <ul class="nav-links">
+      <li><a href="#what-is-it">The Experience</a></li>
+      <li><a href="#events">Events</a></li>
+      <li><a href="#why-us">Why Us</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a href="#inquire" class="nav-cta">Request a Quote</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero wrap">
+    <h1>The Live Embroidery Experience People Keep Talking About</h1>
+    <p class="lede">We bring our embroidery studio to your event — stitching personalized keepsakes on the spot, live and in person.</p>
+    <div class="btn-row">
+      <a href="#inquire" class="btn btn-primary">Request a Quote</a>
+      <a href="#what-is-it" class="btn btn-secondary">See How It Works</a>
+    </div>
+    <div class="hero-thread" aria-hidden="true">
+      <span class="thread-dot" style="background:#2C3645"></span>
+      <span class="thread-dot" style="background:#B3473C"></span>
+      <span class="thread-dot" style="background:#5C6E5A"></span>
+      <span class="thread-dot" style="background:#7A8FA6"></span>
+      <span class="thread-dot" style="background:#6B3A2E"></span>
+    </div>
+  </section>
+
+  <div class="stitch on-cream" aria-hidden="true"></div>
+
+  <!-- WHAT IS IT -->
+  <section id="what-is-it" class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">The Experience</span>
+      <h2>What is a live embroidery experience?</h2>
+      <p>We bring our embroidery studio and set it up wherever you're celebrating — staffed by us, ready for your guests.</p>
+    </div>
+
+    <div class="what-grid">
+      <div class="what-copy">
+        <h3>A keepsake, made while they watch.</h3>
+        <p>Guests choose an item, pick their initials, name or icon, choose a font style and thread color, and watch it get stitched in just a few minutes. They walk away with something made for them, on the spot. No catalogs, no waiting weeks.</p>
+        <p>It's the same hand-finished quality you'd find in our shop, just brought to life in front of an audience.</p>
+      </div>
+
+      <div class="what-visual">
+        <div class="stitch-frame" aria-hidden="true"></div>
+        <div class="step-list">
+          <div class="step">
+            <span class="step-num">01</span>
+            <div>
+              <h4>Choose an item</h4>
+              <p>Choose from a curated selection of items.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">02</span>
+            <div>
+              <h4>Pick a font style and thread color</h4>
+              <p>From our house scripts and color library.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">03</span>
+            <div>
+              <h4>Watch it stitched</h4>
+              <p>Most pieces take just a few minutes, start to finish.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">04</span>
+            <div>
+              <h4>Take it home</h4>
+              <p>Wrapped and ready, with their name already on it.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="stitch on-cream" aria-hidden="true"></div>
+
+  <!-- EVENT TYPES -->
+  <section id="events" class="events-section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Where We Show Up</span>
+        <h2>Events we're booked for</h2>
+        <p>If people are gathering, there's likely a reason to stitch something for them.</p>
+      </div>
+
+      <div class="events-grid">
+        <div class="event-card">
+          <svg class="event-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M16 27s-10-6.2-10-13.4C6 9.8 8.9 7 12.4 7c1.8 0 3.4.9 4.4 2.3.9-1.4 2.5-2.3 4.3-2.3C24.7 7 27 9.8 27 13.6 27 20.8 16 27 16 27z"/></svg>
+          <h4>Weddings &amp; Bridal Showers</h4>
+          <p>Monogrammed favors for bridal showers, welcome bags, and reception send-offs guests hold onto for years.</p>
+        </div>
+        <div class="event-card">
+          <svg class="event-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5" y="13" width="22" height="14" rx="1"/><path d="M11 13V9a5 5 0 0 1 10 0v4"/></svg>
+          <h4>Corporate &amp; Team Events</h4>
+          <p>Onboarding days, milestones, and client appreciation events — swag people actually want.</p>
+        </div>
+        <div class="event-card">
+          <svg class="event-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M16 5v22M9 9l14 14M23 9 9 23"/><circle cx="16" cy="16" r="11"/></svg>
+          <h4>Brand Activations &amp; Pop-Ups</h4>
+          <p>A hands-on moment at your retail event or market that draws a crowd and lingers in their feed.</p>
+        </div>
+        <div class="event-card">
+          <svg class="event-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M16 6v3M9 13l14 0M7 13l2 14h14l2-14M11 13a5 5 0 0 1 10 0"/></svg>
+          <h4>Birthdays &amp; Private Parties</h4>
+          <p>A personalized favor station guests remember more than the cake table.</p>
+        </div>
+        <div class="event-card">
+          <svg class="event-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M16 4v24M8 12l8 4 8-4M8 20l8 4 8-4"/></svg>
+          <h4>Holiday Gatherings</h4>
+          <p>Stockings, ornaments, and gift totes — stitched fresh at your seasonal party.</p>
+        </div>
+        <div class="event-card">
+          <svg class="event-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="11" cy="11" r="4"/><circle cx="21" cy="11" r="4"/><path d="M5 26c0-4 2.5-7 6-7s6 3 6 7M15 26c0-4 2.5-7 6-7s6 3 6 7"/></svg>
+          <h4>Baby Showers &amp; Milestones</h4>
+          <p>Welcome gifts and milestone keepsakes guests can personalize before they go.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="stitch on-cream" aria-hidden="true"></div>
+
+  <!-- WHY BOOK US -->
+  <section id="why-us" class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">The Difference</span>
+      <h2>Why hosts book us</h2>
+    </div>
+
+    <div class="why-grid">
+      <div class="why-item">
+        <span class="why-number">Made by hand</span>
+        <h4>A real keepsake</h4>
+        <p>Not a vendor table — a working studio, run by the same two hands behind every Ember Lane order.</p>
+      </div>
+      <div class="why-item">
+        <span class="why-number">Made for sharing</span>
+        <h4>A moment worth posting</h4>
+        <p>Guests pull out their phones before the needle even stops. It's the part of your event people remember.</p>
+      </div>
+      <div class="why-item">
+        <span class="why-number">Made to match</span>
+        <h4>Your colors, your fonts</h4>
+        <p>Our thread library and house scripts flex to fit your event's palette — or your brand's.</p>
+      </div>
+      <div class="why-item">
+        <span class="why-number">Made on the spot</span>
+        <h4>Minutes, not weeks</h4>
+        <p>No pre-orders, no waiting. Guests choose, watch, and walk away with it the same day.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="stitch on-cream" aria-hidden="true"></div>
+
+  <!-- FAQ -->
+  <section id="faq" class="faq-section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Good to Know</span>
+        <h2>Frequently asked questions</h2>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            How far in advance should I book?
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">We recommend reaching out at least 4–6 weeks ahead, especially for spring, fall, and the holiday season — those dates fill fastest.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            Do you travel for events?
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Yes — we're based in the San Francisco Bay Area and travel up to 2–3 hours for events. Travel fees may apply depending on distance, and we'll outline those clearly in your quote.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            What items can guests personalize?
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">We can curate and source a selection of items for your event, or you're welcome to provide the goods yourself. Tell us what you have in mind and we'll let you know what works.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            How much space and power do you need?
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">A single station needs roughly a 7' x 7' footprint and access to a standard electrical outlet. Let us know your venue layout and we'll help plan around it.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            How long does one piece take to stitch?
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Most pieces are finished in three to eight minutes, depending on size and design complexity.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            Can you match our event or brand colors?
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Absolutely. We carry a wide library of thread colors and can style the station to fit your palette. For brand events, we can also digitize a logo to stitch.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            How much does it cost?
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Pricing depends on event length, guest count, and items selected. Share your event details below and we'll follow up with a clear, custom quote — no surprises.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INQUIRY FORM -->
+  <section id="inquire" class="inquiry-section">
+    <div class="wrap">
+      <div class="inquiry-grid">
+        <div class="inquiry-intro">
+          <h2>Let's Make<br>it Happen</h2>
+          <p>Ready to bring live embroidery to your event?</p>
+          <p>We'd love to hear from you. Fill out the details below and we'll follow up with availability and a custom quote.</p>
+          <div class="contact-line">EMBER LANE &middot; California, made by hand</div>
+        </div>
+
+        <div class="inquiry-form-panel">
+          <form id="inquiry-form" novalidate>
+            <div class="form-row">
+              <div class="field">
+                <label for="firstName">First Name <span class="req">(required)</span></label>
+                <input type="text" id="firstName" name="firstName" required autocomplete="given-name">
+              </div>
+              <div class="field">
+                <label for="lastName">Last Name <span class="req">(required)</span></label>
+                <input type="text" id="lastName" name="lastName" required autocomplete="family-name">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="email">Email <span class="req">(required)</span></label>
+              <input type="email" id="email" name="email" required autocomplete="email">
+            </div>
+
+            <div class="field">
+              <label for="phone">Phone <span class="req">(required)</span></label>
+              <input type="tel" id="phone" name="phone" required autocomplete="tel">
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="eventDate">Event Date <span class="req">(required)</span></label>
+                <input type="date" id="eventDate" name="eventDate" required>
+              </div>
+              <div class="field">
+                <label for="guestCount">Estimated Guests <span class="req">(required)</span></label>
+                <input type="number" id="guestCount" name="guestCount" min="1" required>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="eventAddress">Address of Event <span class="req">(required)</span></label>
+              <input type="text" id="eventAddress" name="eventAddress" required autocomplete="street-address">
+            </div>
+
+            <div class="field">
+              <label for="details">Project Details <span class="req">(required)</span></label>
+              <textarea id="details" name="details" required placeholder="What do you have in mind?"></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Inquiry</button>
+          </form>
+
+          <div class="form-success" id="form-success">
+            <div class="check">&#10003;</div>
+            <h3>Thank you!</h3>
+            <p>We've received your inquiry and will follow up within 1–2 business days with availability and a custom quote.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="stitch on-navy" aria-hidden="true"></div>
+
+<footer>
+  <span class="logotype">EMBER LANE</span>
+  <div>Personalized embroidery, made by hand in California.</div>
+</footer>
+
+<script>
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(function(item){
+    var btn = item.querySelector('.faq-q');
+    var answer = item.querySelector('.faq-a');
+    btn.addEventListener('click', function(){
+      var isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(function(openItem){
+        if(openItem !== item){
+          openItem.classList.remove('open');
+          openItem.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+          openItem.querySelector('.faq-a').style.maxHeight = null;
+        }
+      });
+      if(isOpen){
+        item.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        answer.style.maxHeight = null;
+      } else {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    });
+  });
+
+  // Form submission (placeholder — wire to your backend or form service later)
+  var form = document.getElementById('inquiry-form');
+  var successPanel = document.getElementById('form-success');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(!form.checkValidity()){
+      form.reportValidity();
+      return;
+    }
+    // TODO: replace this block with an actual submission call
+    // e.g. fetch('https://formspree.io/f/your-id', { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
+    form.style.display = 'none';
+    successPanel.classList.add('show');
+  });
+</script>
+
+</body>
+</html>
