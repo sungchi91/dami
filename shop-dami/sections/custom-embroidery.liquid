@@ -64,6 +64,25 @@
     color: var(--ce-muted);
   }
   .ce-point svg { width: 18px; height: 18px; color: var(--ce-ink); flex-shrink: 0; }
+  .ce-btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 36px; }
+  .ce-btn {
+    display: inline-block;
+    padding: 11px 26px;
+    font-family: var(--font-body-family);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid #7a9bad;
+    color: #7a9bad;
+    background: transparent;
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+  }
+  .ce-btn:hover { background: #7a9bad; color: #fff; border-color: #7a9bad; }
+  .ce-btn--filled { background: #7a9bad; color: #fff; border-color: #7a9bad; }
+  .ce-btn--filled:hover { background: #6a8a9a; border-color: #6a8a9a; }
 
   /* FAQ */
   .ce-faq {
@@ -296,6 +315,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>
         No minimum order
       </div>
+    </div>
+    <div class="ce-btn-row">
+      <a href="#ce-inquire" class="ce-btn ce-btn--filled">Request a Quote</a>
+      <a href="#ce-faq" class="ce-btn">See FAQ</a>
     </div>
   </div>
 
