@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "custom_embroidery": {
+      "type": "custom-embroidery",
+      "settings": {}
+    }
+  },
+  "order": ["custom_embroidery"]
+}

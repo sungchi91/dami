@@ -1,0 +1,646 @@
+<style>
+  .ce {
+    --ce-navy:   #1B3054;
+    --ce-ink:    #2f2f2f;
+    --ce-cream:  #f7f4ef;
+    --ce-tan:    #e8e0d5;
+    --ce-white:  #ffffff;
+    --ce-taupe:  #d9d0bc;
+    --ce-muted:  #6b6358;
+    color: var(--ce-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .ce * { box-sizing: border-box; }
+
+  .ce-eyebrow {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ce-muted);
+    margin-bottom: 12px;
+    font-family: var(--font-body-family);
+  }
+
+  /* HERO */
+  .ce-hero {
+    background: var(--ce-white);
+    padding: 80px 80px 72px;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .ce-hero h1 {
+    font-family: var(--font-heading-family);
+    font-weight: 400;
+    font-size: clamp(34px, 5vw, 56px);
+    color: var(--ce-ink);
+    line-height: 1.12;
+    margin: 0 auto 18px;
+    max-width: 720px;
+  }
+  .ce-hero .ce-lede {
+    font-family: var(--font-body-family);
+    font-size: 16px;
+    font-style: italic;
+    color: var(--ce-muted);
+    max-width: 520px;
+    margin: 0 auto 40px;
+    line-height: 1.65;
+  }
+  .ce-points {
+    display: flex;
+    justify-content: center;
+    gap: 36px;
+    flex-wrap: wrap;
+  }
+  .ce-point {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-body-family);
+    font-size: 15px;
+    color: var(--ce-muted);
+  }
+  .ce-point svg { width: 18px; height: 18px; color: var(--ce-ink); flex-shrink: 0; }
+
+  /* FAQ */
+  .ce-faq {
+    background: var(--ce-cream);
+    padding: 80px 0;
+  }
+  .ce-faq-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 80px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .ce-faq-head h2 {
+    font-family: var(--font-heading-family);
+    font-weight: 500;
+    font-size: clamp(26px, 3vw, 38px);
+    color: var(--ce-ink);
+    line-height: 1.2;
+    margin: 0;
+  }
+  .ce-faq-list { border-top: 1px solid var(--ce-taupe); }
+  .ce-faq-item { border-bottom: 1px solid var(--ce-taupe); }
+  .ce-faq-btn {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 20px 0;
+    font-family: var(--font-heading-family);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ce-ink);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .ce-faq-plus { font-size: 20px; color: var(--ce-muted); transition: transform 0.2s; flex-shrink: 0; line-height: 1; }
+  .ce-faq-item.ce-open .ce-faq-plus { transform: rotate(45deg); }
+  .ce-faq-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+  .ce-faq-text { padding: 0 24px 20px 0; color: var(--ce-muted); font-size: 16px; font-family: var(--font-body-family); line-height: 1.7; }
+  .ce-faq-text ul { padding-left: 18px; margin: 8px 0; }
+  .ce-faq-text li { margin-bottom: 6px; }
+
+  /* INQUIRY */
+  .ce-inquiry {
+    background: #2c3645;
+    padding: 80px 0;
+  }
+  .ce-inquiry-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 80px;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .ce-inquiry-copy h2 {
+    font-family: var(--font-heading-family);
+    font-weight: 500;
+    font-size: clamp(30px, 4vw, 48px);
+    color: var(--ce-cream);
+    line-height: 1.1;
+    margin: 0 0 20px;
+  }
+  .ce-inquiry-copy h2 em { font-style: italic; }
+  .ce-inquiry-copy p { font-family: var(--font-body-family); font-size: 15px; color: rgba(247,244,239,0.75); margin: 0 0 12px; line-height: 1.7; }
+  .ce-inquiry-tagline { font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(247,244,239,0.35); margin-top: 32px; font-family: var(--font-body-family); }
+
+  /* Form card */
+  .ce-form-card {
+    background: var(--ce-cream);
+    padding: 48px;
+  }
+
+  /* Form */
+  .ce-fieldset { border: none; padding: 0; margin: 0 0 32px; }
+  .ce-legend {
+    font-family: var(--font-heading-family);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ce-navy);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--ce-taupe);
+    width: 100%;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .ce-field { margin-bottom: 18px; }
+  .ce-field:last-child { margin-bottom: 0; }
+  .ce-field label {
+    display: block;
+    font-family: var(--font-body-family);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ce-ink);
+    margin-bottom: 7px;
+  }
+  .ce-field input,
+  .ce-field select,
+  .ce-field textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--ce-taupe);
+    background: var(--ce-white);
+    font-family: var(--font-body-family);
+    font-size: 15px;
+    color: var(--ce-ink);
+    transition: border-color 0.2s;
+    border-radius: 0;
+    appearance: none;
+  }
+  .ce-field select option { background: var(--ce-white); color: var(--ce-ink); }
+  .ce-field input::placeholder,
+  .ce-field textarea::placeholder { color: rgba(47,47,47,0.3); }
+  .ce-field input:focus,
+  .ce-field select:focus,
+  .ce-field textarea:focus { outline: none; border-color: rgba(27,48,84,0.4); }
+  .ce-field textarea { resize: vertical; min-height: 100px; }
+  .ce-field .ce-hint { font-size: 13px; color: var(--ce-muted); margin-top: 6px; font-family: var(--font-body-family); line-height: 1.5; }
+  .ce-req { font-size: 12px; color: var(--ce-muted); margin-left: 4px; font-family: var(--font-body-family); font-style: normal; text-transform: none; letter-spacing: 0; }
+
+  .ce-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* Garment checkboxes */
+  .ce-garment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ce-garment-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border: 1px solid var(--ce-taupe);
+    background: var(--ce-white);
+    font-family: var(--font-body-family);
+    font-size: 15px;
+    color: var(--ce-ink);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .ce-garment-option:hover { border-color: rgba(27,48,84,0.35); }
+  .ce-garment-option input[type="checkbox"] { width: auto; appearance: auto; -webkit-appearance: checkbox; border: none; padding: 0; background: none; accent-color: #7a9bad; cursor: pointer; flex-shrink: 0; }
+  .ce-garment-other { grid-column: 1 / -1; }
+  .ce-other-text {
+    flex: 1;
+    border: none;
+    border-bottom: 1px solid var(--ce-taupe);
+    padding: 4px 2px;
+    background: transparent;
+    color: var(--ce-ink);
+    font-family: var(--font-body-family);
+    font-size: 15px;
+  }
+  .ce-other-text:focus { outline: none; border-color: rgba(27,48,84,0.4); }
+  .ce-other-text::placeholder { color: rgba(47,47,47,0.35); }
+
+  /* Upload box */
+  .ce-upload-box {
+    border: 1.5px dashed var(--ce-taupe);
+    background: rgba(27,48,84,0.03);
+    padding: 24px 18px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .ce-upload-box:hover, .ce-upload-box.ce-dragover { border-color: rgba(27,48,84,0.35); background: rgba(27,48,84,0.06); }
+  .ce-upload-box svg { width: 24px; height: 24px; color: var(--ce-muted); margin: 0 auto 8px; }
+  .ce-upload-label { font-size: 13.5px; color: var(--ce-ink); font-family: var(--font-body-family); font-weight: 500; }
+  .ce-upload-sub { font-size: 13px; color: var(--ce-muted); margin-top: 4px; font-family: var(--font-body-family); }
+  .ce-upload-box input[type="file"] { display: none; }
+  .ce-file-list { margin-top: 8px; font-size: 14px; color: var(--ce-muted); }
+  .ce-file-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border: 1px solid var(--ce-taupe); margin-top: 6px; font-family: var(--font-body-family); }
+  .ce-file-item button { background: none; border: none; color: var(--ce-muted); cursor: pointer; font-size: 13px; font-family: var(--font-body-family); }
+
+  .ce-submit-btn {
+    background: #2c3645;
+    color: var(--ce-cream);
+    border: none;
+    padding: 12px 32px;
+    font-family: var(--font-body-family);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 4px;
+  }
+  .ce-submit-btn:hover { opacity: 0.85; }
+
+  .ce-form-success { padding: 32px 0; }
+  .ce-form-success h3 { font-family: var(--font-heading-family); font-size: 28px; font-weight: 400; margin: 0 0 10px; color: var(--ce-navy); }
+  .ce-form-success p { font-size: 15px; color: var(--ce-muted); margin: 0 0 8px; font-family: var(--font-body-family); line-height: 1.65; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .ce-faq-inner, .ce-inquiry-inner { grid-template-columns: 1fr; gap: 48px; }
+    .ce-form-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .ce-hero, .ce-faq-inner, .ce-inquiry-inner { padding-left: 24px; padding-right: 24px; }
+    .ce-form-card { padding: 28px 24px; }
+    .ce-garment-grid { grid-template-columns: 1fr; }
+    .ce-points { gap: 18px 28px; }
+  }
+</style>
+
+<div class="ce">
+
+  <!-- HERO -->
+  <div class="ce-hero">
+    <span class="ce-eyebrow">Custom Embroidery for Business</span>
+    <h1>Custom Embroidered<br>Branded Goods</h1>
+    <p class="ce-lede">Tell us what you need and upload your logo we'll follow up with options and a custom quote for your business.</p>
+    <div class="ce-points">
+      <div class="ce-point">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v12M7 9l5-6 5 6M5 21h14"/></svg>
+        Upload your own logo
+      </div>
+      <div class="ce-point">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 8v4l3 3M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+        Quotes within 1–2 business days
+      </div>
+      <div class="ce-point">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>
+        No minimum order
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div id="ce-faq" class="ce-faq">
+    <div class="ce-faq-inner">
+      <div class="ce-faq-head">
+        <span class="ce-eyebrow">Good to Know</span>
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="ce-faq-list">
+
+        <div class="ce-faq-item">
+          <button class="ce-faq-btn" aria-expanded="false">Is there a minimum order quantity?<span class="ce-faq-plus" aria-hidden="true">+</span></button>
+          <div class="ce-faq-body"><div class="ce-faq-text">No minimum. We're happy to take on small orders as well as larger bulk runs just let us know your quantity and we'll quote accordingly.</div></div>
+        </div>
+
+        <div class="ce-faq-item">
+          <button class="ce-faq-btn" aria-expanded="false">Can I provide my own garments?<span class="ce-faq-plus" aria-hidden="true">+</span></button>
+          <div class="ce-faq-body"><div class="ce-faq-text">Yes you're welcome to send us your own shirts, hats, or other items, or we can source garments for you. Let us know which works best.</div></div>
+        </div>
+
+        <div class="ce-faq-item">
+          <button class="ce-faq-btn" aria-expanded="false">What file format should my logo be in?<span class="ce-faq-plus" aria-hidden="true">+</span></button>
+          <div class="ce-faq-body"><div class="ce-faq-text">Vector files (AI, EPS, SVG, or a high-res PDF) embroider best. If you only have a PNG or JPG, send it anyway we can usually work with it or recreate it as needed.</div></div>
+        </div>
+
+        <div class="ce-faq-item">
+          <button class="ce-faq-btn" aria-expanded="false">How long does production take?<span class="ce-faq-plus" aria-hidden="true">+</span></button>
+          <div class="ce-faq-body"><div class="ce-faq-text">Most orders are completed within 2–3 weeks of approving your design and garments. Larger orders or rush timelines may vary let us know your deadline and we'll confirm what's possible.</div></div>
+        </div>
+
+        <div class="ce-faq-item">
+          <button class="ce-faq-btn" aria-expanded="false">Can you match our brand colors?<span class="ce-faq-plus" aria-hidden="true">+</span></button>
+          <div class="ce-faq-body"><div class="ce-faq-text">Yes. We carry a wide library of thread colors and will match your brand palette as closely as possible.</div></div>
+        </div>
+
+        <div class="ce-faq-item">
+          <button class="ce-faq-btn" aria-expanded="false">Will I see a proof before production?<span class="ce-faq-plus" aria-hidden="true">+</span></button>
+          <div class="ce-faq-body"><div class="ce-faq-text">Always. We'll send a digital proof for your approval before stitching begins, so there are no surprises.</div></div>
+        </div>
+
+        <div class="ce-faq-item">
+          <button class="ce-faq-btn" aria-expanded="false">How much does it cost?<span class="ce-faq-plus" aria-hidden="true">+</span></button>
+          <div class="ce-faq-body">
+            <div class="ce-faq-text">
+              Pricing depends on three things:
+              <ul>
+                <li><strong>Embroidery cost</strong> calculated per item, based on stitch count and garment type.</li>
+                <li><strong>Garment cost</strong> depends on what you choose, whether from our selection or your own supplied items.</li>
+                <li><strong>Volume pricing</strong> larger orders typically bring the per-item cost down.</li>
+              </ul>
+              All orders also include a one-time design digitizing fee of $30–$60, depending on size and complexity. This converts your logo into a stitch-ready file and is charged once per design, not per item.
+              <br><br>Share your details in the form below and we'll follow up with a clear, itemized quote.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- INQUIRY -->
+  <div id="ce-inquire" class="ce-inquiry">
+    <div class="ce-inquiry-inner">
+      <div class="ce-inquiry-copy">
+        <span class="ce-eyebrow" style="color:rgba(247,244,239,0.4)">Request a Quote</span>
+        <h2>Let's Talk<br><em>Merch</em></h2>
+        <p>Whether it's team shirts, sweaters, hats, or merch for your store, we'd love to help bring it to life.</p>
+        <p>Fill out the details below the more we know, the better quote we can put together.</p>
+        <div class="ce-inquiry-tagline">Ember Lane &middot; California, made by hand</div>
+      </div>
+
+      <div class="ce-form-card">
+        {%- form 'contact', id: 'ce-merch-form' -%}
+          {%- if form.posted_successfully? -%}
+            <div class="ce-form-success">
+              <h3>Thank you.</h3>
+              <p>We've received your inquiry and will follow up within 1–2 business days with options and a custom quote.</p>
+              <p>If you weren't able to describe your logo fully, just reply to our follow-up email with your file.</p>
+            </div>
+          {%- else -%}
+            {%- if form.errors -%}
+              <p style="color:rgba(247,100,100,0.9);font-size:14px;margin:0 0 16px;font-family:var(--font-body-family);">{{ form.errors | default_errors }}</p>
+            {%- endif -%}
+
+            <fieldset class="ce-fieldset">
+              <span class="ce-legend">Garment Details</span>
+              <div class="ce-field">
+                <label>Garment Type(s) <span class="ce-req">(required)</span></label>
+                <div class="ce-garment-grid" id="ce-garment-grid">
+                  <label class="ce-garment-option"><input type="checkbox" name="contact[garment_type][]" value="Shirt / Polo"> Shirt / Polo</label>
+                  <label class="ce-garment-option"><input type="checkbox" name="contact[garment_type][]" value="Sweaters / Hoodies"> Sweaters / Hoodies</label>
+                  <label class="ce-garment-option"><input type="checkbox" name="contact[garment_type][]" value="Hats"> Hats</label>
+                  <label class="ce-garment-option"><input type="checkbox" name="contact[garment_type][]" value="Totes / Bags"> Totes / Bags</label>
+                  <label class="ce-garment-option"><input type="checkbox" name="contact[garment_type][]" value="Aprons"> Aprons</label>
+                  <label class="ce-garment-option" id="ce-other-checkbox-label"><input type="checkbox" id="ce-other-checkbox" name="contact[garment_type][]" value="Other"> Other</label>
+                  <label class="ce-garment-option ce-garment-other" id="ce-other-row" style="display:none;">
+                    <span style="white-space:nowrap;color:var(--ce-muted);font-size:12px;">Specify:</span>
+                    <input type="text" class="ce-other-text" name="contact[garment_other]" placeholder="e.g. baby onesies, scrub caps…">
+                  </label>
+                </div>
+              </div>
+              <div class="ce-form-row">
+                <div class="ce-field">
+                  <label for="ce-quantity">Estimated Quantity <span class="ce-req">(required)</span></label>
+                  <input type="number" id="ce-quantity" name="contact[quantity]" min="1" placeholder="e.g. 50" required>
+                </div>
+                <div class="ce-field">
+                  <label for="ce-deadline">Needed By <span class="ce-req">(required)</span></label>
+                  <input type="date" id="ce-deadline" name="contact[deadline]" required>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="ce-fieldset">
+              <span class="ce-legend">Logo / Design</span>
+              <div class="ce-field">
+                <label>Upload Your Logo or Design</label>
+                <div class="ce-upload-box" id="ce-upload-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v12M7 9l5-6 5 6M5 21h14"/></svg>
+                  <div class="ce-upload-label">Click to upload, or drag a file here</div>
+                  <div class="ce-upload-sub">PNG, JPG, SVG, PDF, or AI &middot; up to 10MB</div>
+                  <input type="file" id="ce-logo-upload" accept=".png,.jpg,.jpeg,.svg,.pdf,.ai" multiple>
+                </div>
+                <div class="ce-file-list" id="ce-file-list"></div>
+                <input type="hidden" id="ce-logo-url" name="contact[logo_url]">
+                <div class="ce-hint">No file ready? No problem describe your logo in the notes below and we'll follow up.</div>
+                <div class="ce-hint">A one-time design digitizing fee of $30–$60 (depending on size/complexity) applies to all orders, charged once per design.</div>
+              </div>
+              <div class="ce-form-row">
+                <div class="ce-field">
+                  <label for="ce-logo-size">Design Size</label>
+                  <select id="ce-logo-size" name="contact[logo_size]">
+                    <option value="">Not sure / let's discuss</option>
+                    <option>3in × 3in or less</option>
+                    <option>4in × 4in</option>
+                    <option>5in × 5in</option>
+                    <option>8in × 10in</option>
+                    <option>11in × 14in</option>
+                    <option>Other / multiple sizes</option>
+                  </select>
+                </div>
+                <div class="ce-field">
+                  <label for="ce-placement">Placement</label>
+                  <select id="ce-placement" name="contact[placement]">
+                    <option value="">Not sure / let's discuss</option>
+                    <option>Left chest</option>
+                    <option>Center front</option>
+                    <option>Center back</option>
+                    <option>Sleeve</option>
+                    <option>Other / multiple</option>
+                  </select>
+                  <div class="ce-field" id="ce-placement-other-row" style="display:none; margin-top:12px; margin-bottom:0;">
+                    <label for="ce-placement-other">Tell us where you'd like the design</label>
+                    <input type="text" id="ce-placement-other" name="contact[placement_other]" placeholder="e.g. left sleeve and back yoke">
+                  </div>
+                </div>
+              </div>
+              <div class="ce-field">
+                <label for="ce-artwork-notes">Artwork Notes</label>
+                <textarea id="ce-artwork-notes" name="contact[artwork_notes]" placeholder="Thread colors, font preferences, number of colors in your logo, or anything else we should know."></textarea>
+              </div>
+            </fieldset>
+
+            <fieldset class="ce-fieldset">
+              <span class="ce-legend">Contact Info</span>
+              <div class="ce-form-row">
+                <div class="ce-field">
+                  <label for="ce-firstName">First Name <span class="ce-req">(required)</span></label>
+                  <input type="text" id="ce-firstName" name="contact[first_name]" required autocomplete="given-name">
+                </div>
+                <div class="ce-field">
+                  <label for="ce-lastName">Last Name <span class="ce-req">(required)</span></label>
+                  <input type="text" id="ce-lastName" name="contact[last_name]" required autocomplete="family-name">
+                </div>
+              </div>
+              <div class="ce-form-row">
+                <div class="ce-field">
+                  <label for="ce-company">Company / Store Name</label>
+                  <input type="text" id="ce-company" name="contact[company]" autocomplete="organization">
+                </div>
+                <div class="ce-field">
+                  <label for="ce-email">Email <span class="ce-req">(required)</span></label>
+                  <input type="email" id="ce-email" name="contact[email]" required autocomplete="email">
+                </div>
+              </div>
+              <div class="ce-field">
+                <label for="ce-phone">Phone</label>
+                <input type="tel" id="ce-phone" name="contact[phone]" autocomplete="tel">
+              </div>
+            </fieldset>
+
+            <button type="submit" class="ce-submit-btn">Submit Inquiry</button>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  // Garment checkbox validation
+  var ceForm = document.getElementById('ce-merch-form');
+  if (ceForm) {
+    ceForm.addEventListener('submit', function (e) {
+      var anyChecked = ceForm.querySelectorAll('input[name="contact[garment_type][]"]:checked').length > 0;
+      if (!anyChecked) {
+        e.preventDefault();
+        var grid = document.getElementById('ce-garment-grid');
+        grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        grid.style.outline = '2px solid #b94a3a';
+        setTimeout(function () { grid.style.outline = ''; }, 3000);
+        alert('Please select at least one garment type.');
+      }
+    });
+  }
+
+  // FAQ accordion
+  document.querySelectorAll('.ce-faq-item').forEach(function (item) {
+    var btn  = item.querySelector('.ce-faq-btn');
+    var body = item.querySelector('.ce-faq-body');
+    btn.addEventListener('click', function () {
+      var isOpen = item.classList.contains('ce-open');
+      document.querySelectorAll('.ce-faq-item.ce-open').forEach(function (o) {
+        o.classList.remove('ce-open');
+        o.querySelector('.ce-faq-btn').setAttribute('aria-expanded', 'false');
+        o.querySelector('.ce-faq-body').style.maxHeight = null;
+      });
+      if (!isOpen) {
+        item.classList.add('ce-open');
+        btn.setAttribute('aria-expanded', 'true');
+        body.style.maxHeight = body.scrollHeight + 'px';
+      }
+    });
+  });
+
+  // Other garment toggle
+  var otherCheckbox = document.getElementById('ce-other-checkbox');
+  var otherRow      = document.getElementById('ce-other-row');
+  if (otherCheckbox) {
+    otherCheckbox.addEventListener('change', function () {
+      otherRow.style.display = this.checked ? 'flex' : 'none';
+    });
+  }
+
+  // Placement "Other" toggle
+  var placementSelect   = document.getElementById('ce-placement');
+  var placementOtherRow = document.getElementById('ce-placement-other-row');
+  if (placementSelect) {
+    placementSelect.addEventListener('change', function () {
+      var show = this.value === 'Other / multiple';
+      placementOtherRow.style.display = show ? 'block' : 'none';
+      if (!show) document.getElementById('ce-placement-other').value = '';
+    });
+  }
+
+  // Cloudinary unsigned upload
+  var CL_CLOUD   = 'doybojlmc';
+  var CL_PRESET  = 'emberlane';
+  var uploadBox    = document.getElementById('ce-upload-box');
+  var fileInput    = document.getElementById('ce-logo-upload');
+  var fileList     = document.getElementById('ce-file-list');
+  var logoUrlField = document.getElementById('ce-logo-url');
+  var uploadedFiles = []; // { name, url }
+
+  function syncUrlField() {
+    logoUrlField.value = uploadedFiles.map(function (f) { return f.url; }).join('\n');
+  }
+
+  function renderFiles() {
+    fileList.innerHTML = '';
+    uploadedFiles.forEach(function (f, i) {
+      var item = document.createElement('div');
+      item.className = 'ce-file-item';
+      var name = document.createElement('span');
+      name.textContent = f.name + ' ✓';
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = 'Remove';
+      btn.addEventListener('click', function () {
+        uploadedFiles.splice(i, 1);
+        renderFiles();
+        syncUrlField();
+      });
+      item.appendChild(name);
+      item.appendChild(btn);
+      fileList.appendChild(item);
+    });
+  }
+
+  function uploadFile(file) {
+    var statusItem = document.createElement('div');
+    statusItem.className = 'ce-file-item';
+    statusItem.innerHTML = '<span>' + file.name + ' &mdash; uploading&hellip;</span>';
+    fileList.appendChild(statusItem);
+
+    var fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', CL_PRESET);
+
+    fetch('https://api.cloudinary.com/v1_1/' + CL_CLOUD + '/auto/upload', { method: 'POST', body: fd })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        statusItem.remove();
+        if (data.secure_url) {
+          uploadedFiles.push({ name: file.name, url: data.secure_url });
+          renderFiles();
+          syncUrlField();
+        } else {
+          var errItem = document.createElement('div');
+          errItem.className = 'ce-file-item';
+          errItem.innerHTML = '<span>' + file.name + ' &mdash; upload failed</span>';
+          fileList.appendChild(errItem);
+        }
+      })
+      .catch(function () {
+        statusItem.innerHTML = '<span>' + file.name + ' &mdash; upload failed</span>';
+      });
+  }
+
+  function handleFiles(files) {
+    Array.from(files).forEach(uploadFile);
+  }
+
+  if (uploadBox) {
+    uploadBox.addEventListener('click', function () { fileInput.click(); });
+    fileInput.addEventListener('change', function () { handleFiles(fileInput.files); fileInput.value = ''; });
+    ['dragover', 'dragenter'].forEach(function (e) {
+      uploadBox.addEventListener(e, function (ev) { ev.preventDefault(); uploadBox.classList.add('ce-dragover'); });
+    });
+    ['dragleave', 'drop'].forEach(function (e) {
+      uploadBox.addEventListener(e, function (ev) { ev.preventDefault(); uploadBox.classList.remove('ce-dragover'); });
+    });
+    uploadBox.addEventListener('drop', function (ev) { handleFiles(ev.dataTransfer.files); });
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Custom Embroidery Page",
+  "tag": "section",
+  "class": "section"
+}
+{% endschema %}

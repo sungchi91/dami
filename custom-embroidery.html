@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom Embroidered Merch | Ember Lane</title>
+<meta name="description" content="Request a quote for custom embroidered branded goods from Ember Lane — shirts, sweaters, hats, and more. Upload your logo and tell us what you need.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Petit+Formal+Script&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --navy: #2C3645;
+    --navy-deep: #222A36;
+    --cream: #F6F1E7;
+    --cream-soft: #EFE8D8;
+    --taupe: #D9D0BC;
+    --red: #B3473C;
+    --ink: #3A332B;
+    --ink-soft: #6B6358;
+    --white: #FFFDF9;
+
+    --font-script: 'Petit Formal Script', 'Brush Script MT', cursive;
+    --font-serif: 'Cormorant Garamond', 'Georgia', serif;
+    --font-sans: 'Work Sans', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  *{ box-sizing: border-box; margin: 0; padding: 0; }
+  html{ scroll-behavior: smooth; }
+  body{
+    font-family: var(--font-sans);
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  img{ max-width: 100%; display: block; }
+  a{ color: inherit; }
+
+  .wrap{
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ---------- Stitch divider ---------- */
+  .stitch{
+    width: 100%;
+    height: 14px;
+    background-image: repeating-linear-gradient(
+      100deg,
+      transparent 0px, transparent 7px,
+      currentColor 7px, currentColor 9px,
+      transparent 9px, transparent 22px
+    );
+    opacity: 0.55;
+  }
+  .stitch.on-cream{ color: var(--red); }
+  .stitch.on-navy{ color: var(--taupe); opacity: 0.4; }
+
+  /* ---------- Header ---------- */
+  header{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(246,241,231,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(58,51,43,0.08);
+  }
+  .nav{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 28px;
+    max-width: 1140px;
+    margin: 0 auto;
+  }
+  .nav .logotype{
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+  }
+  .nav .logotype em{ font-style: normal; color: var(--red); }
+  .nav-cta{
+    display: inline-block;
+    background: var(--navy);
+    color: var(--cream) !important;
+    padding: 10px 22px;
+    border-radius: 2px;
+    font-size: 13.5px;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .nav-cta:hover{ background: var(--navy-deep); }
+
+  /* ---------- Intro ---------- */
+  .intro{
+    padding: 88px 0 56px;
+    text-align: center;
+  }
+  .eyebrow{
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 18px;
+    display: block;
+  }
+  .intro h1{
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: clamp(32px, 5vw, 50px);
+    color: var(--navy);
+    line-height: 1.18;
+    margin-bottom: 20px;
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .intro p.lede{
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(17px, 2vw, 21px);
+    color: var(--ink-soft);
+    max-width: 620px;
+    margin: 0 auto 30px;
+  }
+
+  .intro-points{
+    display: flex;
+    justify-content: center;
+    gap: 36px;
+    flex-wrap: wrap;
+    margin-top: 38px;
+  }
+  .intro-point{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+  }
+  .intro-point svg{
+    width: 20px; height: 20px;
+    color: var(--red);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px){
+    .intro-points{ gap: 18px 28px; }
+  }
+
+  /* ---------- Section head (for FAQ) ---------- */
+  section{ padding: 0; }
+  .section-head{
+    text-align: center;
+    max-width: 620px;
+    margin: 0 auto 48px;
+  }
+  .section-head .eyebrow{ margin-bottom: 14px; }
+  .section-head h2{
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: clamp(28px, 3.6vw, 38px);
+    color: var(--navy);
+    line-height: 1.2;
+  }
+
+  /* ---------- FAQ ---------- */
+  .faq-section{
+    background: var(--cream-soft);
+    padding: 84px 0;
+  }
+  .faq-list{ max-width: 760px; margin: 0 auto; }
+  .faq-item{
+    border-bottom: 1px solid var(--taupe);
+  }
+  .faq-q{
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 22px 6px;
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .faq-q .plus{
+    font-family: var(--font-sans);
+    font-size: 22px;
+    color: var(--red);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+  .faq-item.open .faq-q .plus{ transform: rotate(45deg); }
+  .faq-a{
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .faq-a-inner{
+    padding: 0 6px 22px;
+    color: var(--ink-soft);
+    font-size: 15px;
+    max-width: 640px;
+  }
+
+  /* ---------- Form section ---------- */
+  .inquiry-section{
+    background: var(--navy);
+    padding: 70px 0 96px;
+  }
+  .inquiry-grid{
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 0;
+    background: var(--cream);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .inquiry-intro{
+    background: var(--navy);
+    color: var(--cream);
+    padding: 56px 46px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .inquiry-intro h2{
+    font-family: var(--font-script);
+    font-size: clamp(36px, 4.6vw, 50px);
+    font-weight: 400;
+    margin-bottom: 22px;
+    line-height: 1.1;
+  }
+  .inquiry-intro p{
+    color: #C9CDD6;
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+  .inquiry-intro .contact-line{
+    margin-top: 26px;
+    font-size: 13.5px;
+    color: var(--taupe);
+  }
+  .inquiry-form-panel{
+    background: var(--cream);
+    padding: 56px 46px;
+  }
+
+  fieldset{
+    border: none;
+    margin-bottom: 30px;
+    padding: 0;
+  }
+  legend{
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--navy);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--taupe);
+    width: 100%;
+  }
+
+  .form-row{ display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .field{ margin-bottom: 22px; }
+  .field:last-child{ margin-bottom: 0; }
+  .field label{
+    display: block;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--navy);
+    margin-bottom: 7px;
+  }
+  .field label .req{
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-left: 4px;
+  }
+  .field .hint{
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-top: 5px;
+  }
+  .field input,
+  .field select,
+  .field textarea{
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid var(--taupe);
+    border-radius: 2px;
+    background: var(--white);
+    font-family: var(--font-sans);
+    font-size: 14.5px;
+    color: var(--ink);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field select{ cursor: pointer; }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus{
+    outline: none;
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(179,71,60,0.12);
+  }
+  .field textarea{ resize: vertical; min-height: 100px; }
+
+  /* Garment type checkboxes */
+  .garment-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .garment-option{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--taupe);
+    border-radius: 2px;
+    background: var(--white);
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .garment-option:hover{ border-color: var(--red); }
+  .garment-option input{
+    width: auto;
+    accent-color: var(--red);
+    cursor: pointer;
+  }
+  .garment-option.other-option{
+    grid-column: 1 / -1;
+  }
+  .garment-option .other-text{
+    flex: 1;
+    border: none;
+    border-bottom: 1px solid var(--taupe);
+    padding: 4px 2px;
+    background: transparent;
+  }
+  .garment-option .other-text:focus{ outline: none; border-color: var(--red); }
+
+  @media (max-width: 480px){
+    .garment-grid{ grid-template-columns: 1fr; }
+  }
+
+  /* File upload */
+  .upload-box{
+    border: 1.5px dashed var(--taupe);
+    border-radius: 2px;
+    background: var(--white);
+    padding: 26px 18px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .upload-box:hover, .upload-box.dragover{
+    border-color: var(--red);
+    background: #FBF6EC;
+  }
+  .upload-box svg{
+    width: 28px; height: 28px;
+    color: var(--red);
+    margin: 0 auto 10px;
+  }
+  .upload-box .upload-label{
+    font-size: 14px;
+    color: var(--navy);
+    font-weight: 500;
+  }
+  .upload-box .upload-sub{
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+  .upload-box input[type="file"]{ display: none; }
+  .file-list{
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-align: left;
+  }
+  .file-list .file-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    background: var(--white);
+    border: 1px solid var(--taupe);
+    border-radius: 2px;
+    margin-top: 6px;
+  }
+  .file-item button{
+    background: none;
+    border: none;
+    color: var(--red);
+    cursor: pointer;
+    font-size: 13px;
+    font-family: var(--font-sans);
+  }
+
+  .submit-btn{
+    background: var(--navy);
+    color: var(--cream);
+    border: none;
+    padding: 15px 38px;
+    border-radius: 2px;
+    font-family: var(--font-sans);
+    font-size: 14.5px;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .submit-btn:hover{ background: var(--navy-deep); }
+
+  .form-success{
+    display: none;
+    text-align: center;
+    padding: 40px 10px;
+  }
+  .form-success.show{ display: block; }
+  .form-success .check{
+    font-size: 38px;
+    color: var(--red);
+    margin-bottom: 16px;
+  }
+  .form-success h3{
+    font-family: var(--font-serif);
+    font-size: 26px;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .form-success p{ color: var(--ink-soft); font-size: 15px; max-width: 420px; margin: 0 auto; }
+  .form-success p + p{ margin-top: 10px; }
+
+  @media (max-width: 860px){
+    .inquiry-grid{ grid-template-columns: 1fr; }
+    .form-row{ grid-template-columns: 1fr; }
+    .inquiry-intro, .inquiry-form-panel{ padding: 42px 26px; }
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    background: var(--navy-deep);
+    color: #9CA3B0;
+    padding: 36px 0;
+    text-align: center;
+    font-size: 13.5px;
+  }
+  footer .logotype{
+    font-family: var(--font-serif);
+    color: var(--cream);
+    font-size: 17px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
+    outline: 2px solid var(--red);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="#top" class="logotype">EMBER <em>LANE</em></a>
+    <a href="#inquire" class="nav-cta">Request a Quote</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- INTRO -->
+  <section class="intro wrap">
+    <span class="eyebrow">Custom Embroidery for Business</span>
+    <h1>Custom Embroidered Branded Goods</h1>
+    <p class="lede">Tell us what you need and upload your logo — we'll follow up with options and a custom quote for your business.</p>
+
+    <div class="intro-points">
+      <div class="intro-point">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v12M7 9l5-6 5 6M5 21h14"/></svg>
+        Upload your own logo
+      </div>
+      <div class="intro-point">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 8v4l3 3M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+        Quotes within 1–2 business days
+      </div>
+      <div class="intro-point">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>
+        No minimum order
+      </div>
+    </div>
+  </section>
+
+  <div class="stitch on-cream" aria-hidden="true"></div>
+
+  <!-- FAQ -->
+  <section id="faq" class="faq-section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Good to Know</span>
+        <h2>Frequently asked questions</h2>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            Is there a minimum order quantity?
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">No minimum. We're happy to take on small orders as well as larger bulk runs — just let us know your quantity and we'll quote accordingly.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            Can I provide my own garments?
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Yes — you're welcome to send us your own shirts, hats, or other items, or we can source garments for you. Let us know which works best.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            What file format should my logo be in?
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Vector files (AI, EPS, SVG, or a high-res PDF) embroider best. If you only have a PNG or JPG, send it anyway — we can usually work with it or recreate it as needed.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            How long does production take?
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Most orders are completed within 2–3 weeks of approving your design and garments. Larger orders or rush timelines may vary — let us know your deadline and we'll confirm what's possible.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            Can you match our brand colors?
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Yes. We carry a wide library of thread colors and will match your brand palette as closely as possible.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            Will I see a proof before production?
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Always. We'll send a digital proof for your approval before stitching begins, so there are no surprises.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            How much does it cost?
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">
+              <p style="margin-bottom: 10px;">Pricing depends on three things:</p>
+              <ul style="margin: 0 0 10px; padding-left: 20px;">
+                <li style="margin-bottom: 6px;"><strong>Embroidery cost</strong> — calculated per item, based on stitch count and garment type.</li>
+                <li style="margin-bottom: 6px;"><strong>Garment cost</strong> — depends on what you choose, whether from our selection or your own supplied items.</li>
+                <li><strong>Volume pricing</strong> — larger orders typically bring the per-item cost down.</li>
+              </ul>
+              <p style="margin-bottom: 10px;">All orders also include a one-time design digitizing fee of $30–$60, depending on size and complexity. This converts your logo into a stitch-ready file and is charged once per design, not per item.</p>
+              <p>Share your details in the form below and we'll follow up with a clear, itemized quote.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="stitch on-cream" aria-hidden="true"></div>
+
+  <!-- INQUIRY FORM -->
+  <section id="inquire" class="inquiry-section">
+    <div class="wrap">
+      <div class="inquiry-grid">
+        <div class="inquiry-intro">
+          <h2>Let's Talk<br>Merch</h2>
+          <p>Whether it's team shirts, sweaters, hats, or merch for your store, we'd love to help bring it to life.</p>
+          <p>Fill out the details below — the more we know, the better quote we can put together.</p>
+          <div class="contact-line">EMBER LANE &middot; California, made by hand</div>
+        </div>
+
+        <div class="inquiry-form-panel">
+          <form id="merch-form" novalidate>
+
+            <fieldset>
+              <legend>Garment Details</legend>
+
+              <div class="field">
+                <label>Garment Type(s) <span class="req">(required)</span></label>
+                <div class="garment-grid" id="garment-grid">
+                  <label class="garment-option">
+                    <input type="checkbox" name="garmentType" value="T-Shirts">
+                    T-Shirts
+                  </label>
+                  <label class="garment-option">
+                    <input type="checkbox" name="garmentType" value="Sweaters / Hoodies">
+                    Sweaters / Hoodies
+                  </label>
+                  <label class="garment-option">
+                    <input type="checkbox" name="garmentType" value="Hats">
+                    Hats
+                  </label>
+                  <label class="garment-option">
+                    <input type="checkbox" name="garmentType" value="Totes / Bags">
+                    Totes / Bags
+                  </label>
+                  <label class="garment-option">
+                    <input type="checkbox" name="garmentType" value="Aprons">
+                    Aprons
+                  </label>
+                  <label class="garment-option">
+                    <input type="checkbox" name="garmentType" value="Other">
+                    Other
+                  </label>
+                  <label class="garment-option other-option" id="other-option-row" style="display:none;">
+                    <span style="white-space:nowrap; color: var(--ink-soft);">Please specify:</span>
+                    <input type="text" class="other-text" id="garmentOther" name="garmentOther" placeholder="e.g. baby onesies, scrub caps...">
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="quantity">Estimated Quantity <span class="req">(required)</span></label>
+                  <input type="number" id="quantity" name="quantity" min="1" placeholder="e.g. 50" required>
+                </div>
+                <div class="field">
+                  <label for="deadline">Needed By <span class="req">(required)</span></label>
+                  <input type="date" id="deadline" name="deadline" required>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Logo / Design</legend>
+
+              <div class="field">
+                <label for="logo-upload">Upload Your Logo or Design</label>
+                <div class="upload-box" id="upload-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v12M7 9l5-6 5 6M5 21h14"/></svg>
+                  <div class="upload-label">Click to upload, or drag a file here</div>
+                  <div class="upload-sub">PNG, JPG, SVG, PDF, or AI &middot; up to 10MB</div>
+                  <input type="file" id="logo-upload" name="logoUpload" accept=".png,.jpg,.jpeg,.svg,.pdf,.ai" multiple>
+                </div>
+                <div class="file-list" id="file-list"></div>
+                <div class="hint">No file ready? No problem — describe your logo in the notes below and we'll follow up.</div>
+                <div class="hint">A one-time design digitizing fee of $30–$60 (depending on size/complexity) applies to all orders, charged once per design.</div>
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="logoSize">Design Size</label>
+                  <select id="logoSize" name="logoSize">
+                    <option value="">Not sure / let's discuss</option>
+                    <option value='3in x 3in'>3in x 3in</option>
+                    <option value='4in x 4in'>4in x 4in</option>
+                    <option value='5in x 5in'>5in x 5in</option>
+                    <option value='8in x 10in'>8in x 10in</option>
+                    <option value='11in x 14in'>11in x 14in</option>
+                    <option value="Other / multiple sizes">Other / multiple sizes</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="placement">Placement</label>
+                  <select id="placement" name="placement">
+                    <option value="">Not sure / let's discuss</option>
+                    <option value="Left chest">Left chest</option>
+                    <option value="Center front">Center front</option>
+                    <option value="Center back">Center back</option>
+                    <option value="Sleeve">Sleeve</option>
+                    <option value="Other / multiple">Other / multiple</option>
+                  </select>
+                  <div class="field" id="placement-other-row" style="display:none; margin-top: 10px; margin-bottom: 0;">
+                    <label for="placementOther">Tell us where you'd like the design</label>
+                    <input type="text" id="placementOther" name="placementOther" placeholder="e.g. left sleeve and back yoke">
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="artworkNotes">Artwork Notes</label>
+                <textarea id="artworkNotes" name="artworkNotes" placeholder="Thread colors, font preferences, number of colors in your logo, or anything else we should know."></textarea>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Contact Info</legend>
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="firstName">First Name <span class="req">(required)</span></label>
+                  <input type="text" id="firstName" name="firstName" required autocomplete="given-name">
+                </div>
+                <div class="field">
+                  <label for="lastName">Last Name <span class="req">(required)</span></label>
+                  <input type="text" id="lastName" name="lastName" required autocomplete="family-name">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="company">Company / Store Name</label>
+                  <input type="text" id="company" name="company" autocomplete="organization">
+                </div>
+                <div class="field">
+                  <label for="email">Email <span class="req">(required)</span></label>
+                  <input type="email" id="email" name="email" required autocomplete="email">
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" name="phone" autocomplete="tel">
+              </div>
+            </fieldset>
+
+            <button type="submit" class="submit-btn">Submit Inquiry</button>
+          </form>
+
+          <div class="form-success" id="form-success">
+            <div class="check">&#10003;</div>
+            <h3>Thank you!</h3>
+            <p>We've received your inquiry and will follow up within 1–2 business days with options and a custom quote.</p>
+            <p>If you weren't able to attach your logo, just reply to our follow-up email with the file.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="stitch on-navy" aria-hidden="true"></div>
+
+<footer>
+  <span class="logotype">EMBER LANE</span>
+  <div>Personalized embroidery, made by hand in California.</div>
+</footer>
+
+<script>
+  // Show/hide "Other" text field
+  var otherCheckbox = document.querySelector('input[value="Other"]');
+  var otherRow = document.getElementById('other-option-row');
+  otherCheckbox.addEventListener('change', function(){
+    otherRow.style.display = this.checked ? 'flex' : 'none';
+    if(!this.checked){ document.getElementById('garmentOther').value = ''; }
+  });
+
+  // Show/hide "Where would you like the design" field for placement
+  var placementSelect = document.getElementById('placement');
+  var placementOtherRow = document.getElementById('placement-other-row');
+  placementSelect.addEventListener('change', function(){
+    var showField = this.value === 'Other / multiple';
+    placementOtherRow.style.display = showField ? 'block' : 'none';
+    if(!showField){ document.getElementById('placementOther').value = ''; }
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(function(item){
+    var btn = item.querySelector('.faq-q');
+    var answer = item.querySelector('.faq-a');
+    btn.addEventListener('click', function(){
+      var isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(function(openItem){
+        if(openItem !== item){
+          openItem.classList.remove('open');
+          openItem.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+          openItem.querySelector('.faq-a').style.maxHeight = null;
+        }
+      });
+      if(isOpen){
+        item.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        answer.style.maxHeight = null;
+      } else {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    });
+  });
+
+  // File upload handling (client-side preview only — no backend wired yet)
+  var uploadBox = document.getElementById('upload-box');
+  var fileInput = document.getElementById('logo-upload');
+  var fileList = document.getElementById('file-list');
+  var selectedFiles = [];
+
+  function renderFileList(){
+    fileList.innerHTML = '';
+    selectedFiles.forEach(function(file, index){
+      var item = document.createElement('div');
+      item.className = 'file-item';
+      var name = document.createElement('span');
+      name.textContent = file.name + ' (' + Math.round(file.size/1024) + ' KB)';
+      var removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.textContent = 'Remove';
+      removeBtn.addEventListener('click', function(){
+        selectedFiles.splice(index, 1);
+        renderFileList();
+      });
+      item.appendChild(name);
+      item.appendChild(removeBtn);
+      fileList.appendChild(item);
+    });
+  }
+
+  uploadBox.addEventListener('click', function(){ fileInput.click(); });
+
+  fileInput.addEventListener('change', function(){
+    selectedFiles = selectedFiles.concat(Array.from(fileInput.files));
+    renderFileList();
+  });
+
+  ['dragover','dragenter'].forEach(function(evt){
+    uploadBox.addEventListener(evt, function(e){
+      e.preventDefault();
+      uploadBox.classList.add('dragover');
+    });
+  });
+  ['dragleave','drop'].forEach(function(evt){
+    uploadBox.addEventListener(evt, function(e){
+      e.preventDefault();
+      uploadBox.classList.remove('dragover');
+    });
+  });
+  uploadBox.addEventListener('drop', function(e){
+    var dropped = Array.from(e.dataTransfer.files);
+    selectedFiles = selectedFiles.concat(dropped);
+    renderFileList();
+  });
+
+  // Form submission (placeholder — wire to your backend or form service later)
+  var form = document.getElementById('merch-form');
+  var successPanel = document.getElementById('form-success');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    var anyGarmentChecked = document.querySelectorAll('input[name="garmentType"]:checked').length > 0;
+    if(!anyGarmentChecked){
+      alert('Please select at least one garment type.');
+      return;
+    }
+    if(!form.checkValidity()){
+      form.reportValidity();
+      return;
+    }
+
+    // TODO: replace this block with an actual submission call
+    // e.g. fetch('https://formspree.io/f/your-id', { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
+    form.style.display = 'none';
+    successPanel.classList.add('show');
+  });
+</script>
+
+</body>
+</html>
