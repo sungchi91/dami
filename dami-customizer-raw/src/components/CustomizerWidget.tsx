@@ -54,6 +54,8 @@ function getDefaultColorIndex(
 ): number {
   const lower = productTitle.toLowerCase()
   if (!colors.length) return 0
+  // Waffle pouches (incl. Grand Waffle) default to white — the first color.
+  if (lower.includes('waffle')) return 0
   let keyword = ''
   if (lower.includes('petite'))    keyword = 'natural'
   else if (lower.includes('grand')) keyword = 'navy'

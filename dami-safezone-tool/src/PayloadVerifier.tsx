@@ -96,7 +96,8 @@ export default function PayloadVerifier() {
     if (!fc) return
 
     const lower  = data.item_base.toLowerCase()
-    const preset = PRESETS.find(p =>
+    const sorted = [...PRESETS].sort((a, b) => b.name.length - a.name.length)
+    const preset = sorted.find(p =>
       lower.includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(lower)
     )
     if (!preset) {
