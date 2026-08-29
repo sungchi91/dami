@@ -75,6 +75,17 @@
   .el-btn:hover { background: #7a9bad; color: #fff; border-color: #7a9bad; }
   .el-btn--filled { background: #7a9bad; color: #fff; border-color: #7a9bad; }
   .el-btn--filled:hover { background: #6a8a9a; border-color: #6a8a9a; }
+  .el-service-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin: 28px 0 0;
+    font-family: var(--font-body-family);
+    font-size: 13px;
+    color: var(--el-muted);
+  }
+  .el-service-area svg { width: 15px; height: 15px; flex-shrink: 0; }
 
   /* HOW IT WORKS */
   .el-how {
@@ -358,6 +369,10 @@
       <a href="#el-inquire" class="el-btn el-btn--filled">Request a Quote</a>
       <a href="#el-how" class="el-btn">See How It Works</a>
     </div>
+    <p class="el-service-area">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21s-6-5.686-6-10a6 6 0 0 1 12 0c0 4.314-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg>
+      Based in the San Francisco Bay Area &middot; traveling up to 2–3 hours for events
+    </p>
   </div>
 
   <!-- HOW IT WORKS -->
@@ -551,13 +566,27 @@
                 <input type="number" id="el-guestCount" name="contact[guest_count]" min="1" required>
               </div>
             </div>
+            <div class="el-form-row">
+              <div class="el-field">
+                <label for="el-startTime">Event Start Time</label>
+                <input type="text" id="el-startTime" name="contact[event_start_time]">
+              </div>
+              <div class="el-field">
+                <label for="el-endTime">Event End Time</label>
+                <input type="text" id="el-endTime" name="contact[event_end_time]">
+              </div>
+            </div>
             <div class="el-field">
-              <label for="el-eventAddress">Event Address</label>
-              <input type="text" id="el-eventAddress" name="contact[event_address]" required autocomplete="street-address">
+              <label for="el-eventLocation">Event Location</label>
+              <input type="text" id="el-eventLocation" name="contact[event_location]" required autocomplete="street-address">
+            </div>
+            <div class="el-field">
+              <label for="el-budget">Budget <span style="text-transform:none;letter-spacing:0;opacity:0.5;">(optional)</span></label>
+              <input type="text" id="el-budget" name="contact[budget]">
             </div>
             <div class="el-field">
               <label for="el-details">Tell us about your event</label>
-              <textarea id="el-details" name="contact[body]" required placeholder="What do you have in mind?"></textarea>
+              <textarea id="el-details" name="contact[body]" required></textarea>
             </div>
             <button type="submit" class="el-submit-btn">Submit Inquiry</button>
           {%- endif -%}
