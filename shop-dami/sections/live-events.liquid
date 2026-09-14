@@ -32,30 +32,34 @@
 
   /* HERO */
   .el-hero {
-    background: var(--el-white);
-    padding: 80px 80px 72px;
-    max-width: 1200px;
-    margin: 0 auto;
+    position: relative;
+    background-image: linear-gradient(rgba(40,40,40,0.6), rgba(40,40,40,0.72)), url({{ 'live-events-hero.jpg' | asset_url }});
+    background-size: cover;
+    background-position: center 65%;
+    padding: 120px 80px;
     text-align: center;
+    isolation: isolate;
   }
   .el-hero h1 {
     font-family: var(--font-heading-family);
     font-weight: 400;
     font-size: clamp(36px, 5vw, 60px);
-    color: var(--el-ink);
+    color: var(--el-white);
     line-height: 1.1;
     margin: 0 auto 20px;
     max-width: 700px;
   }
   .el-hero h1 em { font-style: italic; }
+  .el-hero .el-eyebrow { color: rgba(255,255,255,0.75); }
   .el-hero .el-lede {
     font-family: var(--font-body-family);
     font-size: 16px;
-    color: var(--el-muted);
+    color: rgba(247,244,239,0.85);
     max-width: 480px;
     margin: 0 auto 32px;
     line-height: 1.65;
   }
+  .el-hero .el-service-area { color: rgba(247,244,239,0.75); }
   .el-btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
   .el-btn {
     display: inline-block;
@@ -219,6 +223,30 @@
   }
   .el-why-item p { font-family: var(--font-body-family); font-size: 15px; color: var(--el-muted); margin: 0; line-height: 1.65; }
 
+  /* GALLERY */
+  .el-gallery {
+    background: var(--el-white);
+    padding: 80px 0;
+  }
+  .el-gallery-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 80px;
+  }
+  .el-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 48px;
+  }
+  .el-gallery-item { overflow: hidden; aspect-ratio: 1 / 1; }
+  .el-gallery-grid img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
   /* FAQ */
   .el-faq {
     background: var(--el-cream);
@@ -349,12 +377,15 @@
     .el-why-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
     .el-events-grid { grid-template-columns: 1fr 1fr; }
     .el-form-row { grid-template-columns: 1fr; }
+    .el-gallery-grid { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 560px) {
-    .el-wrap, .el-hero, .el-how-inner, .el-events-inner, .el-why-inner, .el-faq-inner, .el-inquiry-inner { padding-left: 24px; padding-right: 24px; }
+    .el-wrap, .el-hero, .el-how-inner, .el-events-inner, .el-why-inner, .el-faq-inner, .el-inquiry-inner, .el-gallery-inner { padding-left: 24px; padding-right: 24px; }
     .el-form-card { padding: 28px 24px; }
     .el-events-grid { grid-template-columns: 1fr; }
     .el-why-grid { grid-template-columns: 1fr; }
+    .el-hero { padding: 88px 24px; }
+    .el-gallery-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
 
@@ -473,6 +504,31 @@
         <div class="el-why-item">
           <h4>Minutes, not weeks</h4>
           <p>No pre-orders, no waiting. Guests choose, watch, and walk away with it the same day.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GALLERY -->
+  <div id="el-gallery" class="el-gallery">
+    <div class="el-gallery-inner">
+      <div class="el-section-label">
+        <span class="el-eyebrow">From Recent Events</span>
+        <h2>A peek behind the needle</h2>
+        <p>A few moments from a recent event we brought the studio to.</p>
+      </div>
+      <div class="el-gallery-grid">
+        <div class="el-gallery-item">
+          <img src="{{ 'live-events-gallery-3.jpg' | asset_url }}" alt="The Ember Lane embroidery cart set up at an outdoor event" loading="lazy" width="600" height="750">
+        </div>
+        <div class="el-gallery-item">
+          <img src="{{ 'live-events-gallery-1.jpg' | asset_url }}" alt="Guests gathered around the embroidery station" loading="lazy" width="600" height="750">
+        </div>
+        <div class="el-gallery-item">
+          <img src="{{ 'live-events-gallery-2.jpg' | asset_url }}" alt="A guest filling out a custom embroidery order form" loading="lazy" width="600" height="750">
+        </div>
+        <div class="el-gallery-item">
+          <img src="{{ 'live-events-gallery-4.jpg' | asset_url }}" alt="Custom embroidery menu and order forms styled on a table" loading="lazy" width="600" height="750">
         </div>
       </div>
     </div>
