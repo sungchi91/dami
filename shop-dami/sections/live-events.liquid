@@ -170,13 +170,14 @@
   }
   .el-events-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
   }
   .el-event-card {
     background: var(--el-white);
     border: 1px solid var(--el-taupe);
-    padding: 32px 28px;
+    padding: 28px 16px;
+    text-align: center;
     transition: transform 0.2s, box-shadow 0.2s;
   }
   .el-event-card:hover {
@@ -184,19 +185,19 @@
     box-shadow: 0 12px 28px rgba(27,48,84,0.08);
   }
   .el-event-icon {
-    width: 28px; height: 28px;
+    width: 26px; height: 26px;
     color: var(--el-muted);
-    margin-bottom: 16px;
+    margin: 0 auto 14px;
     display: block;
   }
   .el-event-card h4 {
     font-family: var(--font-heading-family);
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 600;
     color: var(--el-ink);
-    margin: 0 0 8px;
+    margin: 0;
+    line-height: 1.35;
   }
-  .el-event-card p { font-family: var(--font-body-family); font-size: 15px; color: var(--el-muted); margin: 0; line-height: 1.65; }
 
   /* WHY */
   .el-why {
@@ -207,17 +208,31 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 80px;
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 64px;
+    align-items: center;
+  }
+  .el-why-photo {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+  }
+  .el-why-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
   .el-why-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 48px;
-    margin-top: 48px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+    margin-top: 40px;
   }
   .el-why-item h4 {
     font-family: var(--font-heading-family);
     font-weight: 600;
-    font-size: 22px;
+    font-size: 20px;
     color: var(--el-ink);
     margin: 0 0 10px;
   }
@@ -235,7 +250,7 @@
   }
   .el-gallery-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     margin-top: 48px;
   }
@@ -333,7 +348,7 @@
     color: var(--el-ink);
     margin-bottom: 7px;
   }
-  .el-field input,
+  .el-field input:not([type="radio"]):not([type="checkbox"]),
   .el-field textarea {
     width: 100%;
     padding: 11px 14px;
@@ -348,9 +363,31 @@
   }
   .el-field input::placeholder,
   .el-field textarea::placeholder { color: rgba(47,47,47,0.3); }
-  .el-field input:focus,
+  .el-field input:not([type="radio"]):not([type="checkbox"]):focus,
   .el-field textarea:focus { outline: none; border-color: rgba(27,48,84,0.4); }
   .el-field textarea { resize: vertical; min-height: 100px; }
+  .el-field select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--el-taupe);
+    background: var(--el-white);
+    font-family: var(--font-body-family);
+    font-size: 15px;
+    color: var(--el-ink);
+    border-radius: 0;
+  }
+  .el-field select:focus { outline: none; border-color: rgba(27,48,84,0.4); }
+  .el-radio-group { display: flex; flex-wrap: wrap; gap: 20px; padding-top: 2px; }
+  .el-radio-option {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-body-family);
+    font-size: 14px;
+    color: var(--el-ink);
+    cursor: pointer;
+  }
+  .el-radio-option input { accent-color: #2c3645; width: 15px; height: 15px; cursor: pointer; }
   .el-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .el-submit-btn {
     background: #2c3645;
@@ -373,16 +410,17 @@
 
   /* Responsive */
   @media (max-width: 900px) {
-    .el-how-inner, .el-faq-inner, .el-inquiry-inner { grid-template-columns: 1fr; gap: 48px; }
+    .el-how-inner, .el-faq-inner, .el-inquiry-inner, .el-why-inner { grid-template-columns: 1fr; gap: 48px; }
+    .el-why-photo { display: none; }
     .el-why-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
-    .el-events-grid { grid-template-columns: 1fr 1fr; }
+    .el-events-grid { grid-template-columns: repeat(3, 1fr); }
     .el-form-row { grid-template-columns: 1fr; }
     .el-gallery-grid { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 560px) {
     .el-wrap, .el-hero, .el-how-inner, .el-events-inner, .el-why-inner, .el-faq-inner, .el-inquiry-inner, .el-gallery-inner { padding-left: 24px; padding-right: 24px; }
     .el-form-card { padding: 28px 24px; }
-    .el-events-grid { grid-template-columns: 1fr; }
+    .el-events-grid { grid-template-columns: 1fr 1fr; }
     .el-why-grid { grid-template-columns: 1fr; }
     .el-hero { padding: 88px 24px; }
     .el-gallery-grid { grid-template-columns: 1fr 1fr; }
@@ -448,34 +486,28 @@
       </div>
       <div class="el-events-grid">
         <div class="el-event-card">
-          <svg class="el-event-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M16 27s-10-6.2-10-13.4C6 9.8 8.9 7 12.4 7c1.8 0 3.4.9 4.4 2.3.9-1.4 2.5-2.3 4.3-2.3C24.7 7 27 9.8 27 13.6 27 20.8 16 27 16 27z"/></svg>
+          <svg class="el-event-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>
           <h4>Weddings &amp; Bridal Showers</h4>
-          <p>Monogrammed favors for bridal showers, welcome bags, and reception send-offs guests hold onto for years.</p>
         </div>
         <div class="el-event-card">
-          <svg class="el-event-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5" y="13" width="22" height="14" rx="1"/><path d="M11 13V9a5 5 0 0 1 10 0v4"/></svg>
+          <svg class="el-event-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
           <h4>Corporate &amp; Team Events</h4>
-          <p>Onboarding days, milestones, and client appreciation events swag people actually want.</p>
         </div>
         <div class="el-event-card">
-          <svg class="el-event-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M16 5v22M9 9l14 14M23 9 9 23"/><circle cx="16" cy="16" r="11"/></svg>
+          <svg class="el-event-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
           <h4>Brand Activations &amp; Pop-Ups</h4>
-          <p>A hands-on moment at your retail event or market that draws a crowd and lingers in their feed.</p>
         </div>
         <div class="el-event-card">
-          <svg class="el-event-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M16 6v3M9 13l14 0M7 13l2 14h14l2-14M11 13a5 5 0 0 1 10 0"/></svg>
+          <svg class="el-event-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M12 8V5"/><path d="M12 5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></svg>
           <h4>Birthdays &amp; Private Parties</h4>
-          <p>A personalized favor station guests remember more than the cake table.</p>
         </div>
         <div class="el-event-card">
-          <svg class="el-event-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M16 4v24M8 12l8 4 8-4M8 20l8 4 8-4"/></svg>
+          <svg class="el-event-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8"/><path d="M16.5 8a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8"/></svg>
           <h4>Holiday Gatherings</h4>
-          <p>Stockings, ornaments, and gift totes stitched fresh at your seasonal party.</p>
         </div>
         <div class="el-event-card">
-          <svg class="el-event-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="11" cy="11" r="4"/><circle cx="21" cy="11" r="4"/><path d="M5 26c0-4 2.5-7 6-7s6 3 6 7M15 26c0-4 2.5-7 6-7s6 3 6 7"/></svg>
+          <svg class="el-event-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg>
           <h4>Baby Showers &amp; Milestones</h4>
-          <p>Welcome gifts and milestone keepsakes guests can personalize before they go.</p>
         </div>
       </div>
     </div>
@@ -484,26 +516,31 @@
   <!-- WHY US -->
   <div id="el-why" class="el-why">
     <div class="el-why-inner">
-      <div class="el-section-label">
-        <span class="el-eyebrow">The Difference</span>
-        <h2>Why hosts book us</h2>
+      <div class="el-why-photo">
+        <img src="{{ 'live-events-gallery-3.jpg' | asset_url }}" alt="The Ember Lane mobile embroidery cart set up inside a retail boutique" loading="lazy" width="800" height="1000">
       </div>
-      <div class="el-why-grid">
-        <div class="el-why-item">
-          <h4>A real keepsake</h4>
-          <p>Not a vendor table a working studio, run by the same two hands behind every Ember Lane order.</p>
+      <div>
+        <div class="el-section-label">
+          <span class="el-eyebrow">The Difference</span>
+          <h2>Why hosts book us</h2>
         </div>
-        <div class="el-why-item">
-          <h4>A moment worth posting</h4>
-          <p>Guests pull out their phones before the needle even stops. It's the part of your event people remember.</p>
-        </div>
-        <div class="el-why-item">
-          <h4>Your colors, your fonts</h4>
-          <p>Our thread library and house scripts flex to fit your event's palette or your brand's.</p>
-        </div>
-        <div class="el-why-item">
-          <h4>Minutes, not weeks</h4>
-          <p>No pre-orders, no waiting. Guests choose, watch, and walk away with it the same day.</p>
+        <div class="el-why-grid">
+          <div class="el-why-item">
+            <h4>A premium setup</h4>
+            <p>Our custom-built mobile embroidery cart brings a polished, photo-ready presence to your event.</p>
+          </div>
+          <div class="el-why-item">
+            <h4>Your colors, your fonts</h4>
+            <p>Our thread library and house scripts flex to fit your event's palette or your brand's.</p>
+          </div>
+          <div class="el-why-item">
+            <h4>A moment worth posting</h4>
+            <p>Guests pull out their phones before the needle even stops. It's the part of your event people remember.</p>
+          </div>
+          <div class="el-why-item">
+            <h4>Minutes, not weeks</h4>
+            <p>No pre-orders, no waiting. Guests choose, watch, and walk away with it the same day.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -515,20 +552,26 @@
       <div class="el-section-label">
         <span class="el-eyebrow">From Recent Events</span>
         <h2>A peek behind the needle</h2>
-        <p>A few moments from a recent event we brought the studio to.</p>
+        <p>A few moments from recent events we've brought the studio to.</p>
       </div>
       <div class="el-gallery-grid">
         <div class="el-gallery-item">
-          <img src="{{ 'live-events-gallery-3.jpg' | asset_url }}" alt="The Ember Lane embroidery cart set up at an outdoor event" loading="lazy" width="600" height="750">
+          <img src="{{ 'live-events-gallery-3.jpg' | asset_url }}" alt="The Ember Lane mobile embroidery cart set up inside a retail boutique" loading="lazy" width="600" height="750">
         </div>
         <div class="el-gallery-item">
-          <img src="{{ 'live-events-gallery-1.jpg' | asset_url }}" alt="Guests gathered around the embroidery station" loading="lazy" width="600" height="750">
+          <img src="{{ 'live-events-gallery-1.jpg' | asset_url }}" alt="A monogrammed pair of jeans, freshly embroidered" loading="lazy" width="600" height="750">
         </div>
         <div class="el-gallery-item">
-          <img src="{{ 'live-events-gallery-2.jpg' | asset_url }}" alt="A guest filling out a custom embroidery order form" loading="lazy" width="600" height="750">
+          <img src="{{ 'live-events-gallery-2.jpg' | asset_url }}" alt="A monogrammed sweater, freshly embroidered" loading="lazy" width="600" height="750">
         </div>
         <div class="el-gallery-item">
-          <img src="{{ 'live-events-gallery-4.jpg' | asset_url }}" alt="Custom embroidery menu and order forms styled on a table" loading="lazy" width="600" height="750">
+          <img src="{{ 'live-events-gallery-4.jpg' | asset_url }}" alt="Guests browsing near the embroidery station inside a retail boutique" loading="lazy" width="600" height="750">
+        </div>
+        <div class="el-gallery-item">
+          <img src="{{ 'live-events-gallery-6.jpg' | asset_url }}" alt="A custom embroidery menu and freshly monogrammed items on display" loading="lazy" width="600" height="750">
+        </div>
+        <div class="el-gallery-item">
+          <img src="{{ 'live-events-gallery-5.jpg' | asset_url }}" alt="Patio setup at an outdoor embroidery event" loading="lazy" width="600" height="750" style="object-position: top;">
         </div>
       </div>
     </div>
@@ -618,8 +661,8 @@
                 <input type="date" id="el-eventDate" name="contact[event_date]" required>
               </div>
               <div class="el-field">
-                <label for="el-guestCount">Estimated Guests</label>
-                <input type="number" id="el-guestCount" name="contact[guest_count]" min="1" required>
+                <label for="el-guestCount">Estimated # of Guests Receiving Embroidery</label>
+                <input type="number" id="el-guestCount" name="contact[guest_count]" min="1" placeholder="Not sure yet? Leave blank">
               </div>
             </div>
             <div class="el-form-row">
@@ -635,6 +678,36 @@
             <div class="el-field">
               <label for="el-eventLocation">Event Location</label>
               <input type="text" id="el-eventLocation" name="contact[event_location]" required autocomplete="street-address">
+            </div>
+            <div class="el-field">
+              <label>Venue Type</label>
+              <div class="el-radio-group">
+                <label class="el-radio-option"><input type="radio" name="contact[venue_type]" value="Indoor" required> Indoor</label>
+                <label class="el-radio-option"><input type="radio" name="contact[venue_type]" value="Outdoor" required> Outdoor</label>
+              </div>
+            </div>
+            <div class="el-field">
+              <label>Item Variety</label>
+              <div class="el-radio-group">
+                <label class="el-radio-option"><input type="radio" id="el-itemVarietySame" name="contact[item_variety]" value="Identical items for every guest" required> Identical items for every guest</label>
+                <label class="el-radio-option"><input type="radio" id="el-itemVarietyDifferent" name="contact[item_variety]" value="Different items per guest" required> Different items per guest</label>
+              </div>
+            </div>
+            <div class="el-field" id="el-itemVarietyCountField" hidden>
+              <label for="el-itemVarietyCount">How Many Different Kinds?</label>
+              <select id="el-itemVarietyCount" name="contact[item_variety_count]">
+                <option value="">Select an option</option>
+                <option value="2-3 kinds">2–3 kinds</option>
+                <option value="4+ kinds">4+ kinds</option>
+                <option value="Not sure yet">Not sure yet</option>
+              </select>
+            </div>
+            <div class="el-field">
+              <label>Item Sourcing</label>
+              <div class="el-radio-group">
+                <label class="el-radio-option"><input type="radio" name="contact[item_sourcing]" value="We'll provide the items" required> We'll provide the items</label>
+                <label class="el-radio-option"><input type="radio" name="contact[item_sourcing]" value="Need Ember Lane to source items" required> Need Ember Lane to source items</label>
+              </div>
             </div>
             <div class="el-field">
               <label for="el-budget">Budget <span style="text-transform:none;letter-spacing:0;opacity:0.5;">(optional)</span></label>
@@ -672,6 +745,20 @@
       }
     });
   });
+
+  var toggleVarietyCount = function () {
+    var varietyDifferent = document.getElementById('el-itemVarietyDifferent');
+    var varietyCountField = document.getElementById('el-itemVarietyCountField');
+    var varietyCountSelect = document.getElementById('el-itemVarietyCount');
+    if (!varietyDifferent || !varietyCountField) return;
+    var show = varietyDifferent.checked;
+    varietyCountField.hidden = !show;
+    if (varietyCountSelect) { varietyCountSelect.required = show; }
+  };
+  document.addEventListener('change', function (e) {
+    if (e.target && e.target.name === 'contact[item_variety]') { toggleVarietyCount(); }
+  });
+  toggleVarietyCount();
 
 })();
 </script>
