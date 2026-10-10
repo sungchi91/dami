@@ -308,7 +308,10 @@
       {%- render 'cart-drawer' -%}
     {%- endif -%}
 
-    {% sections 'header-group' %}
+    {%- comment -%} Ember Lane Live landing page (footer link only): no announcement bar or store header; the page has its own wordmark {%- endcomment -%}
+    {%- unless template.suffix == 'ember-lane-live' -%}
+      {% sections 'header-group' %}
+    {%- endunless -%}
 
     <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
       {{ content_for_layout }}
