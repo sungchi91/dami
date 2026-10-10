@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "ember_lane_live": {
+      "type": "ember-lane-live",
+      "settings": {}
+    }
+  },
+  "order": ["ember_lane_live"]
+}
