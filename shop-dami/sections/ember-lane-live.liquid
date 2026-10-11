@@ -330,7 +330,22 @@
 
   /* STORY */
   .ell-story { background: var(--ell-cream); padding: 104px 80px; }
-  .ell-story-inner { max-width: 680px; margin: 0 auto; }
+  .ell-story-inner, .ell-what-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .ell-story h2 {
+    font-family: var(--font-heading-family);
+    font-weight: 400;
+    font-size: clamp(28px, 3.2vw, 40px);
+    line-height: 1.15;
+    color: var(--ell-ink);
+    margin: 0;
+  }
   .ell-story p {
     font-family: var(--font-heading-family);
     font-size: clamp(22px, 2.4vw, 28px);
@@ -347,14 +362,13 @@
 
   /* WHAT IT IS */
   .ell-what { background: var(--ell-white); padding: 96px 80px; }
-  .ell-what-inner { max-width: 680px; margin: 0 auto; }
   .ell-what h2 {
     font-family: var(--font-heading-family);
     font-weight: 400;
     font-size: clamp(28px, 3.2vw, 40px);
     line-height: 1.15;
     color: var(--ell-ink);
-    margin: 0 0 20px;
+    margin: 0;
   }
   .ell-what p {
     font-family: var(--ell-sans);
@@ -440,6 +454,7 @@
 
   @media (max-width: 900px) {
     .ell-hero-inner, .ell-moment-inner, .ell-access-inner { grid-template-columns: 1fr; gap: 48px; }
+    .ell-story-inner, .ell-what-inner { grid-template-columns: 1fr; gap: 24px; }
     .ell-moment.is-flipped .ell-moment-copy { order: 0; }
     .ell-form-row { grid-template-columns: 1fr; }
   }
@@ -596,18 +611,25 @@
   <!-- STORY -->
   <div class="ell-story">
     <div class="ell-story-inner">
-      <span class="ell-eyebrow">Why we built this</span>
-      <p>We got tired of spending hours nudging letters into place in Embrilliance, and of paper order forms going missing at retail pop-ups. So we built the system we wished we'd had at the cart.</p>
-      <p>We run our own events on it now.</p>
-      <p class="ell-sign">&mdash; Amy and David, Ember Lane</p>
+      <div>
+        <span class="ell-eyebrow">Our story</span>
+        <h2>Why we built this</h2>
+      </div>
+      <div>
+        <p>We got tired of spending hours nudging letters into place in Embrilliance, and of paper order forms going missing at retail pop-ups. So we built the system we wished we'd had at the cart.</p>
+        <p>We run our own events on it now.</p>
+        <p class="ell-sign">&mdash; Amy and David, Ember Lane</p>
+      </div>
     </div>
   </div>
 
   <!-- WHAT IT IS -->
   <div class="ell-what">
     <div class="ell-what-inner">
-      <span class="ell-eyebrow">Live embroidery software</span>
-      <h2>What is Ember Lane Live?</h2>
+      <div>
+        <span class="ell-eyebrow">Live embroidery software</span>
+        <h2>What is Ember Lane Live?</h2>
+      </div>
       <p>Ember Lane Live is a live embroidery management system for studios that stitch at events. Guests order from their phones through your own ordering portal. Your crew runs the line from one live queue, with a label printed for every order and each name sent to the machine ready to stitch. You keep the craft. It keeps the line moving.</p>
     </div>
   </div>
