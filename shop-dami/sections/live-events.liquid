@@ -15,6 +15,7 @@
     --el-red:      #781E23;
     --el-muted:    #6b6358;
     color: var(--el-ink);
+    letter-spacing: normal;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -385,7 +386,10 @@
   }
   .el-field select:focus { outline: none; border-color: rgba(27,48,84,0.4); }
   .el-radio-group { display: flex; flex-wrap: wrap; gap: 20px; padding-top: 2px; }
-  .el-radio-option {
+  .el-field .el-radio-option {
+    text-transform: none;
+    letter-spacing: normal;
+    margin-bottom: 0;
     display: flex;
     align-items: center;
     gap: 7px;
@@ -429,8 +433,32 @@
     .el-form-card { padding: 28px 24px; }
     .el-events-grid { grid-template-columns: 1fr 1fr; }
     .el-why-grid { grid-template-columns: 1fr; }
-    .el-hero { padding: 88px 24px; }
+    .el-hero { padding: 64px 24px; }
     .el-gallery-grid { grid-template-columns: 1fr 1fr; }
+    .el-how, .el-events, .el-why, .el-gallery, .el-faq, .el-inquiry { padding: 56px 0; }
+    .el-how-inner, .el-faq-inner, .el-inquiry-inner, .el-why-inner { gap: 36px; }
+    .el-eyebrow { font-size: 10px; }
+    .el-hero h1 { font-size: 32px; margin-bottom: 16px; }
+    .el-hero .el-lede { font-size: 15px; margin-bottom: 28px; }
+    .el-btn { font-size: 11px; padding: 10px 22px; }
+    .el-service-area { font-size: 12px; margin-top: 24px; }
+    .el-how-copy h2, .el-section-label h2, .el-inquiry-copy h2 { font-size: 26px; }
+    .el-faq h2 { font-size: 26px !important; }
+    .el-section-label { margin-bottom: 32px; }
+    .el-how-copy p, .el-section-label p, .el-step p, .el-why-item p, .el-inquiry-copy p { font-size: 14px; line-height: 1.65; }
+    .el-steps { gap: 20px; }
+    .el-step h3 { font-size: 16px; }
+    .el-events-grid { gap: 12px; }
+    .el-event-card { padding: 22px 12px; }
+    .el-event-card h3 { font-size: 14px; }
+    .el-why-grid { gap: 28px; margin-top: 28px; }
+    .el-why-item h3 { font-size: 18px; margin-bottom: 6px; }
+    .el-gallery-grid { margin-top: 32px; gap: 10px; }
+    .el-faq-btn { font-size: 17px; padding: 16px 0; }
+    .el-faq-text { font-size: 14px; }
+    .el-field label { font-size: 11px; }
+    /* 16px keeps iOS Safari from zooming into the field */
+    .el-field input:not([type="radio"]):not([type="checkbox"]), .el-field textarea, .el-field select { font-size: 16px; }
   }
 </style>
 
