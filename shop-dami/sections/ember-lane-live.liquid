@@ -1,19 +1,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Petit+Formal+Script&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Petit+Formal+Script&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
   .ell {
     --ell-navy:   #2c3645;
     --ell-ink:    #2f2f2f;
     --ell-cream:  #f7f4ef;
-    --ell-tan:    #e8e0d5;
+    --ell-mist:   #eef0f2;
     --ell-white:  #ffffff;
-    --ell-taupe:  #d9d0bc;
-    --ell-muted:  #6b6358;
+    --ell-line:   #e3e5e8;
+    --ell-muted:  #6b6b6b;
     --ell-blue:   #7a9bad;
-    --ell-gold:   #c9a45c;
     --ell-script: 'Petit Formal Script', 'Brush Script MT', cursive;
+    --ell-sans:   'Work Sans', 'Helvetica Neue', Arial, sans-serif;
     color: var(--ell-ink);
     -webkit-font-smoothing: antialiased;
   }
@@ -21,8 +21,9 @@
 
   .ell-eyebrow {
     display: block;
-    font-family: var(--font-body-family);
-    font-size: 12px;
+    font-family: var(--ell-sans);
+    font-size: 11px;
+    font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--ell-muted);
@@ -31,7 +32,7 @@
   .ell-btn {
     display: inline-block;
     padding: 12px 28px;
-    font-family: var(--font-body-family);
+    font-family: var(--ell-sans);
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -81,8 +82,8 @@
   }
   .ell-hero h1 em { font-style: italic; }
   .ell-hero p {
-    font-family: var(--font-body-family);
-    font-size: 19px;
+    font-family: var(--ell-sans);
+    font-size: 18px;
     line-height: 1.6;
     color: rgba(247,244,239,0.92);
     max-width: 460px;
@@ -123,7 +124,7 @@
     background:
       repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 5px),
       repeating-linear-gradient(-45deg, rgba(0,0,0,0.05) 0 2px, transparent 2px 5px),
-      var(--fabric, #c2b28f);
+      var(--fabric, #d6d9dc);
   }
   .ell-stitched {
     font-family: var(--ell-script);
@@ -131,6 +132,11 @@
     line-height: 1;
     color: var(--thread, #f7f4ef);
     text-shadow: 0 1px 0 rgba(0,0,0,0.25), 0 -1px 0 rgba(255,255,255,0.15);
+  }
+  .ell-fabric.is-canvas { box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); }
+  .ell-fabric.is-tonal { box-shadow: inset 0 0 0 1px var(--ell-line); }
+  .ell-fabric.is-tonal .ell-stitched {
+    text-shadow: 0 1px 1px rgba(0,0,0,0.18), 0 0 1px rgba(0,0,0,0.12);
   }
   .ell-phone-picks {
     display: flex;
@@ -142,14 +148,14 @@
     width: 22px; height: 22px;
     border-radius: 50%;
     border: 2px solid var(--ell-white);
-    box-shadow: 0 0 0 1px var(--ell-taupe);
+    box-shadow: 0 0 0 1px var(--ell-line);
   }
   .ell-swatch.is-on { box-shadow: 0 0 0 2px var(--ell-navy); }
   .ell-phone-btn {
     background: var(--ell-blue);
     color: #fff;
     text-align: center;
-    font-family: var(--font-body-family);
+    font-family: var(--ell-sans);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.12em;
@@ -171,22 +177,22 @@
   }
   .ell-moment.is-flipped .ell-moment-copy { order: 2; }
   .ell-before {
-    font-family: var(--font-heading-family);
-    font-size: clamp(24px, 2.6vw, 32px);
-    line-height: 1.3;
+    font-family: var(--ell-sans);
+    font-size: clamp(18px, 1.7vw, 21px);
+    line-height: 1.6;
     color: var(--ell-muted);
     margin: 0 0 28px;
   }
   .ell-now {
-    font-family: var(--font-heading-family);
-    font-size: clamp(24px, 2.6vw, 32px);
-    line-height: 1.3;
+    font-family: var(--ell-sans);
+    font-size: clamp(18px, 1.7vw, 21px);
+    line-height: 1.6;
     color: var(--ell-ink);
     margin: 0;
     padding-top: 28px;
-    border-top: 1px solid var(--ell-taupe);
+    border-top: 1px solid var(--ell-line);
   }
-  .ell-now strong { font-weight: 600; }
+  .ell-now strong { font-weight: 500; }
   .ell-visual {
     display: flex;
     justify-content: center;
@@ -197,7 +203,7 @@
     width: 100%;
     max-width: 340px;
     background: var(--ell-white);
-    border: 1px solid var(--ell-taupe);
+    border: 1px solid var(--ell-line);
     padding: 28px;
   }
   .ell-menu-row {
@@ -205,8 +211,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 12px 0;
-    border-bottom: 1px solid var(--ell-tan);
-    font-family: var(--font-body-family);
+    border-bottom: 1px solid var(--ell-line);
+    font-family: var(--ell-sans);
     font-size: 14px;
   }
   .ell-menu-row:last-child { border-bottom: 0; }
@@ -218,11 +224,11 @@
   .ell-pill {
     display: inline-block;
     padding: 7px 16px;
-    border: 1px solid var(--ell-taupe);
+    border: 1px solid var(--ell-line);
     border-radius: 999px;
     background: var(--ell-white);
-    font-family: var(--font-body-family);
-    font-size: 15px;
+    font-family: var(--ell-sans);
+    font-size: 13px;
     color: var(--ell-muted);
     text-align: center;
   }
@@ -249,11 +255,11 @@
     width: 62%;
     aspect-ratio: 2.25 / 1.25;
     background: var(--ell-white);
-    border: 1px solid var(--ell-taupe);
+    border: 1px solid var(--ell-line);
     padding: 12px 14px;
     box-shadow: 0 14px 30px rgba(0,0,0,0.12);
     transform: rotate(-3deg);
-    font-family: var(--font-body-family);
+    font-family: var(--ell-sans);
   }
   .ell-label b { display: block; font-size: 26px; line-height: 1; margin-bottom: 6px; }
   .ell-label span { display: block; font-size: 12px; color: var(--ell-muted); line-height: 1.45; }
@@ -265,10 +271,10 @@
     top: 0; left: 0;
     width: 64%;
     background: var(--ell-white);
-    border: 1px solid var(--ell-taupe);
+    border: 1px solid var(--ell-line);
     border-left: 3px solid var(--ell-blue);
     padding: 16px 18px;
-    font-family: var(--font-body-family);
+    font-family: var(--ell-sans);
     box-shadow: 0 14px 30px rgba(0,0,0,0.08);
   }
   .ell-card small { display: block; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ell-blue); margin-bottom: 6px; }
@@ -279,11 +285,11 @@
     right: 0; bottom: 0;
     width: 200px; height: 200px;
     border-radius: 50%;
-    border: 10px solid #d8c3a0;
-    box-shadow: inset 0 0 0 3px #bfa77f, 0 16px 34px rgba(0,0,0,0.14);
+    border: 10px solid #d3d7db;
+    box-shadow: inset 0 0 0 3px #bcc2c8, 0 16px 34px rgba(0,0,0,0.14);
     background:
-      repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 5px),
-      #e9e1cf;
+      repeating-linear-gradient(45deg, rgba(0,0,0,0.02) 0 2px, transparent 2px 5px),
+      #fbfbfb;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -302,12 +308,12 @@
     width: 100%;
     max-width: 360px;
     background: var(--ell-white);
-    border: 1px solid var(--ell-taupe);
+    border: 1px solid var(--ell-line);
     padding: 28px;
-    font-family: var(--font-body-family);
+    font-family: var(--ell-sans);
   }
   .ell-clock-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--ell-muted); margin-bottom: 8px; }
-  .ell-bar { height: 10px; background: var(--ell-tan); border-radius: 5px; overflow: hidden; margin-bottom: 22px; }
+  .ell-bar { height: 10px; background: var(--ell-mist); border-radius: 5px; overflow: hidden; margin-bottom: 22px; }
   .ell-bar i { display: block; height: 100%; background: var(--ell-blue); border-radius: 5px; }
   .ell-bar.is-line i { background: var(--ell-navy); }
   .ell-clock-btn {
@@ -341,7 +347,7 @@
 
   /* CLOSE */
   .ell-close {
-    background: var(--ell-tan);
+    background: var(--ell-white);
     padding: 104px 80px;
     text-align: center;
   }
@@ -376,9 +382,9 @@
     margin: 0 0 20px;
   }
   .ell-access-copy p {
-    font-family: var(--font-body-family);
-    font-size: 19px;
-    line-height: 1.6;
+    font-family: var(--ell-sans);
+    font-size: 17px;
+    line-height: 1.65;
     color: rgba(247,244,239,0.9);
     margin: 0;
   }
@@ -386,7 +392,7 @@
   .ell-field { margin-bottom: 18px; }
   .ell-field label {
     display: block;
-    font-family: var(--font-body-family);
+    font-family: var(--ell-sans);
     font-size: 12px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -398,9 +404,9 @@
   .ell-field textarea {
     width: 100%;
     padding: 11px 14px;
-    border: 1px solid var(--ell-taupe);
+    border: 1px solid var(--ell-line);
     background: var(--ell-white);
-    font-family: var(--font-body-family);
+    font-family: var(--ell-sans);
     font-size: 15px;
     color: var(--ell-ink);
     border-radius: 0;
@@ -409,9 +415,9 @@
   .ell-field input:focus,
   .ell-field textarea:focus { outline: none; border-color: rgba(44,54,69,0.45); }
   .ell-field textarea { resize: vertical; min-height: 96px; }
-  .ell-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .ell-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: end; }
   .ell-form-success h3 { font-family: var(--font-heading-family); font-size: 28px; font-weight: 400; margin: 0 0 10px; color: var(--ell-navy); }
-  .ell-form-success p { font-family: var(--font-body-family); font-size: 15px; color: var(--ell-muted); margin: 0; }
+  .ell-form-success p { font-family: var(--ell-sans); font-size: 15px; color: var(--ell-muted); margin: 0; }
 
   @media (max-width: 900px) {
     .ell-hero-inner, .ell-moment-inner, .ell-access-inner { grid-template-columns: 1fr; gap: 48px; }
@@ -442,13 +448,13 @@
       <div class="ell-phone" aria-hidden="true">
         <div class="ell-phone-screen">
           <div class="ell-phone-brand">Ember Lane</div>
-          <div class="ell-fabric" style="--fabric:#b8a682;--thread:#2c3645;">
+          <div class="ell-fabric is-canvas" style="--fabric:#ebe7df;--thread:#2c3645;">
             <span class="ell-stitched">Olivia</span>
           </div>
           <div class="ell-phone-picks">
             <span class="ell-swatch is-on" style="background:#2c3645"></span>
             <span class="ell-swatch" style="background:#f7f4ef"></span>
-            <span class="ell-swatch" style="background:#c9a45c"></span>
+            <span class="ell-swatch" style="background:#7a9bad"></span>
             <span class="ell-swatch" style="background:#781e23"></span>
           </div>
           <div class="ell-phone-btn">Place order</div>
@@ -467,8 +473,8 @@
       </div>
       <div class="ell-visual" aria-hidden="true">
         <div class="ell-menu">
-          <span class="ell-eyebrow">Tonight's menu</span>
-          <div class="ell-menu-row"><span>Canvas tote</span><span>Natural &middot; Navy</span></div>
+          <span class="ell-eyebrow">Embroidery Menu</span>
+          <div class="ell-menu-row"><span>Canvas tote</span><span>White &middot; Navy</span></div>
           <div class="ell-menu-row"><span>Script name</span><span>3 thread colors</span></div>
           <div class="ell-menu-row is-out"><span>Blush thread</span><span>Sold out</span></div>
           <div class="ell-menu-row is-new"><span>Sage thread</span><span>Just added</span></div>
@@ -482,12 +488,12 @@
     <div class="ell-moment-inner">
       <div class="ell-moment-copy">
         <span class="ell-eyebrow">At the counter</span>
-        <p class="ell-before">&ldquo;Will gold show up on khaki?&rdquo; You hold a spool against the shirt and hope they can picture it.</p>
+        <p class="ell-before">&ldquo;Will white show up on off-white?&rdquo; You hold a spool against the shirt and hope they can picture it.</p>
         <p class="ell-now">Now they see it. <strong>Their name, their thread, on their item,</strong> before they order.</p>
       </div>
       <div class="ell-visual has-caption">
         <div class="ell-menu" style="padding:18px;" aria-hidden="true">
-          <div class="ell-fabric" style="--fabric:#c9b994;--thread:#c9a45c;">
+          <div class="ell-fabric is-tonal" style="--fabric:#efede8;--thread:#ffffff;">
             <span class="ell-stitched">Katelyn</span>
           </div>
         </div>
@@ -514,7 +520,7 @@
           <div class="ell-label">
             <b>#22</b>
             <span>Katelyn</span>
-            <span>Tote &middot; Natural &middot; Gold</span>
+            <span>Sweatshirt &middot; Off-white &middot; White</span>
           </div>
         </div>
       </div>
@@ -534,7 +540,7 @@
           <div class="ell-card">
             <small>On machine</small>
             <b>#22 Katelyn</b>
-            <span>Tote &middot; Gold</span>
+            <span>Sweatshirt &middot; White</span>
           </div>
           <div class="ell-hoop">
             <div class="ell-label">
@@ -615,17 +621,23 @@
             </div>
             <div class="ell-form-row">
               <div class="ell-field">
-                <label for="ell-studio">Studio</label>
-                <input type="text" id="ell-studio" name="contact[studio]" required autocomplete="organization">
+                <label for="ell-company">Your company</label>
+                <input type="text" id="ell-company" name="contact[company]" required autocomplete="organization">
               </div>
               <div class="ell-field">
-                <label for="ell-link">Website or Instagram <small>(optional)</small></label>
-                <input type="text" id="ell-link" name="contact[website_or_instagram]">
+                <label for="ell-link">Website or social</label>
+                <input type="text" id="ell-link" name="contact[website_or_social]" required>
               </div>
             </div>
-            <div class="ell-field">
-              <label for="ell-machine">Which machine do you bring to events?</label>
-              <input type="text" id="ell-machine" name="contact[machine]" required placeholder="e.g. Baby Lock Venture 2">
+            <div class="ell-form-row">
+              <div class="ell-field">
+                <label for="ell-machine">Which machine do you bring to events?</label>
+                <input type="text" id="ell-machine" name="contact[machine]" required placeholder="e.g. Baby Lock Venture 2">
+              </div>
+              <div class="ell-field">
+                <label for="ell-machine-count">How many machines?</label>
+                <input type="number" id="ell-machine-count" name="contact[machine_count]" required min="1" inputmode="numeric">
+              </div>
             </div>
             <div class="ell-field">
               <label for="ell-body">How do you take orders at events today? <small>(optional)</small></label>

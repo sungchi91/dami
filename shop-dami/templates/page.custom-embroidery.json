@@ -3,7 +3,14 @@
     "custom_embroidery": {
       "type": "custom-embroidery",
       "settings": {}
+    },
+    "in_the_wild": {
+      "type": "custom-liquid",
+      "settings": {}
     }
   },
-  "order": ["custom_embroidery"]
+  "order": [
+    "custom_embroidery",
+    "in_the_wild"
+  ]
 }

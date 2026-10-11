@@ -1,5 +1,11 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
   .ce {
+    --ce-sans: 'Work Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--ce-sans);
     --ce-navy:   #1B3054;
     --ce-ink:    #2f2f2f;
     --ce-cream:  #f7f4ef;
@@ -15,12 +21,13 @@
 
   .ce-eyebrow {
     display: block;
-    font-size: 12px;
+    font-size: 11px;
+    font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--ce-muted);
     margin-bottom: 12px;
-    font-family: var(--font-body-family);
+    font-family: var(--ce-sans);
   }
 
   /* HERO */
@@ -41,9 +48,8 @@
     max-width: 720px;
   }
   .ce-hero .ce-lede {
-    font-family: var(--font-body-family);
+    font-family: var(--ce-sans);
     font-size: 16px;
-    font-style: italic;
     color: var(--ce-muted);
     max-width: 520px;
     margin: 0 auto 40px;
@@ -59,7 +65,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: var(--font-body-family);
+    font-family: var(--ce-sans);
     font-size: 15px;
     color: var(--ce-muted);
   }
@@ -68,7 +74,7 @@
   .ce-btn {
     display: inline-block;
     padding: 11px 26px;
-    font-family: var(--font-body-family);
+    font-family: var(--ce-sans);
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -127,7 +133,7 @@
   .ce-faq-plus { font-size: 20px; color: var(--ce-muted); transition: transform 0.2s; flex-shrink: 0; line-height: 1; }
   .ce-faq-item.ce-open .ce-faq-plus { transform: rotate(45deg); }
   .ce-faq-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
-  .ce-faq-text { padding: 0 24px 20px 0; color: var(--ce-muted); font-size: 16px; font-family: var(--font-body-family); line-height: 1.7; }
+  .ce-faq-text { padding: 0 24px 20px 0; color: var(--ce-muted); font-size: 16px; font-family: var(--ce-sans); line-height: 1.7; }
   .ce-faq-text ul { padding-left: 18px; margin: 8px 0; }
   .ce-faq-text li { margin-bottom: 6px; }
 
@@ -154,8 +160,8 @@
     margin: 0 0 20px;
   }
   .ce-inquiry-copy h2 em { font-style: italic; }
-  .ce-inquiry-copy p { font-family: var(--font-body-family); font-size: 15px; color: rgba(247,244,239,0.75); margin: 0 0 12px; line-height: 1.7; }
-  .ce-inquiry-tagline { font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(247,244,239,0.35); margin-top: 32px; font-family: var(--font-body-family); }
+  .ce-inquiry-copy p { font-family: var(--ce-sans); font-size: 15px; color: rgba(247,244,239,0.75); margin: 0 0 12px; line-height: 1.7; }
+  .ce-inquiry-tagline { font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(247,244,239,0.35); margin-top: 32px; font-family: var(--ce-sans); }
 
   /* Form card */
   .ce-form-card {
@@ -180,7 +186,7 @@
   .ce-field:last-child { margin-bottom: 0; }
   .ce-field label {
     display: block;
-    font-family: var(--font-body-family);
+    font-family: var(--ce-sans);
     font-size: 12px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -194,7 +200,7 @@
     padding: 11px 14px;
     border: 1px solid var(--ce-taupe);
     background: var(--ce-white);
-    font-family: var(--font-body-family);
+    font-family: var(--ce-sans);
     font-size: 15px;
     color: var(--ce-ink);
     transition: border-color 0.2s;
@@ -208,8 +214,8 @@
   .ce-field select:focus,
   .ce-field textarea:focus { outline: none; border-color: rgba(27,48,84,0.4); }
   .ce-field textarea { resize: vertical; min-height: 100px; }
-  .ce-field .ce-hint { font-size: 13px; color: var(--ce-muted); margin-top: 6px; font-family: var(--font-body-family); line-height: 1.5; }
-  .ce-req { font-size: 12px; color: var(--ce-muted); margin-left: 4px; font-family: var(--font-body-family); font-style: normal; text-transform: none; letter-spacing: 0; }
+  .ce-field .ce-hint { font-size: 13px; color: var(--ce-muted); margin-top: 6px; font-family: var(--ce-sans); line-height: 1.5; }
+  .ce-req { font-size: 12px; color: var(--ce-muted); margin-left: 4px; font-family: var(--ce-sans); font-style: normal; text-transform: none; letter-spacing: 0; }
 
   .ce-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
@@ -222,7 +228,7 @@
     padding: 11px 14px;
     border: 1px solid var(--ce-taupe);
     background: var(--ce-white);
-    font-family: var(--font-body-family);
+    font-family: var(--ce-sans);
     font-size: 15px;
     color: var(--ce-ink);
     cursor: pointer;
@@ -238,7 +244,7 @@
     padding: 4px 2px;
     background: transparent;
     color: var(--ce-ink);
-    font-family: var(--font-body-family);
+    font-family: var(--ce-sans);
     font-size: 15px;
   }
   .ce-other-text:focus { outline: none; border-color: rgba(27,48,84,0.4); }
@@ -255,19 +261,19 @@
   }
   .ce-upload-box:hover, .ce-upload-box.ce-dragover { border-color: rgba(27,48,84,0.35); background: rgba(27,48,84,0.06); }
   .ce-upload-box svg { width: 24px; height: 24px; color: var(--ce-muted); margin: 0 auto 8px; }
-  .ce-upload-label { font-size: 13.5px; color: var(--ce-ink); font-family: var(--font-body-family); font-weight: 500; }
-  .ce-upload-sub { font-size: 13px; color: var(--ce-muted); margin-top: 4px; font-family: var(--font-body-family); }
+  .ce-upload-label { font-size: 13.5px; color: var(--ce-ink); font-family: var(--ce-sans); font-weight: 500; }
+  .ce-upload-sub { font-size: 13px; color: var(--ce-muted); margin-top: 4px; font-family: var(--ce-sans); }
   .ce-upload-box input[type="file"] { display: none; }
   .ce-file-list { margin-top: 8px; font-size: 14px; color: var(--ce-muted); }
-  .ce-file-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border: 1px solid var(--ce-taupe); margin-top: 6px; font-family: var(--font-body-family); }
-  .ce-file-item button { background: none; border: none; color: var(--ce-muted); cursor: pointer; font-size: 13px; font-family: var(--font-body-family); }
+  .ce-file-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border: 1px solid var(--ce-taupe); margin-top: 6px; font-family: var(--ce-sans); }
+  .ce-file-item button { background: none; border: none; color: var(--ce-muted); cursor: pointer; font-size: 13px; font-family: var(--ce-sans); }
 
   .ce-submit-btn {
     background: #2c3645;
     color: var(--ce-cream);
     border: none;
     padding: 12px 32px;
-    font-family: var(--font-body-family);
+    font-family: var(--ce-sans);
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -280,7 +286,7 @@
 
   .ce-form-success { padding: 32px 0; }
   .ce-form-success h3 { font-family: var(--font-heading-family); font-size: 28px; font-weight: 400; margin: 0 0 10px; color: var(--ce-navy); }
-  .ce-form-success p { font-size: 15px; color: var(--ce-muted); margin: 0 0 8px; font-family: var(--font-body-family); line-height: 1.65; }
+  .ce-form-success p { font-size: 15px; color: var(--ce-muted); margin: 0 0 8px; font-family: var(--ce-sans); line-height: 1.65; }
 
   /* Responsive */
   @media (max-width: 900px) {
@@ -402,7 +408,7 @@
             </div>
           {%- else -%}
             {%- if form.errors -%}
-              <p style="color:rgba(247,100,100,0.9);font-size:14px;margin:0 0 16px;font-family:var(--font-body-family);">{{ form.errors | default_errors }}</p>
+              <p style="color:rgba(247,100,100,0.9);font-size:14px;margin:0 0 16px;font-family:var(--ce-sans);">{{ form.errors | default_errors }}</p>
             {%- endif -%}
 
             <fieldset class="ce-fieldset">

@@ -3,7 +3,14 @@
     "live_events": {
       "type": "live-events",
       "settings": {}
+    },
+    "in_the_wild": {
+      "type": "custom-liquid",
+      "settings": {}
     }
   },
-  "order": ["live_events"]
+  "order": [
+    "live_events",
+    "in_the_wild"
+  ]
 }
