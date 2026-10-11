@@ -345,9 +345,28 @@
     margin: 32px 0 0;
   }
 
+  /* WHAT IT IS */
+  .ell-what { background: var(--ell-white); padding: 96px 80px; }
+  .ell-what-inner { max-width: 680px; margin: 0 auto; }
+  .ell-what h2 {
+    font-family: var(--font-heading-family);
+    font-weight: 400;
+    font-size: clamp(28px, 3.2vw, 40px);
+    line-height: 1.15;
+    color: var(--ell-ink);
+    margin: 0 0 20px;
+  }
+  .ell-what p {
+    font-family: var(--ell-sans);
+    font-size: 18px;
+    line-height: 1.7;
+    color: var(--ell-muted);
+    margin: 0;
+  }
+
   /* CLOSE */
   .ell-close {
-    background: var(--ell-white);
+    background: var(--ell-cream);
     padding: 104px 80px;
     text-align: center;
   }
@@ -427,7 +446,7 @@
   @media (max-width: 560px) {
     .ell-hero { padding: 28px 20px 72px; }
     .ell-mark { margin-bottom: 48px; font-size: 16px; }
-    .ell-moment, .ell-story, .ell-close, .ell-access { padding: 72px 20px; }
+    .ell-moment, .ell-story, .ell-what, .ell-close, .ell-access { padding: 72px 20px; }
     .ell-form-card { padding: 28px 20px; }
     .ell-menu, .ell-clock { padding: 22px; }
   }
@@ -440,7 +459,7 @@
     <a href="{{ routes.root_url }}" class="ell-mark">Ember Lane</a>
     <div class="ell-hero-inner">
       <div>
-        <span class="ell-eyebrow">Ember Lane Live &middot; Early access</span>
+        <span class="ell-eyebrow">Ember Lane Live &middot; Live embroidery software</span>
         <h1>Live embroidery, <em>beautifully orchestrated.</em></h1>
         <p>Guests order from their phones. By the time you reach for the next blank, their name is on your machine.</p>
         <a href="#ell-access" class="ell-btn">Request early access</a>
@@ -584,6 +603,15 @@
     </div>
   </div>
 
+  <!-- WHAT IT IS -->
+  <div class="ell-what">
+    <div class="ell-what-inner">
+      <span class="ell-eyebrow">Live embroidery software</span>
+      <h2>What is Ember Lane Live?</h2>
+      <p>Ember Lane Live is a live embroidery management system for studios that stitch at events. Guests order from their phones through your own ordering portal. Your crew runs the line from one live queue, with a label printed for every order and each name sent to the machine ready to stitch. You keep the craft. It keeps the line moving.</p>
+    </div>
+  </div>
+
   <!-- CLOSE -->
   <div class="ell-close">
     <h2>You came to stitch. <em>Not to stress.</em></h2>
@@ -651,6 +679,21 @@
   </div>
 
 </div>
+
+{%- comment -%} Structured data for search engines {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Ember Lane Live",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web, Windows",
+  "description": "Live embroidery management system for studios that stitch at events: guest ordering portal, live queue management, order labels and machine-ready files.",
+  "keywords": "live embroidery software, live embroidery management system, live embroidery queue system, live embroidery queue management, live embroidery portal, embroidery event software",
+  "url": {{ canonical_url | json }},
+  "publisher": { "@type": "Organization", "name": {{ shop.name | json }}, "url": {{ shop.url | json }} }
+}
+</script>
 
 {% schema %}
 {

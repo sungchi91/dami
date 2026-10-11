@@ -6,7 +6,12 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="">
     <meta name="p:domain_verify" content="2177f5f1cdb7cb1b42d2555291553fc5"/>
-    <link rel="canonical" href="{{ canonical_url }}">
+    {%- comment -%} The home page shows the Live Events section, so /pages/live-events points search engines at the home page. Remove this if the home page changes back. {%- endcomment -%}
+    {%- if template.name == 'page' and template.suffix == 'live-events' -%}
+      <link rel="canonical" href="{{ request.origin }}{{ routes.root_url }}">
+    {%- else -%}
+      <link rel="canonical" href="{{ canonical_url }}">
+    {%- endif %}
 
     {%- if settings.favicon != blank -%}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
