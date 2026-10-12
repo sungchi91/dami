@@ -194,21 +194,43 @@
     color: var(--ell-ink);
     margin: 0 0 24px;
   }
-  .ell-before {
+  .ell-moment-title::before {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 2px;
+    background: var(--ell-blue);
+    margin-bottom: 20px;
+  }
+  /* Before -> now, side by side (stacked on phones) */
+  .ell-ba {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
+    align-items: stretch;
+  }
+  .ell-before, .ell-now {
     font-family: var(--ell-sans);
-    font-size: clamp(16px, 1.4vw, 18px);
+    font-size: 15px;
     line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+  }
+  .ell-before {
     color: var(--ell-muted);
-    margin: 0 0 28px;
+    border: 1px solid var(--ell-line);
   }
   .ell-now {
-    font-family: var(--ell-sans);
-    font-size: clamp(16px, 1.4vw, 18px);
-    line-height: 1.6;
     color: var(--ell-ink);
-    margin: 0;
-    padding-top: 28px;
-    border-top: 1px solid var(--ell-line);
+    background: #edf2f5;
+    border: 1px solid var(--ell-blue);
+  }
+  .ell-arrow {
+    align-self: center;
+    font-family: var(--ell-sans);
+    font-size: 20px;
+    line-height: 1;
+    color: var(--ell-blue);
   }
   .ell-now strong { font-weight: 500; }
   .ell-before strong { font-weight: 500; color: var(--ell-ink); }
@@ -406,6 +428,7 @@
     color: var(--ell-muted);
     margin: 0;
   }
+  .ell-what p.ell-what-summary { font-style: italic; font-size: 14px; color: rgba(107,107,107,0.75); }
   .ell-compat { margin: 32px 0 0; padding-top: 24px; border-top: 1px solid var(--ell-line); }
   .ell-compat dl { margin: 0; font-family: var(--ell-sans); font-size: 15px; line-height: 1.6; }
   .ell-compat dt { color: var(--ell-ink); font-weight: 500; }
@@ -500,15 +523,16 @@
     .ell-hero p { font-size: 15px; margin-bottom: 20px; }
     .ell-hero-pills { margin-bottom: 28px; }
     .ell-hero-pills li { font-size: 12px; }
-    .ell-moment-title { font-size: 22px; margin-bottom: 18px; }
+    .ell-moment-title { font-size: 26px; margin-bottom: 20px; }
+    .ell-moment-title::before { margin-bottom: 16px; }
     .ell-btn { font-size: 11px; padding: 11px 22px; }
     .ell-phone { max-width: 230px; }
     .ell-stitched { font-size: 36px; }
     .ell-hero-inner, .ell-moment-inner, .ell-access-inner { gap: 36px; }
     .ell-moment, .ell-story, .ell-what, .ell-close, .ell-access { padding: 56px 24px; }
-    .ell-before, .ell-now { font-size: 15px; }
-    .ell-before { margin-bottom: 20px; }
-    .ell-now { padding-top: 20px; }
+    .ell-ba { grid-template-columns: 1fr; gap: 8px; }
+    .ell-arrow { justify-self: center; transform: rotate(90deg); }
+    .ell-before, .ell-now { padding: 18px; }
     .ell-menu, .ell-clock { max-width: 300px; padding: 20px; }
     .ell-menu-row { font-size: 13px; padding: 10px 0; }
     .ell-menu-row span:last-child { font-size: 12px; }
@@ -569,8 +593,11 @@
     <div class="ell-moment-inner">
       <div class="ell-moment-copy">
         <h2 class="ell-moment-title">Prepare for events without rebuilding everything from scratch</h2>
-        <p class="ell-before"><strong>The week before.</strong> You build the embroidery order form in Canva and print it. You spend an hour stitching out the menu. Then the host changes a color, and you start again.</p>
-        <p class="ell-now">Now the order form lives on the guest's phone, with a live preview of every design. <strong>Change it the night before, or halfway through the event.</strong> The next guest sees it.</p>
+        <div class="ell-ba">
+          <p class="ell-before"><strong>The week before.</strong> You build the embroidery order form in Canva and print it. You spend an hour stitching out the menu. Then the host changes a color, and you start again.</p>
+          <span class="ell-arrow" aria-hidden="true">&rarr;</span>
+          <p class="ell-now">Now the order form lives on the guest's phone, with a live preview of every design. <strong>Change it the night before, or halfway through the event.</strong> The next guest sees it.</p>
+        </div>
       </div>
       <div class="ell-visual" aria-hidden="true">
         <div class="ell-menu">
@@ -588,9 +615,12 @@
   <div class="ell-moment is-flipped">
     <div class="ell-moment-inner">
       <div class="ell-moment-copy">
-        <h2 class="ell-moment-title">Let guests choose confidently without constant operator consultation</h2>
-        <p class="ell-before"><strong>At the counter.</strong> &ldquo;Will white show up on off-white?&rdquo; You hold a spool against the shirt and hope they can picture it.</p>
-        <p class="ell-now">Now they see it. <strong>Their name, their thread, on their item,</strong> before they order.</p>
+        <h2 class="ell-moment-title">Let guests choose confidently without constant consultation</h2>
+        <div class="ell-ba">
+          <p class="ell-before"><strong>At the counter.</strong> &ldquo;Will white show up on off-white?&rdquo; You hold a spool against the shirt and hope they can picture it.</p>
+          <span class="ell-arrow" aria-hidden="true">&rarr;</span>
+          <p class="ell-now">Now they see it. <strong>Their name, their thread, on their item,</strong> before they order.</p>
+        </div>
       </div>
       <div class="ell-visual has-caption">
         <div class="ell-menu" style="padding:18px;" aria-hidden="true">
@@ -608,8 +638,11 @@
     <div class="ell-moment-inner">
       <div class="ell-moment-copy">
         <h2 class="ell-moment-title">Stop manually adjusting every letter</h2>
-        <p class="ell-before"><strong>At the machine.</strong> Find the font. Type the name. Nudge every letter until the joins touch. USB stick. Find the file. Center it again. Three guests are waiting.</p>
-        <p class="ell-now">Now you <strong>hoop and press start.</strong> The name is already on the machine, lined up, at the top of the list.</p>
+        <div class="ell-ba">
+          <p class="ell-before"><strong>At the machine.</strong> Find the font. Type the name. Nudge every letter until the joins touch. USB stick. Find the file. Center it again. Three guests are waiting.</p>
+          <span class="ell-arrow" aria-hidden="true">&rarr;</span>
+          <p class="ell-now">Now you <strong>hoop and press start.</strong> The name is already on the machine, lined up, at the top of the list.</p>
+        </div>
       </div>
       <div class="ell-visual" aria-hidden="true">
         <div class="ell-stack">
@@ -633,8 +666,11 @@
     <div class="ell-moment-inner">
       <div class="ell-moment-copy">
         <h2 class="ell-moment-title">Never lose track of whose order is whose</h2>
-        <p class="ell-before"><strong>Between orders.</strong> The needle stops, and everyone scrambles. Whose is this? Which shirt? Where's the next one?</p>
-        <p class="ell-now">Now the label prints the moment they order. <strong>The next blank is hooped and tagged before the needle stops.</strong></p>
+        <div class="ell-ba">
+          <p class="ell-before"><strong>Between orders.</strong> The needle stops, and everyone scrambles. Whose is this? Which shirt? Where's the next one?</p>
+          <span class="ell-arrow" aria-hidden="true">&rarr;</span>
+          <p class="ell-now">Now the label prints the moment they order. <strong>The next blank is hooped and tagged before the needle stops.</strong></p>
+        </div>
       </div>
       <div class="ell-visual" aria-hidden="true">
         <div class="ell-hoop-wrap">
@@ -660,8 +696,11 @@
     <div class="ell-moment-inner">
       <div class="ell-moment-copy">
         <h2 class="ell-moment-title">Know when you&rsquo;re approaching event capacity</h2>
-        <p class="ell-before"><strong>The last hour.</strong> Twenty orders still in line, and the venue wants you out. You turn people away, or you stitch at home until midnight.</p>
-        <p class="ell-now">Now you see it coming. <strong>The line and the clock, side by side.</strong> Stop taking orders while everyone in line still gets theirs.</p>
+        <div class="ell-ba">
+          <p class="ell-before"><strong>The last hour.</strong> Twenty orders still in line, and the venue wants you out. You turn people away, or you stitch at home until midnight.</p>
+          <span class="ell-arrow" aria-hidden="true">&rarr;</span>
+          <p class="ell-now">Now you see it coming. <strong>The line and the clock, side by side.</strong> Stop taking orders while everyone in line still gets theirs.</p>
+        </div>
       </div>
       <div class="ell-visual" aria-hidden="true">
         <div class="ell-clock">
@@ -698,7 +737,7 @@
         <h2>What is Ember Lane Live?</h2>
       </div>
       <div>
-        <p>Ember Lane Live is a live embroidery management system for studios that stitch at events. Guests order from their phones through your own ordering portal. Your crew runs the line from one live queue, with a label printed for every order and each name sent to the machine ready to stitch. You keep the craft. It keeps the line moving.</p>
+        <p class="ell-what-summary">Ember Lane Live is a live embroidery management system for studios that stitch at events. Guests order from their phones through your own ordering portal. Your crew runs the line from one live queue, with a label printed for every order and each name sent to the machine ready to stitch. You keep the craft. It keeps the line moving.</p>
         <div class="ell-compat">
           <span class="ell-eyebrow">Works with today</span>
           <dl>
