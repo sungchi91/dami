@@ -88,7 +88,16 @@
     line-height: 1.6;
     color: rgba(247,244,239,0.92);
     max-width: 460px;
-    margin: 0 0 36px;
+    margin: 0 0 24px;
+  }
+  .ell-hero-pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 36px; padding: 0; list-style: none; }
+  .ell-hero-pills li {
+    padding: 6px 14px;
+    border: 1px solid rgba(247,244,239,0.3);
+    border-radius: 999px;
+    font-family: var(--ell-sans);
+    font-size: 13px;
+    color: rgba(247,244,239,0.92);
   }
 
   /* Phone mock */
@@ -177,6 +186,14 @@
     align-items: center;
   }
   .ell-moment.is-flipped .ell-moment-copy { order: 2; }
+  .ell-moment-title {
+    font-family: var(--font-heading-family);
+    font-weight: 400;
+    font-size: clamp(24px, 2.6vw, 32px);
+    line-height: 1.2;
+    color: var(--ell-ink);
+    margin: 0 0 24px;
+  }
   .ell-before {
     font-family: var(--ell-sans);
     font-size: clamp(16px, 1.4vw, 18px);
@@ -194,6 +211,7 @@
     border-top: 1px solid var(--ell-line);
   }
   .ell-now strong { font-weight: 500; }
+  .ell-before strong { font-weight: 500; color: var(--ell-ink); }
   .ell-visual {
     display: flex;
     justify-content: center;
@@ -388,6 +406,11 @@
     color: var(--ell-muted);
     margin: 0;
   }
+  .ell-compat { margin: 32px 0 0; padding-top: 24px; border-top: 1px solid var(--ell-line); }
+  .ell-compat dl { margin: 0; font-family: var(--ell-sans); font-size: 15px; line-height: 1.6; }
+  .ell-compat dt { color: var(--ell-ink); font-weight: 500; }
+  .ell-compat dd { margin: 0 0 12px; color: var(--ell-muted); }
+  .ell-compat dd:last-child { margin-bottom: 0; }
 
   /* CLOSE */
   .ell-close {
@@ -474,7 +497,10 @@
     .ell-mark { margin-bottom: 40px; font-size: 14px; }
     .ell-eyebrow { font-size: 10px; margin-bottom: 12px; }
     .ell-hero h1 { font-size: 32px; margin-bottom: 16px; }
-    .ell-hero p { font-size: 15px; margin-bottom: 28px; }
+    .ell-hero p { font-size: 15px; margin-bottom: 20px; }
+    .ell-hero-pills { margin-bottom: 28px; }
+    .ell-hero-pills li { font-size: 12px; }
+    .ell-moment-title { font-size: 22px; margin-bottom: 18px; }
     .ell-btn { font-size: 11px; padding: 11px 22px; }
     .ell-phone { max-width: 230px; }
     .ell-stitched { font-size: 36px; }
@@ -511,8 +537,13 @@
     <div class="ell-hero-inner">
       <div>
         <span class="ell-eyebrow">Ember Lane Live &middot; Live embroidery software</span>
-        <h1>Live embroidery, <em>beautifully orchestrated.</em></h1>
-        <p>Guests order from their phones. By the time you reach for the next blank, their name is on your machine.</p>
+        <h1>Less managing orders. <em>More embroidery.</em></h1>
+        <p>Software built for live embroidery activations. Let guests customize and preview their designs, automate order intake, and coordinate your production queue from one system.</p>
+        <ul class="ell-hero-pills">
+          <li>Guest self-service</li>
+          <li>Automated design files</li>
+          <li>Live queue management</li>
+        </ul>
         <a href="#ell-access" class="ell-btn">Request early access</a>
       </div>
       <div class="ell-phone" aria-hidden="true">
@@ -537,8 +568,8 @@
   <div class="ell-moment">
     <div class="ell-moment-inner">
       <div class="ell-moment-copy">
-        <span class="ell-eyebrow">The week before</span>
-        <p class="ell-before">You build the embroidery order form in Canva and print it. You spend an hour stitching out the menu. Then the host changes a color, and you start again.</p>
+        <h2 class="ell-moment-title">Prepare for events without rebuilding everything from scratch</h2>
+        <p class="ell-before"><strong>The week before.</strong> You build the embroidery order form in Canva and print it. You spend an hour stitching out the menu. Then the host changes a color, and you start again.</p>
         <p class="ell-now">Now the order form lives on the guest's phone, with a live preview of every design. <strong>Change it the night before, or halfway through the event.</strong> The next guest sees it.</p>
       </div>
       <div class="ell-visual" aria-hidden="true">
@@ -557,8 +588,8 @@
   <div class="ell-moment is-flipped">
     <div class="ell-moment-inner">
       <div class="ell-moment-copy">
-        <span class="ell-eyebrow">At the counter</span>
-        <p class="ell-before">&ldquo;Will white show up on off-white?&rdquo; You hold a spool against the shirt and hope they can picture it.</p>
+        <h2 class="ell-moment-title">Let guests choose confidently without constant operator consultation</h2>
+        <p class="ell-before"><strong>At the counter.</strong> &ldquo;Will white show up on off-white?&rdquo; You hold a spool against the shirt and hope they can picture it.</p>
         <p class="ell-now">Now they see it. <strong>Their name, their thread, on their item,</strong> before they order.</p>
       </div>
       <div class="ell-visual has-caption">
@@ -576,8 +607,8 @@
   <div class="ell-moment">
     <div class="ell-moment-inner">
       <div class="ell-moment-copy">
-        <span class="ell-eyebrow">At the machine</span>
-        <p class="ell-before">Find the font. Type the name. Nudge every letter until the joins touch. USB stick. Find the file. Center it again. Three guests are waiting.</p>
+        <h2 class="ell-moment-title">Stop manually adjusting every letter</h2>
+        <p class="ell-before"><strong>At the machine.</strong> Find the font. Type the name. Nudge every letter until the joins touch. USB stick. Find the file. Center it again. Three guests are waiting.</p>
         <p class="ell-now">Now you <strong>hoop and press start.</strong> The name is already on the machine, lined up, at the top of the list.</p>
       </div>
       <div class="ell-visual" aria-hidden="true">
@@ -601,8 +632,8 @@
   <div class="ell-moment is-flipped">
     <div class="ell-moment-inner">
       <div class="ell-moment-copy">
-        <span class="ell-eyebrow">Between orders</span>
-        <p class="ell-before">The needle stops, and everyone scrambles. Whose is this? Which shirt? Where's the next one?</p>
+        <h2 class="ell-moment-title">Never lose track of whose order is whose</h2>
+        <p class="ell-before"><strong>Between orders.</strong> The needle stops, and everyone scrambles. Whose is this? Which shirt? Where's the next one?</p>
         <p class="ell-now">Now the label prints the moment they order. <strong>The next blank is hooped and tagged before the needle stops.</strong></p>
       </div>
       <div class="ell-visual" aria-hidden="true">
@@ -628,8 +659,8 @@
   <div class="ell-moment">
     <div class="ell-moment-inner">
       <div class="ell-moment-copy">
-        <span class="ell-eyebrow">The last hour</span>
-        <p class="ell-before">Twenty orders still in line, and the venue wants you out. You turn people away, or you stitch at home until midnight.</p>
+        <h2 class="ell-moment-title">Know when you&rsquo;re approaching event capacity</h2>
+        <p class="ell-before"><strong>The last hour.</strong> Twenty orders still in line, and the venue wants you out. You turn people away, or you stitch at home until midnight.</p>
         <p class="ell-now">Now you see it coming. <strong>The line and the clock, side by side.</strong> Stop taking orders while everyone in line still gets theirs.</p>
       </div>
       <div class="ell-visual" aria-hidden="true">
@@ -666,7 +697,18 @@
         <span class="ell-eyebrow">Live embroidery software</span>
         <h2>What is Ember Lane Live?</h2>
       </div>
-      <p>Ember Lane Live is a live embroidery management system for studios that stitch at events. Guests order from their phones through your own ordering portal. Your crew runs the line from one live queue, with a label printed for every order and each name sent to the machine ready to stitch. You keep the craft. It keeps the line moving.</p>
+      <div>
+        <p>Ember Lane Live is a live embroidery management system for studios that stitch at events. Guests order from their phones through your own ordering portal. Your crew runs the line from one live queue, with a label printed for every order and each name sent to the machine ready to stitch. You keep the craft. It keeps the line moving.</p>
+        <div class="ell-compat">
+          <span class="ell-eyebrow">Works with today</span>
+          <dl>
+            <dt>Machines</dt>
+            <dd>Brother and Baby Lock embroidery machines that use .pes files</dd>
+            <dt>Computer</dt>
+            <dd>A Windows laptop at the event (guests order from any phone)</dd>
+          </dl>
+        </div>
+      </div>
     </div>
   </div>
 
